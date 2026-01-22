@@ -1,0 +1,203 @@
+/* pages/profile/profile.wxss */
+.profile-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.profile-scroll {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 160rpx;
+}
+
+/* 个人信息头部 */
+.profile-header {
+  position: relative;
+  padding: 96rpx 48rpx 64rpx;
+  background-color: #fff;
+  border-bottom: 2rpx solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.settings-btn {
+  position: absolute;
+  top: 32rpx;
+  right: 32rpx;
+  color: #999;
+  padding: 16rpx;
+}
+
+.settings-icon {
+  font-size: 40rpx;
+}
+
+.avatar-wrapper {
+  width: 160rpx;
+  height: 160rpx;
+  position: relative;
+  margin-bottom: 24rpx;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 8rpx solid #fff;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+}
+
+.level-badge {
+  position: absolute;
+  bottom: -8rpx;
+  right: -8rpx;
+  background-color: #000;
+  color: #fff;
+  font-size: 20rpx;
+  font-weight: bold;
+  padding: 8rpx 16rpx;
+  border-radius: 50rpx;
+  border: 4rpx solid #fff;
+}
+
+.username {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 8rpx;
+}
+
+.user-id {
+  color: #999;
+  font-size: 24rpx;
+  font-family: monospace;
+  margin-bottom: 48rpx;
+}
+
+.stats-row {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  gap: 96rpx;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: 900;
+  color: #000;
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 成就勋章区域 */
+.achievements-section {
+  padding: 48rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 32rpx;
+}
+
+.section-title {
+  color: #000;
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.achievement-item {
+  background-color: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 32rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  border: 2rpx solid #f0f0f0;
+}
+
+.achievement-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.icon-text {
+  font-size: 40rpx;
+}
+
+.achievement-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.achievement-name {
+  color: #000;
+  font-weight: bold;
+  font-size: 28rpx;
+  margin-bottom: 8rpx;
+}
+
+.achievement-desc {
+  font-size: 24rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+.achievement-progress {
+  flex-shrink: 0;
+}
+
+.progress-text {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #999;
+}
+
+/* 分享按钮 */
+.share-btn {
+  width: 100%;
+  margin-top: 32rpx;
+  padding: 24rpx;
+  background-color: #fff;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 50rpx;
+  color: #333;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-icon {
+  font-size: 36rpx;
+}
+
+.share-text {
+  font-size: 28rpx;
+}
+
+.bottom-spacer {
+  height: 80rpx;
+}

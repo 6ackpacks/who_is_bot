@@ -1,0 +1,72 @@
+<!--pages/leaderboard/leaderboard.wxml-->
+<view class="leaderboard-container">
+
+  <!-- 分类标签 -->
+  <view class="category-tabs">
+    <view class="tab-item {{activeType === 'all' ? 'tab-active' : ''}}"
+          data-type="all"
+          bindtap="handleTypeChange">
+      <text class="tab-icon">🏆</text>
+      <text class="tab-label">全部</text>
+    </view>
+    <view class="tab-item {{activeType === 'video' ? 'tab-active' : ''}}"
+          data-type="video"
+          bindtap="handleTypeChange">
+      <text class="tab-icon">🎬</text>
+      <text class="tab-label">视频</text>
+    </view>
+    <view class="tab-item {{activeType === 'image' ? 'tab-active' : ''}}"
+          data-type="image"
+          bindtap="handleTypeChange">
+      <text class="tab-icon">🖼️</text>
+      <text class="tab-label">图片</text>
+    </view>
+    <view class="tab-item {{activeType === 'text' ? 'tab-active' : ''}}"
+          data-type="text"
+          bindtap="handleTypeChange">
+      <text class="tab-icon">📝</text>
+      <text class="tab-label">文字</text>
+    </view>
+  </view>
+
+  <!-- 列表标题 -->
+  <view class="list-header">
+    <text class="header-left">模型名称</text>
+    <text class="header-right">误判率</text>
+  </view>
+
+  <!-- 排行榜列表 -->
+  <scroll-view scroll-y class="leaderboard-list">
+    <view wx:for="{{filteredData}}"
+          wx:key="id"
+          class="leaderboard-item">
+
+      <!-- 排名 -->
+      <view class="rank-badge rank-{{index < 3 ? index : 'other'}}">
+        <text class="rank-number">{{index + 1}}</text>
+      </view>
+
+      <!-- 模型信息 -->
+      <view class="model-info">
+        <view class="model-header">
+          <text class="model-name">{{item.modelName}}</text>
+          <text class="model-company">{{item.company}}</text>
+        </view>
+        <view class="model-meta">
+          <text class="model-type">{{item.type === 'image' ? '图像' : item.type === 'text' ? '文本' : '视频'}}模型</text>
+          <text class="meta-dot">•</text>
+          <text class="model-tests">{{item.totalTests}} 次测试</text>
+        </view>
+      </view>
+
+      <!-- 欺骗率 -->
+      <view class="deception-rate">
+        <text class="rate-value">{{item.deceptionRate}}%</text>
+      </view>
+    </view>
+
+    <!-- 底部占位 -->
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+</view>

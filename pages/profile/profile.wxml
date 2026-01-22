@@ -1,0 +1,67 @@
+<!--pages/profile/profile.wxml-->
+<view class="profile-container">
+  <scroll-view scroll-y class="profile-scroll">
+
+    <!-- 个人信息头部 -->
+    <view class="profile-header">
+      <!-- 设置按钮 -->
+      <view class="settings-btn" bindtap="handleSettings">
+        <text class="settings-icon">⚙️</text>
+      </view>
+
+      <!-- 头像 -->
+      <view class="avatar-wrapper">
+        <image src="{{userInfo.avatar}}" class="avatar-image" mode="aspectFill"></image>
+        <view class="level-badge">Lv.{{userInfo.level}}</view>
+      </view>
+
+      <!-- 用户名 -->
+      <view class="username">{{userInfo.nickname}}</view>
+      <view class="user-id">UID: {{userInfo.uid}}</view>
+
+      <!-- 统计数据 -->
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-value">{{stats.accuracy}}%</text>
+          <text class="stat-label">准确率</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{stats.totalJudged}}</text>
+          <text class="stat-label">已判定</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{stats.streak}}</text>
+          <text class="stat-label">连续正确</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 成就勋章 -->
+    <view class="achievements-section">
+      <view class="section-title">成就勋章</view>
+
+      <view wx:for="{{achievements}}" wx:key="id" class="achievement-item">
+        <view class="achievement-icon" style="background-color: {{item.bgColor}}; color: {{item.iconColor}}">
+          <text class="icon-text">{{item.icon}}</text>
+        </view>
+        <view class="achievement-info">
+          <view class="achievement-name">{{item.name}}</view>
+          <view class="achievement-desc">{{item.description}}</view>
+        </view>
+        <view class="achievement-progress">
+          <text class="progress-text">{{item.progress}}/{{item.total}}</text>
+        </view>
+      </view>
+
+      <!-- 分享按钮 -->
+      <button class="share-btn" bindtap="handleShare">
+        <text class="share-icon">📤</text>
+        <text class="share-text">分享我的主页</text>
+      </button>
+    </view>
+
+    <!-- 底部占位 -->
+    <view class="bottom-spacer"></view>
+
+  </scroll-view>
+</view>

@@ -1,0 +1,192 @@
+<!--pages/feed/feed.wxml-->
+<view class="feed-container">
+
+  <!-- 判定阶段 -->
+  <view wx:if="{{viewState === 'judging'}}" class="judging-view">
+    <view class="content-card-wrapper">
+      <view class="content-card {{showAnimation ? 'card-animate' : ''}}">
+        <!-- 引号装饰 -->
+        <view class="quote-icon">"</view>
+
+        <!-- 图片内容 -->
+        <view wx:if="{{currentItem.type === 'image'}}" class="image-content">
+          <image src="{{currentItem.url}}" mode="aspectFill" class="content-image"></image>
+          <view class="image-overlay"></view>
+          <view class="image-title">{{currentItem.title}}</view>
+        </view>
+
+        <!-- 文字内容 -->
+        <view wx:else class="text-content">
+          <text class="content-text">{{currentItem.text}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 判定按钮 -->
+    <view class="judge-buttons">
+      <button class="judge-btn judge-btn-ai" data-choice="ai" bindtap="handleJudge">
+        <text class="judge-btn-text">铁是人机!</text>
+      </button>
+      <button class="judge-btn judge-btn-human" data-choice="human" bindtap="handleJudge">
+        <text class="judge-btn-text">包真人的!</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 结果揭晓阶段 -->
+  <view wx:if="{{viewState === 'revealed'}}" class="revealed-view">
+    <view class="content-card-wrapper">
+      <view class="content-card dimmed">
+        <!-- 引号装饰 -->
+        <view class="quote-icon">"</view>
+
+        <!-- 图片内容 -->
+        <view wx:if="{{currentItem.type === 'image'}}" class="image-content">
+          <image src="{{currentItem.url}}" mode="aspectFill" class="content-image"></image>
+          <view class="image-overlay"></view>
+          <view class="image-title">{{currentItem.title}}</view>
+        </view>
+
+        <!-- 文字内容 -->
+        <view wx:else class="text-content">
+          <text class="content-text">{{currentItem.text}}</text>
+        </view>
+
+        <!-- 结果覆盖层 -->
+        <view class="result-overlay">
+          <!-- 返回按钮 -->
+          <view class="back-btn" bindtap="handleBackToJudging">
+            <text class="back-icon">‹</text>
+            <text class="back-text">返回</text>
+          </view>
+
+          <!-- 结果图标 -->
+          <view class="result-icon {{isCorrect ? 'result-correct' : 'result-wrong'}}">
+            <text class="result-icon-text">{{isCorrect ? '✓' : '✕'}}</text>
+          </view>
+
+          <!-- 结果标题 -->
+          <view class="result-title">{{isCorrect ? '慧眼如炬' : '遗憾误判'}}</view>
+
+          <!-- 结果说明 -->
+          <view class="result-subtitle">
+            这是由 <text class="result-model">{{currentItem.isAi ? currentItem.modelTag : 'Human'}}</text> 创作的内容
+          </view>
+
+          <!-- 统计条 -->
+          <view class="stats-bar">
+            <view class="stats-label">{{currentItem.deceptionRate}}% 认为是AI</view>
+            <view class="stats-progress">
+              <view class="stats-fill" style="width: {{currentItem.deceptionRate}}%"></view>
+            </view>
+          </view>
+
+          <!-- 操作按钮 -->
+          <view class="result-actions">
+            <button class="result-btn result-btn-primary" bindtap="handleViewDetails">
+              <text>查看解析与讨论</text>
+            </button>
+            <button class="result-btn result-btn-secondary" bindtap="handleNext">
+              <text>跳过，下一题</text>
+            </button>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 详情页面 -->
+  <view wx:if="{{viewState === 'details'}}" class="details-view">
+    <!-- 导航栏 -->
+    <view class="details-header">
+      <view class="details-back" bindtap="handleBackToResult">
+        <text class="back-icon">‹</text>
+        <text class="back-text">返回</text>
+      </view>
+      <view class="details-title">真相解析</view>
+    </view>
+
+    <scroll-view scroll-y class="details-content">
+      <!-- 结果摘要 -->
+      <view class="details-summary">
+        <view class="summary-header">
+          <text class="summary-icon">{{isCorrect ? '✓' : '✕'}}</text>
+          <text class="summary-title">{{isCorrect ? '判断正确' : '判断错误'}}</text>
+        </view>
+        <view class="summary-text">
+          该内容确实是 <text class="summary-bold">{{currentItem.isAi ? 'AI 生成' : '真人创作'}}</text>
+        </view>
+      </view>
+
+      <!-- 统计条 -->
+      <view class="details-stats">
+        <view class="stats-labels">
+          <text class="stats-label-left">人机感 {{currentItem.deceptionRate}}%</text>
+          <text class="stats-label-right">真实感 {{100 - currentItem.deceptionRate}}%</text>
+        </view>
+        <view class="stats-bar-full">
+          <view class="stats-fill-ai" style="width: {{currentItem.deceptionRate}}%"></view>
+          <view class="stats-fill-human"></view>
+        </view>
+      </view>
+
+      <!-- 提供者信息 -->
+      <view class="provider-info">
+        <text class="provider-label">来源提供:</text>
+        <view class="provider-badge">
+          <image src="https://api.dicebear.com/7.x/avataaars/svg?seed={{currentItem.provider}}" class="provider-avatar"></image>
+          <text class="provider-name">{{currentItem.provider}}</text>
+        </view>
+      </view>
+
+      <!-- 详细解释 -->
+      <view class="explanation-box">
+        <text class="explanation-icon">"</text>
+        <view class="explanation-content">
+          <view class="explanation-title">鉴别要点</view>
+          <text class="explanation-text">{{currentItem.explanation}}</text>
+          <view class="explanation-footer">
+            <text class="explanation-label">生成模型/来源</text>
+            <text class="explanation-model">{{currentItem.isAi ? currentItem.modelTag : 'Human'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 社区讨论 -->
+      <view class="comments-section">
+        <view class="comments-header">
+          <text class="comments-icon">💬</text>
+          <text class="comments-title">社区讨论</text>
+        </view>
+
+        <view class="comments-list">
+          <view wx:for="{{currentItem.comments}}" wx:key="id" class="comment-item">
+            <image src="{{item.avatar}}" class="comment-avatar"></image>
+            <view class="comment-content">
+              <view class="comment-header">
+                <text class="comment-user">{{item.user}}</text>
+                <view class="comment-likes">
+                  <text class="like-icon">♥</text>
+                  <text class="like-count">{{item.likes}}</text>
+                </view>
+              </view>
+              <text class="comment-text">{{item.text}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 底部占位 -->
+      <view class="bottom-spacer"></view>
+    </scroll-view>
+
+    <!-- 底部按钮 -->
+    <view class="details-footer">
+      <button class="next-btn" bindtap="handleNext">
+        <text>继续挑战下一题</text>
+        <text class="next-arrow">→</text>
+      </button>
+    </view>
+  </view>
+
+</view>

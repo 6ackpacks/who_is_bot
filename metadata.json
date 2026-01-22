@@ -1,0 +1,5 @@
+{
+  "name": "Who is the Bot",
+  "description": "A social Turing Test game where users judge content authenticity.",
+  "requestFramePermissions": []
+}

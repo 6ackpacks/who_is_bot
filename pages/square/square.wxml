@@ -1,0 +1,10 @@
+<!--pages/square/square.wxml-->
+<view class="square-container">
+  <view class="square-content">
+    <!-- 标题 -->
+    <view class="square-title">社区广场</view>
+
+    <!-- 描述 -->
+    <view class="square-desc">讨论区即将开放...</view>
+  </view>
+</view>
