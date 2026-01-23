@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { User } from '../user/user.entity';
 import { Comment } from './comment.entity';
 
-@Entity('contents')
+@Entity('content')
 export class Content {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -19,7 +19,7 @@ export class Content {
   @Column({ type: 'varchar', length: 255 })
   title: string;
 
-  @Column({ type: 'boolean' })
+  @Column({ name: 'is_bot', type: 'boolean' })
   isAi: boolean;
 
   @Column({ type: 'varchar', length: 100 })
