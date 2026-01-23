@@ -9,32 +9,91 @@ Page({
     viewState: 'judging', // 'judging', 'revealed', 'details'
     userChoice: null, // 'ai' or 'human'
     isCorrect: false,
-    showAnimation: false
+    showAnimation: false,
+    loading: false,
+    judgeButtonDisabled: false // 防止重复点击
   },
 
   onLoad() {
-    this.setData({
-      items: MOCK_FEED,
-      currentItem: MOCK_FEED[0]
+    this.loadFeedData();
+  },
+
+  // 从云托管后端加载数据
+  loadFeedData() {
+    this.setData({ loading: true });
+
+    wx.cloud.callContainer({
+      path: '/content/feed',
+      method: 'GET',
+      data: {
+        limit: 10
+      },
+      success: res => {
+        console.log('获取内容成功', res);
+        if (res.data && res.data.length > 0) {
+          this.setData({
+            items: res.data,
+            currentItem: res.data[0],
+            loading: false
+          });
+        } else {
+          // 如果后端没有数据，使用 mock 数据
+          console.log('后端无数据，使用 mock 数据');
+          this.setData({
+            items: MOCK_FEED,
+            currentItem: MOCK_FEED[0],
+            loading: false
+          });
+        }
+      },
+      fail: err => {
+        console.error('获取内容失败', err);
+        // 失败时使用 mock 数据
+        wx.showToast({
+          title: '加载失败，使用本地数据',
+          icon: 'none'
+        });
+        this.setData({
+          items: MOCK_FEED,
+          currentItem: MOCK_FEED[0],
+          loading: false
+        });
+      }
     });
   },
 
   // 用户做出判断
   handleJudge(e) {
+    // 防止重复点击
+    if (this.data.judgeButtonDisabled) {
+      return;
+    }
+
     const choice = e.currentTarget.dataset.choice;
     const isCorrect = choice === 'ai' ? this.data.currentItem.isAi : !this.data.currentItem.isAi;
 
+    // 禁用按钮并添加视觉反馈
     this.setData({
-      userChoice: choice,
-      viewState: 'revealed',
-      isCorrect: isCorrect,
-      showAnimation: true
+      judgeButtonDisabled: true,
+      userChoice: choice
     });
 
-    // 动画结束后重置
+    // 短暂延迟后显示结果，增强反馈感
     setTimeout(() => {
-      this.setData({ showAnimation: false });
-    }, 300);
+      this.setData({
+        viewState: 'revealed',
+        isCorrect: isCorrect,
+        showAnimation: true
+      });
+
+      // 动画结束后重置
+      setTimeout(() => {
+        this.setData({
+          showAnimation: false,
+          judgeButtonDisabled: false
+        });
+      }, 300);
+    }, 200);
   },
 
   // 查看详情
@@ -52,7 +111,8 @@ Page({
       currentItem: this.data.items[nextIndex],
       viewState: 'judging',
       userChoice: null,
-      isCorrect: false
+      isCorrect: false,
+      judgeButtonDisabled: false
     });
   },
 
@@ -67,7 +127,8 @@ Page({
   handleBackToJudging() {
     this.setData({
       viewState: 'judging',
-      userChoice: null
+      userChoice: null,
+      judgeButtonDisabled: false
     });
   },
 

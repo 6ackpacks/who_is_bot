@@ -24,10 +24,10 @@
 
     <!-- 判定按钮 -->
     <view class="judge-buttons">
-      <button class="judge-btn judge-btn-ai" data-choice="ai" bindtap="handleJudge">
+      <button class="judge-btn judge-btn-ai {{judgeButtonDisabled ? 'button-disabled' : ''}}" data-choice="ai" bindtap="handleJudge" disabled="{{judgeButtonDisabled}}">
         <text class="judge-btn-text">铁是人机!</text>
       </button>
-      <button class="judge-btn judge-btn-human" data-choice="human" bindtap="handleJudge">
+      <button class="judge-btn judge-btn-human {{judgeButtonDisabled ? 'button-disabled' : ''}}" data-choice="human" bindtap="handleJudge" disabled="{{judgeButtonDisabled}}">
         <text class="judge-btn-text">包真人的!</text>
       </button>
     </view>

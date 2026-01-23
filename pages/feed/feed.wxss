@@ -130,15 +130,35 @@
   justify-content: center;
   box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
   border: none;
-  transition: transform 0.2s;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .judge-btn::after {
   border: none;
 }
 
+.judge-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.2);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
 .judge-btn:active {
   transform: scale(0.95);
+}
+
+.judge-btn:active::before {
+  opacity: 1;
+}
+
+.judge-btn.button-disabled {
+  opacity: 0.6;
+  transform: scale(0.98);
 }
 
 .judge-btn-ai {
@@ -154,6 +174,8 @@
   font-weight: bold;
   font-size: 28rpx;
   letter-spacing: 4rpx;
+  position: relative;
+  z-index: 1;
 }
 
 /* ===== 结果揭晓阶段样式 ===== */
