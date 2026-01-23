@@ -23,8 +23,18 @@ Page({
     this.setData({ loading: true });
 
     wx.cloud.callContainer({
-      path: '/content/feed?limit=10',
+      config: {
+        env: 'prod-3ge8ht6pded7ed77'
+      },
+      path: '/content/feed',
+      header: {
+        'X-WX-SERVICE': 'who-is-the-bot-api2',
+        'content-type': 'application/json'
+      },
       method: 'GET',
+      data: {
+        limit: 10
+      },
       success: res => {
         console.log('获取内容成功', res);
         if (res.data && res.data.length > 0) {
