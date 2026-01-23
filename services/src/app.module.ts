@@ -11,12 +11,12 @@ import { UserModule } from './user/user.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: 'mysql',
       host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT) || 5432,
-      username: process.env.DB_USERNAME || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_DATABASE || 'who_is_the_bot',
+      port: parseInt(process.env.DB_PORT) || 3306,
+      username: process.env.DB_USER || 'root',
+      password: process.env.DB_PASS || 'root',
+      database: process.env.DB_NAME || 'who_is_the_bot',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true, // Set to false in production
     }),

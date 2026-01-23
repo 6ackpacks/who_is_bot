@@ -1,19 +1,19 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:15-alpine
+  mysql:
+    image: mysql:8.0
     container_name: who-is-the-bot-db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: who_is_the_bot
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: who_is_the_bot
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
     networks:
       - app-network
+    command: --default-authentication-plugin=mysql_native_password
 
   backend:
     build:
@@ -21,21 +21,21 @@ services:
       dockerfile: Dockerfile
     container_name: who-is-the-bot-backend
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-      DB_DATABASE: who_is_the_bot
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASS: root
+      DB_NAME: who_is_the_bot
     ports:
       - "80:80"
     depends_on:
-      - postgres
+      - mysql
     networks:
       - app-network
     restart: unless-stopped
 
 volumes:
-  postgres_data:
+  mysql_data:
 
 networks:
   app-network:

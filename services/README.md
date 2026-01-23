@@ -7,7 +7,7 @@ NestJS backend for the "Who is the Bot" application.
 - RESTful API for content management
 - User profile and statistics
 - AI model leaderboard
-- PostgreSQL database with TypeORM
+- MySQL database with TypeORM
 - Docker support
 
 ## API Endpoints
@@ -42,13 +42,13 @@ npm install
 2. Set up environment variables in `.env`:
 ```
 DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=postgres
-DB_DATABASE=who_is_the_bot
+DB_PORT=3306
+DB_USER=root
+DB_PASS=root
+DB_NAME=who_is_the_bot
 ```
 
-3. Start PostgreSQL database
+3. Start MySQL database
 
 4. Run the application:
 ```bash
@@ -65,7 +65,7 @@ docker-compose up -d
 ```
 
 This will start:
-- PostgreSQL database on port 5432
+- MySQL database on port 3306
 - NestJS backend on port 80
 
 2. Stop the services:
@@ -92,6 +92,6 @@ services/
 
 - NestJS 10
 - TypeORM
-- PostgreSQL
+- MySQL 8.0
 - TypeScript
 - Docker
