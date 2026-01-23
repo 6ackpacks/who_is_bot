@@ -8,8 +8,15 @@
         <!-- 引号装饰 -->
         <view class="quote-icon">"</view>
 
+        <!-- 视频内容 -->
+        <view wx:if="{{currentItem.type === 'video'}}" class="video-content">
+          <video src="{{currentItem.url}}" class="content-video" controls></video>
+          <view class="video-overlay"></view>
+          <view class="video-title">{{currentItem.title}}</view>
+        </view>
+
         <!-- 图片内容 -->
-        <view wx:if="{{currentItem.type === 'image'}}" class="image-content">
+        <view wx:elif="{{currentItem.type === 'image'}}" class="image-content">
           <image src="{{currentItem.url}}" mode="aspectFill" class="content-image"></image>
           <view class="image-overlay"></view>
           <view class="image-title">{{currentItem.title}}</view>
@@ -40,8 +47,15 @@
         <!-- 引号装饰 -->
         <view class="quote-icon">"</view>
 
+        <!-- 视频内容 -->
+        <view wx:if="{{currentItem.type === 'video'}}" class="video-content">
+          <video src="{{currentItem.url}}" class="content-video" controls></video>
+          <view class="video-overlay"></view>
+          <view class="video-title">{{currentItem.title}}</view>
+        </view>
+
         <!-- 图片内容 -->
-        <view wx:if="{{currentItem.type === 'image'}}" class="image-content">
+        <view wx:elif="{{currentItem.type === 'image'}}" class="image-content">
           <image src="{{currentItem.url}}" mode="aspectFill" class="content-image"></image>
           <view class="image-overlay"></view>
           <view class="image-title">{{currentItem.title}}</view>
