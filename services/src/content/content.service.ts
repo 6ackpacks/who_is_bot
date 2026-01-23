@@ -34,10 +34,6 @@ export class ContentService {
   }
 
   async getFeed(limit: number = 10): Promise<Content[]> {
-    return this.contentRepository.find({
-      relations: ['author', 'comments', 'comments.user'],
-      order: { createdAt: 'DESC' },
-      take: limit,
-    });
+    return this.contentRepository.find();
   }
 }
