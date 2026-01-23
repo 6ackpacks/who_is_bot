@@ -23,11 +23,8 @@ Page({
     this.setData({ loading: true });
 
     wx.cloud.callContainer({
-      path: '/content/feed',
+      path: '/content/feed?limit=10',
       method: 'GET',
-      data: {
-        limit: 10
-      },
       success: res => {
         console.log('获取内容成功', res);
         if (res.data && res.data.length > 0) {
