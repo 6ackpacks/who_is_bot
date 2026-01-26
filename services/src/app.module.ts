@@ -9,6 +9,8 @@ import { UserModule } from './user/user.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      ignoreEnvFile: true, // Don't try to load .env files in cloud container
+      envFilePath: [], // Explicitly set empty array to prevent file system access
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
