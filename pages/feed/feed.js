@@ -167,5 +167,18 @@ Page({
       icon: 'none',
       duration: 2000
     });
+  },
+
+  // Swiper 切换事件
+  onSwiperChange(e) {
+    const newIndex = e.detail.current;
+    console.log('Swiper changed to index:', newIndex);
+    this.setData({
+      currentIndex: newIndex,
+      currentItem: this.data.items[newIndex],
+      viewState: 'judging',  // 切换到新内容时重置为判定状态
+      userChoice: null,
+      isCorrect: false
+    });
   }
 });

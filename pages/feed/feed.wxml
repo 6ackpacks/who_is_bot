@@ -1,129 +1,65 @@
 <!--pages/feed/feed.wxml-->
 <view class="feed-container">
+  <swiper class="feed-swiper" vertical duration="300" bindchange="onSwiperChange">
+    <swiper-item wx:for="{{items}}" wx:key="id" class="feed-item">
 
-  <!-- 判定阶段 -->
-  <view wx:if="{{viewState === 'judging'}}" class="judging-view">
-    <view class="content-card-wrapper">
-      <view class="content-card {{showAnimation ? 'card-animate' : ''}}">
-        <!-- 引号装饰 -->
-        <view class="quote-icon">"</view>
-
-        <!-- 视频内容 -->
-        <view wx:if="{{currentItem.type === 'video'}}" class="video-content">
+      <!-- 视频类型：全屏沉浸式 -->
+      <block wx:if="{{item.type === 'video'}}">
+        <view class="video-container">
           <video
-            wx:if="{{currentItem.url}}"
-            src="{{currentItem.url}}"
-            class="content-video"
-            controls
+            wx:if="{{item.url}}"
+            src="{{item.url}}"
+            class="full-video"
+            loop
+            autoplay="{{index === currentIndex}}"
+            controls="{{false}}"
+            object-fit="cover"
             binderror="onVideoError"
-            style="width: 750rpx; height: 450rpx;"
           ></video>
-          <view class="video-overlay"></view>
-          <view class="video-title">{{currentItem.title}}</view>
-        </view>
-
-        <!-- 图片内容 -->
-        <view wx:elif="{{currentItem.type === 'image'}}" class="image-content">
-          <image src="{{currentItem.url}}" mode="aspectFill" class="content-image"></image>
-          <view class="image-overlay"></view>
-          <view class="image-title">{{currentItem.title}}</view>
-        </view>
-
-        <!-- 文字内容 -->
-        <view wx:else class="text-content">
-          <text class="content-text">{{currentItem.text}}</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 判定按钮 -->
-    <view class="judge-buttons">
-      <button class="judge-btn judge-btn-ai {{judgeButtonDisabled ? 'button-disabled' : ''}}" data-choice="ai" bindtap="handleJudge" disabled="{{judgeButtonDisabled}}">
-        <text class="judge-btn-text">铁是人机!</text>
-      </button>
-      <button class="judge-btn judge-btn-human {{judgeButtonDisabled ? 'button-disabled' : ''}}" data-choice="human" bindtap="handleJudge" disabled="{{judgeButtonDisabled}}">
-        <text class="judge-btn-text">包真人的!</text>
-      </button>
-    </view>
-  </view>
-
-  <!-- 结果揭晓阶段 -->
-  <view wx:if="{{viewState === 'revealed'}}" class="revealed-view">
-    <view class="content-card-wrapper">
-      <view class="content-card dimmed">
-        <!-- 引号装饰 -->
-        <view class="quote-icon">"</view>
-
-        <!-- 视频内容 -->
-        <view wx:if="{{currentItem.type === 'video'}}" class="video-content">
-          <video
-            wx:if="{{currentItem.url}}"
-            src="{{currentItem.url}}"
-            class="content-video"
-            controls
-            binderror="onVideoError"
-            style="width: 750rpx; height: 450rpx;"
-          ></video>
-          <view class="video-overlay"></view>
-          <view class="video-title">{{currentItem.title}}</view>
-        </view>
-
-        <!-- 图片内容 -->
-        <view wx:elif="{{currentItem.type === 'image'}}" class="image-content">
-          <image src="{{currentItem.url}}" mode="aspectFill" class="content-image"></image>
-          <view class="image-overlay"></view>
-          <view class="image-title">{{currentItem.title}}</view>
-        </view>
-
-        <!-- 文字内容 -->
-        <view wx:else class="text-content">
-          <text class="content-text">{{currentItem.text}}</text>
-        </view>
-
-        <!-- 结果覆盖层 -->
-        <view class="result-overlay">
-          <!-- 返回按钮 -->
-          <view class="back-btn" bindtap="handleBackToJudging">
-            <text class="back-icon">‹</text>
-            <text class="back-text">返回</text>
+          <view class="video-overlay">
+            <text class="video-title">{{item.title}}</text>
           </view>
+        </view>
+      </block>
 
-          <!-- 结果图标 -->
-          <view class="result-icon {{isCorrect ? 'result-correct' : 'result-wrong'}}">
-            <text class="result-icon-text">{{isCorrect ? '✓' : '✕'}}</text>
-          </view>
-
-          <!-- 结果标题 -->
-          <view class="result-title">{{isCorrect ? '慧眼如炬' : '遗憾误判'}}</view>
-
-          <!-- 结果说明 -->
-          <view class="result-subtitle">
-            这是由 <text class="result-model">{{currentItem.isAi ? currentItem.modelTag : 'Human'}}</text> 创作的内容
-          </view>
-
-          <!-- 统计条 -->
-          <view class="stats-bar">
-            <view class="stats-label">{{currentItem.deceptionRate}}% 认为是AI</view>
-            <view class="stats-progress">
-              <view class="stats-fill" style="width: {{currentItem.deceptionRate}}%"></view>
+      <!-- 图片/文本类型：卡片流 -->
+      <block wx:else>
+        <view class="card-container">
+          <view class="card-content">
+            <image wx:if="{{item.type === 'image'}}" src="{{item.url}}" mode="aspectFill" class="card-image"></image>
+            <view class="card-text-area">
+              <text class="card-title">{{item.title}}</text>
+              <text class="card-desc" wx:if="{{item.text}}">{{item.text}}</text>
             </view>
           </view>
+        </view>
+      </block>
 
-          <!-- 操作按钮 -->
-          <view class="result-actions">
-            <button class="result-btn result-btn-primary" bindtap="handleViewDetails">
-              <text>查看解析与讨论</text>
-            </button>
-            <button class="result-btn result-btn-secondary" bindtap="handleNext">
-              <text>跳过，下一题</text>
-            </button>
-          </view>
+      <!-- 判定按钮 -->
+      <view class="action-bar" wx:if="{{viewState === 'judging'}}">
+        <button class="btn btn-bot" bindtap="handleJudge" data-choice="ai">铁是人机！</button>
+        <button class="btn btn-human" bindtap="handleJudge" data-choice="human">包真人的！</button>
+      </view>
+
+      <!-- 结果覆盖层 -->
+      <view wx:if="{{viewState === 'revealed' && index === currentIndex}}" class="result-overlay">
+        <view class="result-icon {{isCorrect ? 'result-correct' : 'result-wrong'}}">
+          <text class="result-icon-text">{{isCorrect ? '✓' : '✕'}}</text>
+        </view>
+        <view class="result-title">{{isCorrect ? '慧眼如炬' : '遗憾误判'}}</view>
+        <view class="result-subtitle">
+          这是由 <text class="result-model">{{item.isAi ? item.modelTag : 'Human'}}</text> 创作的内容
+        </view>
+        <view class="result-actions">
+          <button class="result-btn result-btn-primary" bindtap="handleViewDetails">查看解析</button>
+          <button class="result-btn result-btn-secondary" bindtap="handleNext">下一题</button>
         </view>
       </view>
-    </view>
-  </view>
 
-  <!-- 详情页面 -->
+    </swiper-item>
+  </swiper>
+
+  <!-- 详情页面（保持原有的详情页） -->
   <view wx:if="{{viewState === 'details'}}" class="details-view">
     <!-- 导航栏 -->
     <view class="details-header">
