@@ -6,6 +6,7 @@
     "pages/square/square",
     "pages/profile/profile"
   ],
+  "cloud": true,
   "window": {
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#ffffff",
