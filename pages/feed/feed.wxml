@@ -10,7 +10,7 @@
 
         <!-- 视频内容 -->
         <view wx:if="{{currentItem.type === 'video'}}" class="video-content">
-          <video src="{{currentItem.url}}" class="content-video" controls></video>
+          <video src="{{currentItem.url}}" class="content-video" controls binderror="onVideoError"></video>
           <view class="video-overlay"></view>
           <view class="video-title">{{currentItem.title}}</view>
         </view>
@@ -49,7 +49,7 @@
 
         <!-- 视频内容 -->
         <view wx:if="{{currentItem.type === 'video'}}" class="video-content">
-          <video src="{{currentItem.url}}" class="content-video" controls></video>
+          <video src="{{currentItem.url}}" class="content-video" controls binderror="onVideoError"></video>
           <view class="video-overlay"></view>
           <view class="video-title">{{currentItem.title}}</view>
         </view>

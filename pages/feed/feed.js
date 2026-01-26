@@ -37,6 +37,9 @@ Page({
       },
       success: res => {
         console.log('获取内容成功', res);
+        console.log('Raw Data Item:', res.data[0]); // 详细查看第一条数据
+        console.log('Data keys:', res.data[0] ? Object.keys(res.data[0]) : 'no data'); // 查看所有字段名
+
         if (res.data && res.data.length > 0) {
           // 添加测试数据：使用公开可播放的视频
           const testData = [{
@@ -56,10 +59,15 @@ Page({
           // 将测试数据添加到返回数据的开头
           const allData = [...testData, ...res.data];
 
+          console.log('Setting data with items:', allData.length);
+          console.log('First item:', allData[0]);
+
           this.setData({
             items: allData,
             currentItem: allData[0],
             loading: false
+          }, () => {
+            console.log('Data set complete. Current item:', this.data.currentItem);
           });
         } else {
           // 如果后端没有数据，使用 mock 数据
@@ -160,5 +168,17 @@ Page({
   // 格式化数字
   formatNumber(num) {
     return num.toLocaleString();
+  },
+
+  // 视频错误处理
+  onVideoError(e) {
+    console.error('Video Error Details:', e.detail);
+    console.error('Video Error Message:', e.detail.errMsg);
+    console.error('Current video URL:', this.data.currentItem?.url);
+    wx.showToast({
+      title: '视频加载失败',
+      icon: 'none',
+      duration: 2000
+    });
   }
 });
