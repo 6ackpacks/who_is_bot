@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Quote, ChevronLeft, MessageCircle, Heart, ArrowRight, BarChart2, CheckCircle2, XCircle, RotateCcw } from 'lucide-react';
 import { ContentItem } from '../types';
 import { MOCK_FEED } from '../services/mockData';
+import { api } from '../services/api';
 
 // UI Text Configuration to avoid hardcoding
 const UI_LABELS = {
@@ -34,12 +35,69 @@ const UI_LABELS = {
 type ViewState = 'judging' | 'revealed' | 'details';
 
 export const Feed: React.FC = () => {
-  const [items] = useState<ContentItem[]>(MOCK_FEED);
+  const [items, setItems] = useState<ContentItem[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [viewState, setViewState] = useState<ViewState>('judging');
   const [userChoice, setUserChoice] = useState<'ai' | 'human' | null>(null);
-  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch data from backend on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const data = await api.getFeed(10);
+        if (data && data.length > 0) {
+          setItems(data);
+        } else {
+          // Fallback to mock data if backend returns empty
+          console.log('Backend returned empty data, using mock data');
+          setItems(MOCK_FEED);
+        }
+      } catch (err) {
+        console.error('Failed to fetch feed data:', err);
+        setError('Failed to load data');
+        // Fallback to mock data on error
+        setItems(MOCK_FEED);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const currentItem = items[currentIndex];
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full bg-app-bg">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-500">加载中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error or empty state
+  if (!currentItem) {
+    return (
+      <div className="flex items-center justify-center h-full bg-app-bg">
+        <div className="text-center p-8">
+          <p className="text-gray-500 mb-4">{error || '暂无内容'}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-black text-white rounded-full text-sm font-bold"
+          >
+            重新加载
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   const handleJudge = (choice: 'ai' | 'human') => {
     setUserChoice(choice);
