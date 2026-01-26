@@ -38,9 +38,27 @@ Page({
       success: res => {
         console.log('获取内容成功', res);
         if (res.data && res.data.length > 0) {
+          // 添加测试数据：使用公开可播放的视频
+          const testData = [{
+            id: 'test-1',
+            type: 'video',
+            url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            title: '测试视频 - Big Buck Bunny',
+            text: '',
+            isAi: true,
+            modelTag: 'Test',
+            provider: '测试用户',
+            deceptionRate: 50,
+            explanation: '这是一个测试视频，用于验证视频播放功能是否正常。',
+            comments: []
+          }];
+
+          // 将测试数据添加到返回数据的开头
+          const allData = [...testData, ...res.data];
+
           this.setData({
-            items: res.data,
-            currentItem: res.data[0],
+            items: allData,
+            currentItem: allData[0],
             loading: false
           });
         } else {

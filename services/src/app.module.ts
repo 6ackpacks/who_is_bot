@@ -5,6 +5,7 @@ import { ContentModule } from './content/content.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { UserModule } from './user/user.module';
 import { HealthController } from './health.controller';
+import { ProxyController } from './proxy.controller';
 
 // Check if database is configured
 const isDatabaseConfigured = process.env.DB_HOST && process.env.DB_HOST !== 'localhost';
@@ -46,6 +47,6 @@ if (isDatabaseConfigured) {
 
 @Module({
   imports,
-  controllers: [HealthController],
+  controllers: [HealthController, ProxyController],
 })
 export class AppModule {}
