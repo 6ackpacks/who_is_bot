@@ -8,6 +8,7 @@
         <view class="video-container">
           <video
             wx:if="{{item.url}}"
+            id="video-{{index}}"
             src="{{item.url}}"
             class="full-video"
             loop
@@ -15,7 +16,18 @@
             controls="{{false}}"
             object-fit="cover"
             binderror="onVideoError"
+            bindplay="onVideoPlay"
+            bindpause="onVideoPause"
           ></video>
+
+          <!-- 暂停/播放按钮 -->
+          <view class="video-control" wx:if="{{index === currentIndex}}" bindtap="toggleVideoPlay" data-index="{{index}}">
+            <view class="control-icon {{videoPlaying ? 'playing' : 'paused'}}">
+              <text wx:if="{{!videoPlaying}}">▶</text>
+              <text wx:else>❚❚</text>
+            </view>
+          </view>
+
           <view class="video-overlay">
             <text class="video-title">{{item.title}}</text>
           </view>

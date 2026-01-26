@@ -11,7 +11,8 @@ Page({
     isCorrect: false,
     showAnimation: false,
     loading: false,
-    judgeButtonDisabled: false // 防止重复点击
+    judgeButtonDisabled: false, // 防止重复点击
+    videoPlaying: true // 视频播放状态
   },
 
   onLoad() {
@@ -178,7 +179,30 @@ Page({
       currentItem: this.data.items[newIndex],
       viewState: 'judging',  // 切换到新内容时重置为判定状态
       userChoice: null,
-      isCorrect: false
+      isCorrect: false,
+      videoPlaying: true  // 重置视频播放状态
     });
+  },
+
+  // 视频播放事件
+  onVideoPlay() {
+    this.setData({ videoPlaying: true });
+  },
+
+  // 视频暂停事件
+  onVideoPause() {
+    this.setData({ videoPlaying: false });
+  },
+
+  // 切换视频播放/暂停
+  toggleVideoPlay(e) {
+    const index = e.currentTarget.dataset.index;
+    const videoContext = wx.createVideoContext(`video-${index}`, this);
+
+    if (this.data.videoPlaying) {
+      videoContext.pause();
+    } else {
+      videoContext.play();
+    }
   }
 });
