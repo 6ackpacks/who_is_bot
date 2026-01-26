@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ContentModule } from './content/content.module';
 import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { UserModule } from './user/user.module';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -32,5 +33,6 @@ import { UserModule } from './user/user.module';
     LeaderboardModule,
     UserModule,
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
