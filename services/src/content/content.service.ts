@@ -39,4 +39,8 @@ export class ContentService {
       take: limit,
     });
   }
+
+  async remove(id: string): Promise<void> {
+    await this.contentRepository.delete(id);
+  }
 }

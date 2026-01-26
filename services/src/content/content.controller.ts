@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query, Delete } from '@nestjs/common';
 import { ContentService } from './content.service';
 import { CreateContentDto } from './dto/create-content.dto';
 
@@ -24,5 +24,10 @@ export class ContentController {
   @Post()
   create(@Body() createContentDto: CreateContentDto) {
     return this.contentService.create(createContentDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.contentService.remove(id);
   }
 }
