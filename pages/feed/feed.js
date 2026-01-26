@@ -204,5 +204,11 @@ Page({
     } else {
       videoContext.play();
     }
+  },
+
+  // 阻止事件冒泡（用于按钮和文字区域）
+  preventTap(e) {
+    // 阻止事件冒泡到视频容器
+    return false;
   }
 });

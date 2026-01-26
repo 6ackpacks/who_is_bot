@@ -5,7 +5,7 @@
 
       <!-- 视频类型：全屏沉浸式 -->
       <block wx:if="{{item.type === 'video'}}">
-        <view class="video-container">
+        <view class="video-container" bindtap="toggleVideoPlay" data-index="{{index}}">
           <video
             wx:if="{{item.url}}"
             id="video-{{index}}"
@@ -21,14 +21,14 @@
           ></video>
 
           <!-- 暂停/播放按钮 -->
-          <view class="video-control" wx:if="{{index === currentIndex}}" bindtap="toggleVideoPlay" data-index="{{index}}">
+          <view class="video-control" wx:if="{{index === currentIndex}}">
             <view class="control-icon {{videoPlaying ? 'playing' : 'paused'}}">
               <text wx:if="{{!videoPlaying}}">▶</text>
               <text wx:else>❚❚</text>
             </view>
           </view>
 
-          <view class="video-overlay">
+          <view class="video-overlay" catchtap="preventTap">
             <text class="video-title">{{item.title}}</text>
           </view>
         </view>
@@ -48,13 +48,13 @@
       </block>
 
       <!-- 判定按钮 -->
-      <view class="action-bar" wx:if="{{viewState === 'judging'}}">
+      <view class="action-bar" wx:if="{{viewState === 'judging'}}" catchtap="preventTap">
         <button class="btn btn-bot" bindtap="handleJudge" data-choice="ai">铁是人机！</button>
         <button class="btn btn-human" bindtap="handleJudge" data-choice="human">包真人的！</button>
       </view>
 
       <!-- 结果覆盖层 -->
-      <view wx:if="{{viewState === 'revealed' && index === currentIndex}}" class="result-overlay">
+      <view wx:if="{{viewState === 'revealed' && index === currentIndex}}" class="result-overlay" catchtap="preventTap">
         <view class="result-icon {{isCorrect ? 'result-correct' : 'result-wrong'}}">
           <text class="result-icon-text">{{isCorrect ? '✓' : '✕'}}</text>
         </view>

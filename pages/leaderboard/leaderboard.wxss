@@ -125,22 +125,28 @@
 .model-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
 }
 
 .model-header {
   display: flex;
   align-items: center;
   gap: 16rpx;
-  margin-bottom: 8rpx;
+  margin-bottom: 0;
+  flex-wrap: wrap;
 }
 
 .model-name {
   font-weight: bold;
   color: #333;
-  font-size: 32rpx;
-  white-space: nowrap;
+  font-size: 30rpx;
+  flex-shrink: 0;
+  max-width: 300rpx;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .model-company {
@@ -150,6 +156,7 @@
   background-color: #f5f5f5;
   color: #666;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .model-meta {
@@ -158,10 +165,12 @@
   gap: 16rpx;
   font-size: 24rpx;
   color: #999;
+  flex-wrap: wrap;
 }
 
 .model-type {
   text-transform: capitalize;
+  white-space: nowrap;
 }
 
 .meta-dot {
@@ -170,6 +179,7 @@
 
 .model-tests {
   font-size: 24rpx;
+  white-space: nowrap;
 }
 
 /* 欺骗率 */

@@ -266,11 +266,14 @@
 .result-btn {
   width: 100%;
   height: 90rpx;
-  line-height: 90rpx;
   border-radius: 45rpx;
   font-size: 30rpx;
   font-weight: bold;
   border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .result-btn::after {
