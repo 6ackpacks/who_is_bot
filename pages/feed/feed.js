@@ -41,18 +41,19 @@ Page({
         console.log('Data keys:', res.data[0] ? Object.keys(res.data[0]) : 'no data'); // 查看所有字段名
 
         if (res.data && res.data.length > 0) {
-          // 添加测试数据：使用公开可播放的视频
+          // 添加测试数据：使用云存储的视频（需要先上传）
+          // 或者使用文本/图片类型的测试数据
           const testData = [{
             id: 'test-1',
-            type: 'video',
-            url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-            title: '测试视频 - Big Buck Bunny',
-            text: '',
+            type: 'text',  // 改为文本类型先测试数据流
+            url: '',
+            text: '这是一条测试文本内容。如果你能看到这条消息，说明数据绑定是正常的。接下来我们需要解决视频播放的问题。',
+            title: '测试文本内容',
             isAi: true,
             modelTag: 'Test',
             provider: '测试用户',
             deceptionRate: 50,
-            explanation: '这是一个测试视频，用于验证视频播放功能是否正常。',
+            explanation: '这是测试数据，用于验证数据流是否正常。',
             comments: []
           }];
 
