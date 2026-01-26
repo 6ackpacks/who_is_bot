@@ -39,36 +39,22 @@ Page({
         console.log('获取内容成功', res);
         console.log('Raw Data Item:', res.data[0]); // 详细查看第一条数据
         console.log('Data keys:', res.data[0] ? Object.keys(res.data[0]) : 'no data'); // 查看所有字段名
+        console.log('Title value:', res.data[0] ? res.data[0].title : 'no title'); // 查看title值
+        console.log('URL value:', res.data[0] ? res.data[0].url : 'no url'); // 查看url值
 
         if (res.data && res.data.length > 0) {
-          // 添加测试数据：使用云存储的视频（需要先上传）
-          // 或者使用文本/图片类型的测试数据
-          const testData = [{
-            id: 'test-1',
-            type: 'text',  // 改为文本类型先测试数据流
-            url: '',
-            text: '这是一条测试文本内容。如果你能看到这条消息，说明数据绑定是正常的。接下来我们需要解决视频播放的问题。',
-            title: '测试文本内容',
-            isAi: true,
-            modelTag: 'Test',
-            provider: '测试用户',
-            deceptionRate: 50,
-            explanation: '这是测试数据，用于验证数据流是否正常。',
-            comments: []
-          }];
-
-          // 将测试数据添加到返回数据的开头
-          const allData = [...testData, ...res.data];
-
-          console.log('Setting data with items:', allData.length);
-          console.log('First item:', allData[0]);
+          // 直接使用后端返回的数据，不添加测试数据
+          console.log('Setting data with items:', res.data.length);
+          console.log('First item:', res.data[0]);
 
           this.setData({
-            items: allData,
-            currentItem: allData[0],
+            items: res.data,
+            currentItem: res.data[0],
             loading: false
           }, () => {
             console.log('Data set complete. Current item:', this.data.currentItem);
+            console.log('Current item title:', this.data.currentItem.title);
+            console.log('Current item url:', this.data.currentItem.url);
           });
         } else {
           // 如果后端没有数据，使用 mock 数据
