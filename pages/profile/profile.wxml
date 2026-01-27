@@ -4,59 +4,104 @@
 
     <!-- 个人信息头部 -->
     <view class="profile-header">
-      <!-- 设置按钮 -->
-      <view class="settings-btn" bindtap="handleSettings">
-        <text class="settings-icon">⚙️</text>
-      </view>
-
-      <!-- 头像 -->
+      <!-- 头像（带渐变边框） -->
       <view class="avatar-wrapper">
-        <image src="{{userInfo.avatar}}" class="avatar-image" mode="aspectFill"></image>
-        <view class="level-badge">Lv.{{userInfo.level}}</view>
+        <view class="avatar-gradient">
+          <image src="{{userInfo.avatar}}" class="avatar-image" mode="aspectFill"></image>
+        </view>
       </view>
 
       <!-- 用户名 -->
       <view class="username">{{userInfo.nickname}}</view>
-      <view class="user-id">UID: {{userInfo.uid}}</view>
+
+      <!-- 等级徽章 -->
+      <view class="level-badge-row">
+        <view class="level-dot"></view>
+        <text class="level-text">{{userInfo.levelName}}</text>
+      </view>
+
+      <!-- 进度条 -->
+      <view class="progress-section">
+        <view class="progress-labels">
+          <text class="progress-label-left">Lv.{{userInfo.level}}</text>
+          <text class="progress-label-right">Next: {{userInfo.nextLevel}}</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{userInfo.progress}}%"></view>
+        </view>
+        <text class="progress-hint">还需识破 {{userInfo.remaining}} 个 AI 伪装即可升级</text>
+      </view>
 
       <!-- 统计数据 -->
       <view class="stats-row">
         <view class="stat-item">
-          <text class="stat-value">{{stats.accuracy}}%</text>
-          <text class="stat-label">准确率</text>
-        </view>
-        <view class="stat-item">
           <text class="stat-value">{{stats.totalJudged}}</text>
-          <text class="stat-label">已判定</text>
+          <text class="stat-label">TOTAL JUDGED</text>
+        </view>
+        <view class="stat-item stat-divider">
+          <text class="stat-value stat-highlight">{{stats.accuracy}}%</text>
+          <text class="stat-label">ACCURACY</text>
         </view>
         <view class="stat-item">
-          <text class="stat-value">{{stats.streak}}</text>
-          <text class="stat-label">连续正确</text>
+          <text class="stat-value stat-streak">{{stats.streak}}</text>
+          <text class="stat-label">BEST STREAK</text>
         </view>
       </view>
     </view>
 
-    <!-- 成就勋章 -->
-    <view class="achievements-section">
-      <view class="section-title">成就勋章</view>
+    <!-- 创作者中心 -->
+    <view class="creator-section">
+      <view class="section-header">
+        <text class="section-title">创作者中心</text>
+        <view class="beta-badge">Beta</view>
+      </view>
 
-      <view wx:for="{{achievements}}" wx:key="id" class="achievement-item">
-        <view class="achievement-icon" style="background-color: {{item.bgColor}}; color: {{item.iconColor}}">
-          <text class="icon-text">{{item.icon}}</text>
+      <view class="creator-card">
+        <view class="creator-content">
+          <view class="lock-icon-wrapper">
+            <text class="lock-icon">🔒</text>
+          </view>
+          <text class="creator-title">上传通道未开启</text>
+          <text class="creator-desc">想让大家看看你的高仿人机？</text>
+          <text class="creator-desc">达到 <text class="highlight-text">硅谷天才</text> 等级后解锁上传权限</text>
+          <button class="creator-btn" disabled>申请内测资格</button>
+        </view>
+        <view class="creator-bg-circle"></view>
+      </view>
+    </view>
+
+    <!-- 我的成就 -->
+    <view class="achievements-section">
+      <view class="section-title">我的成就</view>
+
+      <!-- 已获得成就 -->
+      <view class="achievement-item achievement-unlocked">
+        <view class="achievement-icon icon-unlocked">
+          <text class="icon-text">👁️</text>
         </view>
         <view class="achievement-info">
-          <view class="achievement-name">{{item.name}}</view>
-          <view class="achievement-desc">{{item.description}}</view>
+          <view class="achievement-name">火眼金睛</view>
+          <view class="achievement-desc">连续准确率达到 90%</view>
         </view>
-        <view class="achievement-progress">
-          <text class="progress-text">{{item.progress}}/{{item.total}}</text>
+        <text class="achievement-status status-unlocked">已获得</text>
+      </view>
+
+      <!-- 锁定成就 -->
+      <view class="achievement-item achievement-locked">
+        <view class="achievement-icon icon-locked">
+          <text class="icon-text">⚡</text>
         </view>
+        <view class="achievement-info">
+          <view class="achievement-name">闪电判官</view>
+          <view class="achievement-desc">1分钟内完成10次正确判定</view>
+        </view>
+        <text class="achievement-status status-locked">🔒</text>
       </view>
 
       <!-- 分享按钮 -->
       <button class="share-btn" bindtap="handleShare">
-        <text class="share-icon">📤</text>
-        <text class="share-text">分享我的主页</text>
+        <text class="share-icon">🔗</text>
+        <text class="share-text">分享我的侦探名片</text>
       </button>
     </view>
 

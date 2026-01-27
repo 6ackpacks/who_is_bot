@@ -37,4 +37,42 @@ export class UserService {
     await this.userRepository.update(id, { accuracy, totalJudged, streak });
     return this.findOne(id);
   }
+
+  async getLeaderboard(limit: number = 50): Promise<User[]> {
+    return this.userRepository.find({
+      order: {
+        totalBotsBusted: 'DESC',
+        maxStreak: 'DESC',
+        weeklyAccuracy: 'DESC',
+      },
+      take: limit,
+    });
+  }
+
+  async updateLeaderboardStats(
+    id: string,
+    totalBotsBusted: number,
+    maxStreak: number,
+    weeklyAccuracy: number,
+    weeklyJudged: number,
+    weeklyCorrect: number,
+  ): Promise<User> {
+    await this.userRepository.update(id, {
+      totalBotsBusted,
+      maxStreak,
+      weeklyAccuracy,
+      weeklyJudged,
+      weeklyCorrect,
+    });
+    return this.findOne(id);
+  }
+
+  async resetWeeklyStats(): Promise<void> {
+    await this.userRepository.update({}, {
+      weeklyAccuracy: 0,
+      weeklyJudged: 0,
+      weeklyCorrect: 0,
+      lastWeekReset: new Date(),
+    });
+  }
 }

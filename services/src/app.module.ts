@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ContentModule } from './content/content.module';
-import { LeaderboardModule } from './leaderboard/leaderboard.module';
 import { UserModule } from './user/user.module';
 import { HealthController } from './health.controller';
 import { ProxyController } from './proxy.controller';
@@ -38,7 +37,6 @@ if (isDatabaseConfigured) {
       }),
     }) as any,
     ContentModule as any,
-    LeaderboardModule as any,
     UserModule as any,
   );
 } else {

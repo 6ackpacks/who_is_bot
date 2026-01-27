@@ -1,77 +1,128 @@
 import React from 'react';
-import { Hexagon, Share2, Award, Zap, Activity, Settings } from 'lucide-react';
+import { Share2, Lock, Upload, ChevronRight, Zap, Target, Eye } from 'lucide-react';
+
+// Mock User Profile Data
+const CURRENT_USER = {
+    level: '人机杀手',
+    nextLevel: '硅谷天才',
+    progress: 72, // percentage to next level
+    totalJudgments: 850,
+    accuracy: 89.4,
+    streak: 12,
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=MyUser',
+};
 
 export const Profile: React.FC = () => {
   return (
     <div className="h-full bg-app-bg overflow-y-auto pb-24">
-      {/* Header Profile */}
-      <div className="relative pt-12 pb-8 px-6 bg-white border-b border-gray-100 flex flex-col items-center">
-         <div className="absolute top-4 right-4 text-gray-400">
-            <Settings size={20} />
-         </div>
+      {/* 1. Header Card */}
+      <div className="bg-white pb-8 pt-12 px-6 rounded-b-[40px] shadow-sm mb-6">
+         <div className="flex flex-col items-center">
+            {/* Avatar */}
+            <div className="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-app-primary to-blue-400 mb-3">
+                <img src={CURRENT_USER.avatar} className="w-full h-full rounded-full bg-white border-2 border-white" alt="Avatar"/>
+            </div>
 
-         <div className="w-20 h-20 relative mb-3">
-            <img 
-              src="https://picsum.photos/200" 
-              alt="Avatar" 
-              className="w-full h-full rounded-full border-4 border-white shadow-lg object-cover"
-            />
-            <div className="absolute -bottom-1 -right-1 bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white">
-                Lv.5
+            {/* Name & Level */}
+            <h2 className="text-xl font-black text-gray-900 mb-1">Cyber_Detective</h2>
+            <div className="flex items-center space-x-2 bg-black/5 px-3 py-1 rounded-full">
+                <span className="w-2 h-2 bg-app-primary rounded-full animate-pulse"></span>
+                <span className="text-xs font-bold text-gray-600">{CURRENT_USER.level}</span>
+            </div>
+
+            {/* Level Progress */}
+            <div className="w-full max-w-[200px] mt-6">
+                <div className="flex justify-between text-[10px] font-bold text-gray-400 mb-1.5">
+                    <span>Lv.3</span>
+                    <span>Next: {CURRENT_USER.nextLevel}</span>
+                </div>
+                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-app-primary to-blue-400" style={{ width: `${CURRENT_USER.progress}%` }}></div>
+                </div>
+                <p className="text-center text-[10px] text-gray-400 mt-2">还需识破 28 个 AI 伪装即可升级</p>
             </div>
          </div>
-         
-         <h2 className="text-xl font-bold text-gray-900">鉴伪专家_007</h2>
-         <p className="text-gray-400 text-xs font-mono mt-1">UID: 8940201</p>
 
          {/* Stats Row */}
-         <div className="flex w-full justify-center space-x-12 mt-6">
+         <div className="grid grid-cols-3 gap-4 mt-8">
             <div className="flex flex-col items-center">
-                <span className="text-lg font-black text-gray-900">78%</span>
-                <span className="text-xs text-gray-400">准确率</span>
+                <span className="text-lg font-black text-gray-900">{CURRENT_USER.totalJudgments}</span>
+                <span className="text-[10px] text-gray-400 font-bold mt-1 uppercase">Total Judged</span>
+            </div>
+            <div className="flex flex-col items-center border-x border-gray-100">
+                <span className="text-lg font-black text-app-primary">{CURRENT_USER.accuracy}%</span>
+                <span className="text-[10px] text-gray-400 font-bold mt-1 uppercase">Accuracy</span>
             </div>
             <div className="flex flex-col items-center">
-                <span className="text-lg font-black text-gray-900">124</span>
-                <span className="text-xs text-gray-400">已判定</span>
-            </div>
-            <div className="flex flex-col items-center">
-                <span className="text-lg font-black text-gray-900">12</span>
-                <span className="text-xs text-gray-400">连续正确</span>
+                <span className="text-lg font-black text-orange-500">{CURRENT_USER.streak}</span>
+                <span className="text-[10px] text-gray-400 font-bold mt-1 uppercase">Best Streak</span>
             </div>
          </div>
       </div>
 
-      {/* Menu / Achievements */}
-      <div className="p-6 space-y-4">
-        <h3 className="text-gray-900 text-sm font-bold">成就勋章</h3>
-        
-        <div className="bg-white rounded-xl p-4 flex items-center space-x-4 shadow-sm border border-gray-100">
-            <div className="w-10 h-10 rounded-full bg-yellow-50 text-yellow-600 flex items-center justify-center">
-                <Award size={20} />
-            </div>
-            <div className="flex-1">
-                <h4 className="text-gray-900 font-bold text-sm">火眼金睛</h4>
-                <p className="text-xs text-gray-500 mt-0.5">连续正确识别 50 张 AI 图片。</p>
-            </div>
-            <div className="text-xs font-medium text-gray-400">34/50</div>
+      {/* 2. Creator Management (Locked) */}
+      <div className="px-6 mb-6">
+        <div className="flex items-center justify-between mb-3">
+            <h3 className="font-bold text-gray-900">创作者中心</h3>
+            <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold">Beta</span>
         </div>
 
-        <div className="bg-white rounded-xl p-4 flex items-center space-x-4 shadow-sm border border-gray-100">
-            <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
-                <Hexagon size={20} />
+        <div className="bg-white rounded-2xl p-6 border border-gray-100 relative overflow-hidden group">
+            {/* Locked Overlay content */}
+            <div className="flex flex-col items-center text-center relative z-10">
+                <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-3">
+                    <Lock size={20} className="text-gray-400" />
+                </div>
+                <h4 className="font-bold text-gray-900 mb-1">上传通道未开启</h4>
+                <p className="text-xs text-gray-500 mb-4 max-w-[200px]">
+                    想让大家看看你的高仿人机？<br/>达到 <span className="text-app-primary font-bold">硅谷天才</span> 等级后解锁上传权限
+                </p>
+                <button className="px-5 py-2 bg-gray-900 text-white text-xs font-bold rounded-full opacity-50 cursor-not-allowed">
+                    申请内测资格
+                </button>
             </div>
-            <div className="flex-1">
-                <h4 className="text-gray-900 font-bold text-sm">贡献者</h4>
-                <p className="text-xs text-gray-500 mt-0.5">向实验室上传 5 个样本。</p>
-            </div>
-            <div className="text-xs font-medium text-gray-400">1/5</div>
-        </div>
 
-        <button className="w-full mt-8 py-3 bg-white border border-gray-200 rounded-full text-gray-700 font-bold flex items-center justify-center space-x-2 shadow-sm active:bg-gray-50">
+            {/* Background Decor */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50 rounded-full -mr-10 -mt-10 z-0"></div>
+        </div>
+      </div>
+
+      {/* 3. Achievements Menu */}
+      <div className="px-6 space-y-3">
+         <h3 className="font-bold text-gray-900">我的成就</h3>
+
+         <div className="bg-white rounded-2xl p-4 flex items-center justify-between border border-gray-100">
+            <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center text-app-primary">
+                    <Eye size={20} />
+                </div>
+                <div>
+                    <h4 className="font-bold text-gray-900 text-sm">火眼金睛</h4>
+                    <p className="text-[10px] text-gray-400">连续准确率达到 90%</p>
+                </div>
+            </div>
+            <span className="text-xs font-bold text-app-primary">已获得</span>
+         </div>
+
+         <div className="bg-white rounded-2xl p-4 flex items-center justify-between border border-gray-100 opacity-60">
+            <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                    <Zap size={20} />
+                </div>
+                <div>
+                    <h4 className="font-bold text-gray-900 text-sm">闪电判官</h4>
+                    <p className="text-[10px] text-gray-400">1分钟内完成10次正确判定</p>
+                </div>
+            </div>
+            <Lock size={14} className="text-gray-300" />
+         </div>
+
+         <button className="w-full mt-4 h-12 border-2 border-app-primary rounded-full text-app-primary font-bold flex items-center justify-center space-x-2 active:bg-green-50">
             <Share2 size={18} />
-            <span>分享我的主页</span>
+            <span>分享我的侦探名片</span>
         </button>
       </div>
+
     </div>
   );
 };

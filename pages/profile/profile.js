@@ -4,38 +4,19 @@ const app = getApp();
 Page({
   data: {
     userInfo: {
-      nickname: '鉴伪专家_007',
-      uid: '8940201',
-      level: 5,
-      avatar: 'https://picsum.photos/200'
+      nickname: 'Cyber_Detective',
+      level: 3,
+      levelName: '人机杀手',
+      nextLevel: '硅谷天才',
+      progress: 72,
+      remaining: 28,
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=MyUser'
     },
     stats: {
-      accuracy: 78,
-      totalJudged: 124,
+      totalJudged: 850,
+      accuracy: 89.4,
       streak: 12
-    },
-    achievements: [
-      {
-        id: 'a1',
-        icon: '🏆',
-        name: '火眼金睛',
-        description: '连续正确识别 50 张 AI 图片。',
-        progress: 34,
-        total: 50,
-        bgColor: '#fef3c7',
-        iconColor: '#d97706'
-      },
-      {
-        id: 'a2',
-        icon: '⬡',
-        name: '贡献者',
-        description: '向实验室上传 5 个样本。',
-        progress: 1,
-        total: 5,
-        bgColor: '#f3e8ff',
-        iconColor: '#9333ea'
-      }
-    ]
+    }
   },
 
   onLoad() {
@@ -50,19 +31,25 @@ Page({
     }
   },
 
-  // 分享主页
+  // 分享侦探名片
   handleShare() {
+    wx.showShareMenu({
+      withShareTicket: true,
+      menus: ['shareAppMessage', 'shareTimeline']
+    });
+
     wx.showToast({
-      title: '分享功能开发中',
+      title: '点击右上角分享',
       icon: 'none'
     });
   },
 
-  // 设置
-  handleSettings() {
-    wx.showToast({
-      title: '设置功能开发中',
-      icon: 'none'
-    });
+  // 页面分享配置
+  onShareAppMessage() {
+    return {
+      title: `我是${this.data.userInfo.levelName}！准确率${this.data.stats.accuracy}%`,
+      path: '/pages/feed/feed',
+      imageUrl: this.data.userInfo.avatar
+    };
   }
 });

@@ -1,68 +1,63 @@
 <!--pages/leaderboard/leaderboard.wxml-->
 <view class="leaderboard-container">
 
-  <!-- 分类标签 -->
-  <view class="category-tabs">
-    <view class="tab-item {{activeType === 'all' ? 'tab-active' : ''}}"
-          data-type="all"
-          bindtap="handleTypeChange">
-      <text class="tab-icon">🏆</text>
-      <text class="tab-label">全部</text>
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="header-title">
+      <text class="title-main">全网最强</text>
+      <text class="title-highlight">赛博侦探榜</text>
     </view>
-    <view class="tab-item {{activeType === 'video' ? 'tab-active' : ''}}"
-          data-type="video"
-          bindtap="handleTypeChange">
-      <text class="tab-icon">🎬</text>
-      <text class="tab-label">视频</text>
-    </view>
-    <view class="tab-item {{activeType === 'image' ? 'tab-active' : ''}}"
-          data-type="image"
-          bindtap="handleTypeChange">
-      <text class="tab-icon">🖼️</text>
-      <text class="tab-label">图片</text>
-    </view>
-    <view class="tab-item {{activeType === 'text' ? 'tab-active' : ''}}"
-          data-type="text"
-          bindtap="handleTypeChange">
-      <text class="tab-icon">📝</text>
-      <text class="tab-label">文字</text>
-    </view>
+    <text class="header-subtitle">每日 24:00 更新 · 寻找人类最强鹰眼</text>
   </view>
 
-  <!-- 列表标题 -->
-  <view class="list-header">
-    <text class="header-left">模型名称</text>
-    <text class="header-right">误判率</text>
+  <!-- 表头 -->
+  <view class="table-header">
+    <text class="th-rank">#</text>
+    <text class="th-detective">DETECTIVE</text>
+    <view class="th-stats">
+      <text class="th-busted">BUSTED</text>
+      <text class="th-strk">STRK</text>
+    </view>
   </view>
 
   <!-- 排行榜列表 -->
   <scroll-view scroll-y class="leaderboard-list">
-    <view wx:for="{{filteredData}}"
-          wx:key="id"
-          class="leaderboard-item">
+    <view wx:for="{{users}}" wx:key="id" class="user-item">
 
-      <!-- 排名 -->
-      <view class="rank-badge rank-{{index < 3 ? index : 'other'}}">
-        <text class="rank-number">{{index + 1}}</text>
+      <!-- 排名图标 -->
+      <view class="rank-icon">
+        <text wx:if="{{index === 0}}" class="icon-trophy">🏆</text>
+        <text wx:elif="{{index === 1}}" class="icon-medal silver">🥈</text>
+        <text wx:elif="{{index === 2}}" class="icon-medal bronze">🥉</text>
+        <text wx:else class="rank-number">{{index + 1}}</text>
       </view>
 
-      <!-- 模型信息 -->
-      <view class="model-info">
-        <view class="model-header">
-          <text class="model-name">{{item.modelName}}</text>
-          <text class="model-company">{{item.company}}</text>
+      <!-- 用户信息 -->
+      <view class="user-info">
+        <image src="{{item.avatar}}" class="user-avatar"></image>
+        <view class="user-details">
+          <view class="user-name-row">
+            <text class="user-name">{{item.username}}</text>
+            <view class="level-badge badge-{{item.levelClass}}">
+              <text class="badge-text">{{item.level}}</text>
+            </view>
+          </view>
+          <view class="user-accuracy">
+            <text class="accuracy-icon">↗</text>
+            <text class="accuracy-text">周准确率 {{item.weeklyAccuracy}}%</text>
+          </view>
         </view>
-        <view class="model-meta">
-          <text class="model-type">{{item.type === 'image' ? '图像' : item.type === 'text' ? '文本' : '视频'}}模型</text>
-          <text class="meta-dot">•</text>
-          <text class="model-tests">{{item.totalTests}} 次测试</text>
+      </view>
+
+      <!-- 统计数据 -->
+      <view class="user-stats">
+        <text class="stat-busted">{{item.bustedCount}}</text>
+        <view class="stat-streak">
+          <text class="streak-icon">⚡</text>
+          <text class="streak-value">{{item.maxStreak}}</text>
         </view>
       </view>
 
-      <!-- 欺骗率 -->
-      <view class="deception-rate">
-        <text class="rate-value">{{item.deceptionRate}}%</text>
-      </view>
     </view>
 
     <!-- 底部占位 -->

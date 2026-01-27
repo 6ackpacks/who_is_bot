@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Query } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -32,5 +32,32 @@ export class UserController {
     @Body() body: { accuracy: number; totalJudged: number; streak: number },
   ) {
     return this.userService.updateStats(id, body.accuracy, body.totalJudged, body.streak);
+  }
+
+  @Get('leaderboard/top')
+  getLeaderboard(@Query('limit') limit?: string) {
+    const limitNum = limit ? parseInt(limit) : 50;
+    return this.userService.getLeaderboard(limitNum);
+  }
+
+  @Patch(':id/leaderboard-stats')
+  updateLeaderboardStats(
+    @Param('id') id: string,
+    @Body() body: {
+      totalBotsBusted: number;
+      maxStreak: number;
+      weeklyAccuracy: number;
+      weeklyJudged: number;
+      weeklyCorrect: number;
+    },
+  ) {
+    return this.userService.updateLeaderboardStats(
+      id,
+      body.totalBotsBusted,
+      body.maxStreak,
+      body.weeklyAccuracy,
+      body.weeklyJudged,
+      body.weeklyCorrect,
+    );
   }
 }

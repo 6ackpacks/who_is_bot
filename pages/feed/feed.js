@@ -4,9 +4,12 @@ const { MOCK_FEED } = require('../../utils/mockData.js');
 Page({
   data: {
     items: [],
+    displayItems: [], // 根据分类过滤后的内容
     currentIndex: 0,
     currentItem: null,
-    viewState: 'judging', // 'judging', 'revealed', 'details'
+    activeCategory: 'recommended', // 'recommended' or 'hardest'
+    viewState: 'judging', // 'judging', 'revealed'
+    showDetails: false, // 控制详情抽屉显示
     userChoice: null, // 'ai' or 'human'
     isCorrect: false,
     showAnimation: false,
@@ -38,32 +41,22 @@ Page({
       },
       success: res => {
         console.log('获取内容成功', res);
-        console.log('Raw Data Item:', res.data[0]); // 详细查看第一条数据
-        console.log('Data keys:', res.data[0] ? Object.keys(res.data[0]) : 'no data'); // 查看所有字段名
-        console.log('Title value:', res.data[0] ? res.data[0].title : 'no title'); // 查看title值
-        console.log('URL value:', res.data[0] ? res.data[0].url : 'no url'); // 查看url值
 
         if (res.data && res.data.length > 0) {
-          // 直接使用后端返回的数据，不添加测试数据
-          console.log('Setting data with items:', res.data.length);
-          console.log('First item:', res.data[0]);
-
           this.setData({
             items: res.data,
-            currentItem: res.data[0],
             loading: false
           }, () => {
-            console.log('Data set complete. Current item:', this.data.currentItem);
-            console.log('Current item title:', this.data.currentItem.title);
-            console.log('Current item url:', this.data.currentItem.url);
+            this.filterItemsByCategory();
           });
         } else {
           // 如果后端没有数据，使用 mock 数据
           console.log('后端无数据，使用 mock 数据');
           this.setData({
             items: MOCK_FEED,
-            currentItem: MOCK_FEED[0],
             loading: false
+          }, () => {
+            this.filterItemsByCategory();
           });
         }
       },
@@ -76,10 +69,37 @@ Page({
         });
         this.setData({
           items: MOCK_FEED,
-          currentItem: MOCK_FEED[0],
           loading: false
+        }, () => {
+          this.filterItemsByCategory();
         });
       }
+    });
+  },
+
+  // 根据分类过滤内容
+  filterItemsByCategory() {
+    const { items, activeCategory } = this.data;
+    const filtered = items.filter(item => item.category === activeCategory);
+    const displayItems = filtered.length > 0 ? filtered : items;
+
+    this.setData({
+      displayItems: displayItems,
+      currentItem: displayItems[0],
+      currentIndex: 0
+    });
+  },
+
+  // 切换分类
+  handleCategoryChange(e) {
+    const category = e.currentTarget.dataset.category;
+    this.setData({
+      activeCategory: category,
+      viewState: 'judging',
+      showDetails: false,
+      userChoice: null
+    }, () => {
+      this.filterItemsByCategory();
     });
   },
 
@@ -92,6 +112,11 @@ Page({
 
     const choice = e.currentTarget.dataset.choice;
     const isCorrect = choice === 'ai' ? this.data.currentItem.isAi : !this.data.currentItem.isAi;
+
+    // 震动反馈
+    wx.vibrateShort({
+      type: 'medium'
+    });
 
     // 禁用按钮并添加视觉反馈
     this.setData({
@@ -117,20 +142,28 @@ Page({
     }, 200);
   },
 
-  // 查看详情
+  // 切换详情抽屉
+  toggleDetails() {
+    this.setData({
+      showDetails: !this.data.showDetails
+    });
+  },
+
+  // 查看详情（已废弃，使用toggleDetails）
   handleViewDetails() {
     this.setData({
-      viewState: 'details'
+      showDetails: true
     });
   },
 
   // 下一题
   handleNext() {
-    const nextIndex = (this.data.currentIndex + 1) % this.data.items.length;
+    const nextIndex = (this.data.currentIndex + 1) % this.data.displayItems.length;
     this.setData({
       currentIndex: nextIndex,
-      currentItem: this.data.items[nextIndex],
+      currentItem: this.data.displayItems[nextIndex],
       viewState: 'judging',
+      showDetails: false,
       userChoice: null,
       isCorrect: false,
       judgeButtonDisabled: false
@@ -176,8 +209,9 @@ Page({
     console.log('Swiper changed to index:', newIndex);
     this.setData({
       currentIndex: newIndex,
-      currentItem: this.data.items[newIndex],
+      currentItem: this.data.displayItems[newIndex],
       viewState: 'judging',  // 切换到新内容时重置为判定状态
+      showDetails: false,
       userChoice: null,
       isCorrect: false,
       videoPlaying: true  // 重置视频播放状态

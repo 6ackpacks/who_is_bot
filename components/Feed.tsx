@@ -1,383 +1,318 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Quote, ChevronLeft, MessageCircle, Heart, ArrowRight, BarChart2, CheckCircle2, XCircle, RotateCcw } from 'lucide-react';
+import {
+  Heart, X, MessageCircle, ChevronUp, Share2,
+  Bot, User, Sparkles, AlertCircle, Info, ArrowRight
+} from 'lucide-react';
 import { ContentItem } from '../types';
 import { MOCK_FEED } from '../services/mockData';
-import { api } from '../services/api';
 
-// UI Text Configuration to avoid hardcoding
-const UI_LABELS = {
-  headerTitle: "真相解析",
-  judgeCorrect: "判断正确",
-  judgeWrong: "判断错误",
-  contentIs: "该内容确实是",
-  aiGen: "AI 生成",
-  humanCreat: "真人创作",
-  aiScore: "人机感",
-  humanScore: "真实感",
-  sourceProvider: "来源提供:",
-  analysisTitle: "鉴别要点",
-  modelSourceLabel: "生成模型/来源",
-  communityTitle: "社区讨论",
-  nextButton: "继续挑战下一题",
-  viewDetailsBtn: "查看解析与讨论",
-  skipBtn: "跳过，下一题",
-  resultTitleCorrect: "慧眼如炬",
-  resultTitleWrong: "遗憾误判",
-  resultSubtitle: "这是由",
-  resultSubtitleEnd: "创作的内容",
-  voteAi: "铁是人机!",
-  voteHuman: "包真人的!",
-  back: "返回",
-  rejudge: "重新判定" // Label for going back to judging
-};
-
-type ViewState = 'judging' | 'revealed' | 'details';
+type FeedCategory = 'recommended' | 'hardest';
+type ViewState = 'judging' | 'revealed';
 
 export const Feed: React.FC = () => {
-  const [items, setItems] = useState<ContentItem[]>([]);
+  const [activeCategory, setActiveCategory] = useState<FeedCategory>('recommended');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [viewState, setViewState] = useState<ViewState>('judging');
+  const [showDetails, setShowDetails] = useState(false);
   const [userChoice, setUserChoice] = useState<'ai' | 'human' | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch data from backend on component mount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const data = await api.getFeed(10);
-        if (data && data.length > 0) {
-          setItems(data);
-        } else {
-          // Fallback to mock data if backend returns empty
-          console.log('Backend returned empty data, using mock data');
-          setItems(MOCK_FEED);
-        }
-      } catch (err) {
-        console.error('Failed to fetch feed data:', err);
-        setError('Failed to load data');
-        // Fallback to mock data on error
-        setItems(MOCK_FEED);
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Filter items based on category
+  const categoryItems = MOCK_FEED.filter(item => item.category === activeCategory);
+  // Fallback if empty category
+  const displayItems = categoryItems.length > 0 ? categoryItems : MOCK_FEED;
 
-    fetchData();
-  }, []);
+  const currentItem = displayItems[currentIndex];
+  const isCorrect = userChoice === 'ai' ? currentItem.isAi : !currentItem.isAi;
 
-  const currentItem = items[currentIndex];
-
-  // Show loading state
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full bg-app-bg">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-gray-200 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-500">加载中...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show error or empty state
-  if (!currentItem) {
-    return (
-      <div className="flex items-center justify-center h-full bg-app-bg">
-        <div className="text-center p-8">
-          <p className="text-gray-500 mb-4">{error || '暂无内容'}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-black text-white rounded-full text-sm font-bold"
-          >
-            重新加载
-          </button>
-        </div>
-      </div>
-    );
-  }
+  const handleCategoryChange = (cat: FeedCategory) => {
+    setActiveCategory(cat);
+    setCurrentIndex(0);
+    setViewState('judging');
+    setShowDetails(false);
+    setUserChoice(null);
+  };
 
   const handleJudge = (choice: 'ai' | 'human') => {
+    // Vibrate if supported
+    if (navigator.vibrate) navigator.vibrate(50);
+
     setUserChoice(choice);
     setViewState('revealed');
   };
 
   const handleNext = () => {
     setViewState('judging');
+    setShowDetails(false);
     setUserChoice(null);
-    setCurrentIndex((prev) => (prev + 1) % items.length);
+    setCurrentIndex((prev) => (prev + 1) % displayItems.length);
   };
 
-  const handleViewDetails = () => {
-    setViewState('details');
+  const toggleDetails = () => {
+    setShowDetails(!showDetails);
   };
 
-  const handleBackToResult = () => {
-    setViewState('revealed');
-  };
-
-  const handleBackToJudging = () => {
-    setViewState('judging');
-    setUserChoice(null);
-  };
-
-  const isCorrect = userChoice === 'ai' ? currentItem.isAi : !currentItem.isAi;
-
-  // -- Render Details View (Stage 3) --
-  if (viewState === 'details') {
+  // Render content (Image/Video/Text)
+  const renderContent = () => {
+    if (currentItem.type === 'video') {
+       return (
+        <div className="w-full h-full bg-black relative flex items-center justify-center">
+            {/* Placeholder for video player - using image for mock */}
+            <div className="absolute inset-0 bg-gray-900 flex items-center justify-center text-white/50">
+                <span className="z-10 bg-black/50 px-4 py-2 rounded-full backdrop-blur-sm">Video Content Placeholder</span>
+            </div>
+            {/* Using image as thumbnail for the mock */}
+            <img src="https://images.unsplash.com/photo-1537047902294-62286416950a?q=80&w=1000&auto=format&fit=crop" className="w-full h-full object-cover opacity-60" alt="video" />
+        </div>
+       );
+    }
+    if (currentItem.type === 'image') {
+      return (
+        <img
+            src={currentItem.url}
+            alt={currentItem.title}
+            className="w-full h-full object-cover"
+        />
+      );
+    }
     return (
-      <motion.div 
-        initial={{ opacity: 0, x: '100%' }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: '100%' }}
-        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-        className="flex flex-col h-full bg-white overflow-y-auto z-50 fixed inset-0"
-      >
-        {/* Navigation Header */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 h-[56px] flex items-center justify-between z-20 shadow-sm">
-            <button 
-                onClick={handleBackToResult}
-                className="flex items-center text-gray-700 hover:text-black active:opacity-60 transition-opacity px-2 -ml-2 py-2"
-            >
-                <ChevronLeft size={24} />
-                <span className="font-medium text-base ml-1">{UI_LABELS.back}</span>
-            </button>
-            <span className="font-bold text-base absolute left-1/2 transform -translate-x-1/2">
-                {UI_LABELS.headerTitle}
-            </span>
-            <div className="w-8"></div> {/* Spacer for centering */}
+        <div className="w-full h-full bg-white flex flex-col justify-center items-center p-8 text-center bg-gradient-to-br from-gray-50 to-gray-100">
+            <QuoteIcon />
+            <p className="text-xl md:text-2xl font-serif leading-loose text-gray-800 my-8 px-4">
+                {currentItem.text}
+            </p>
         </div>
-
-        <div className="pb-28">
-            {/* Header Result Summary */}
-            <div className="p-6 pb-4">
-                <div className="flex items-center space-x-2 mb-2">
-                    {isCorrect ? (
-                        <CheckCircle2 className="text-app-green" size={24} color="#10B981" />
-                    ) : (
-                        <XCircle className="text-app-red" size={24} />
-                    )}
-                    <h2 className="text-xl font-bold text-gray-900">
-                        {isCorrect ? UI_LABELS.judgeCorrect : UI_LABELS.judgeWrong}
-                    </h2>
-                </div>
-                <p className="text-sm text-gray-500 pl-8">
-                    {UI_LABELS.contentIs} <span className="font-bold text-black">{currentItem.isAi ? UI_LABELS.aiGen : UI_LABELS.humanCreat}</span>
-                </p>
-            </div>
-
-            {/* Stats Bar */}
-            <div className="px-6 mb-8">
-                <div className="flex justify-between text-xs font-bold mb-2 text-gray-500">
-                    <span>{UI_LABELS.aiScore} {currentItem.deceptionRate}%</span>
-                    <span>{UI_LABELS.humanScore} {100 - currentItem.deceptionRate}%</span>
-                </div>
-                <div className="h-3 w-full bg-gray-100 rounded-full overflow-hidden flex">
-                    <div className="h-full bg-app-red transition-all duration-1000 ease-out" style={{ width: `${currentItem.deceptionRate}%` }}></div>
-                    <div className="h-full bg-app-blue flex-1"></div>
-                </div>
-            </div>
-
-            {/* Provider Info */}
-            <div className="px-6 mb-6 flex items-center text-xs text-gray-400">
-                <span>{UI_LABELS.sourceProvider}</span>
-                <div className="flex items-center ml-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
-                    <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${currentItem.provider}`} className="w-5 h-5 rounded-full mr-2" alt="avatar"/>
-                    <span className="font-bold text-gray-700">{currentItem.provider}</span>
-                </div>
-            </div>
-
-            {/* Detailed Explanation */}
-            <div className="mx-6 p-6 bg-blue-50/40 rounded-2xl border border-blue-100 relative mb-8">
-                <Quote className="text-app-blue/20 absolute top-4 left-4 transform -scale-x-100" size={32} />
-                <div className="relative z-10 pt-4">
-                    <h3 className="font-bold text-gray-900 mb-2 text-sm">{UI_LABELS.analysisTitle}</h3>
-                    <p className="text-gray-700 leading-relaxed text-sm text-justify">
-                        {currentItem.explanation}
-                    </p>
-                    <div className="mt-4 pt-4 border-t border-blue-100/50 text-xs text-gray-400 flex justify-between items-center">
-                        <span>{UI_LABELS.modelSourceLabel}</span>
-                        <span className="font-mono font-bold text-app-blue bg-white px-2 py-0.5 rounded shadow-sm border border-blue-100">
-                            {currentItem.isAi ? currentItem.modelTag : 'Human'}
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Community/Comments */}
-            <div className="px-6">
-                <h3 className="font-bold text-lg mb-4 flex items-center text-gray-900">
-                    <MessageCircle className="mr-2" size={18} />
-                    <span>{UI_LABELS.communityTitle}</span>
-                </h3>
-                
-                <div className="space-y-6">
-                    {currentItem.comments.map(comment => (
-                        <div key={comment.id} className="flex space-x-3">
-                            <img src={comment.avatar} alt={comment.user} className="w-9 h-9 rounded-full bg-gray-100 border border-gray-100" />
-                            <div className="flex-1">
-                                <div className="flex justify-between items-start">
-                                    <span className="text-sm font-bold text-gray-800">{comment.user}</span>
-                                    <div className="flex items-center space-x-1 text-gray-400">
-                                        <Heart size={14} />
-                                        <span className="text-xs font-medium">{comment.likes}</span>
-                                    </div>
-                                </div>
-                                <p className="text-sm text-gray-600 mt-1 leading-relaxed">{comment.text}</p>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-
-        {/* Floating Action Button for Next */}
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white/95 to-transparent z-30 border-t border-gray-50">
-             <button 
-                onClick={handleNext}
-                className="w-full h-12 bg-black text-white rounded-full font-bold shadow-xl flex items-center justify-center space-x-2 active:scale-95 transition-transform"
-            >
-                <span>{UI_LABELS.nextButton}</span>
-                <ArrowRight size={18} />
-            </button>
-        </div>
-      </motion.div>
     );
-  }
+  };
 
-  // -- Render Main Card (Judging or Revealed Stage) --
   return (
-    <div className="relative w-full h-full flex flex-col bg-app-bg">
-      {/* Content Card Area */}
-      <div className="flex-1 px-4 pt-4 pb-28 overflow-y-auto flex items-center justify-center relative">
-          <motion.div
-            key={currentItem.id}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className={`w-full max-w-sm bg-white rounded-3xl shadow-sm overflow-hidden border border-gray-100 relative min-h-[60vh] flex flex-col transition-all duration-300 ${viewState === 'revealed' ? 'scale-[0.98] brightness-95' : ''}`}
-          >
-             <div className="absolute top-4 left-4 z-10">
-                <Quote className="text-gray-200 transform -scale-x-100" size={48} />
-             </div>
+    <div className="relative w-full h-full bg-black text-white overflow-hidden font-sans">
 
-            {/* Dynamic Content */}
-            {currentItem.type === 'image' ? (
-              <div className="flex-1 relative bg-gray-50">
-                  <img 
-                    src={currentItem.url} 
-                    alt="Content" 
-                    className="w-full h-full object-cover"
-                  />
-                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-                   <div className="absolute bottom-4 left-4 text-white font-bold text-xl shadow-black drop-shadow-md">
-                      {currentItem.title}
-                   </div>
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col p-8 pt-16">
-                 <p className="text-lg leading-loose text-gray-800 font-serif tracking-wide">
-                  {currentItem.text}
-                 </p>
-              </div>
-            )}
-            
-            {/* Revealed Overlay on Card (Stage 2) */}
-            <AnimatePresence>
-                {viewState === 'revealed' && (
-                    <motion.div 
-                        initial={{ opacity: 0 }} 
-                        animate={{ opacity: 1 }}
-                        className="absolute inset-0 z-20 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center p-8 text-center"
-                    >
-                        {/* Return / Re-judge Button */}
-                        <div className="absolute top-4 left-4 z-30">
-                            <button 
-                                onClick={handleBackToJudging}
-                                className="flex items-center text-gray-500 hover:text-black transition-colors p-2 rounded-full active:bg-gray-100"
-                            >
-                                <ChevronLeft size={24} />
-                                <span className="text-sm font-bold ml-1">{UI_LABELS.back}</span>
-                            </button>
-                        </div>
-
-                         {isCorrect ? (
-                            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4 ring-4 ring-green-50">
-                                <CheckCircle2 className="text-green-500" size={40} />
-                            </div>
-                        ) : (
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4 ring-4 ring-red-50">
-                                <XCircle className="text-red-500" size={40} />
-                            </div>
-                        )}
-                        
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                            {isCorrect ? UI_LABELS.resultTitleCorrect : UI_LABELS.resultTitleWrong}
-                        </h3>
-                        
-                        <p className="text-gray-500 text-sm mb-6">
-                            {UI_LABELS.resultSubtitle} <span className="font-bold text-black">{currentItem.isAi ? currentItem.modelTag : 'Human'}</span> {UI_LABELS.resultSubtitleEnd}
-                        </p>
-
-                        <div className="w-full mb-8">
-                            <div className="flex justify-between text-xs font-bold text-gray-400 mb-2">
-                                <span>{currentItem.deceptionRate}% 认为是AI</span>
-                            </div>
-                            <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                                <div 
-                                    className="h-full bg-app-red" 
-                                    style={{ width: `${currentItem.deceptionRate}%` }}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col w-full space-y-3">
-                            <button 
-                                onClick={handleViewDetails}
-                                className="w-full py-4 bg-gray-900 text-white rounded-xl font-bold text-sm flex items-center justify-center space-x-2 shadow-lg hover:bg-black active:scale-95 transition-all"
-                            >
-                                <BarChart2 size={18} />
-                                <span>{UI_LABELS.viewDetailsBtn}</span>
-                            </button>
-                            <button 
-                                onClick={handleNext}
-                                className="w-full py-4 bg-white border border-gray-200 text-gray-600 rounded-xl font-bold text-sm hover:bg-gray-50 active:bg-gray-100 transition-colors"
-                            >
-                                {UI_LABELS.skipBtn}
-                            </button>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-          </motion.div>
+      {/* 1. Top Tabs (Floating) */}
+      <div className="absolute top-0 left-0 right-0 z-30 pt-4 pb-8 bg-gradient-to-b from-black/80 to-transparent px-4">
+          <div className="flex justify-center space-x-6 text-lg font-bold drop-shadow-md">
+            <button
+                onClick={() => handleCategoryChange('recommended')}
+                className={`transition-all duration-300 ${activeCategory === 'recommended' ? 'text-white scale-105 border-b-2 border-app-primary pb-1' : 'text-white/60'}`}
+            >
+                推荐
+            </button>
+            <div className="w-[1px] h-6 bg-white/20 self-center"></div>
+            <button
+                onClick={() => handleCategoryChange('hardest')}
+                className={`transition-all duration-300 ${activeCategory === 'hardest' ? 'text-white scale-105 border-b-2 border-app-primary pb-1' : 'text-white/60'}`}
+            >
+                全网最难
+            </button>
+          </div>
       </div>
 
-      {/* Judgment Buttons (Only visible in Judging Stage) */}
+      {/* 2. Main Content Card (Immersive) */}
+      <div className="w-full h-full relative">
+        {renderContent()}
+
+        {/* Gradient Overlay for Text Visibility */}
+        <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
+
+        {/* Info Text (Bottom Left) */}
+        <div className="absolute bottom-32 left-4 z-10 max-w-[80%] pointer-events-none">
+            <div className="flex items-center space-x-2 mb-2">
+                <span className="bg-white/20 backdrop-blur-md px-2 py-0.5 rounded text-[10px] font-bold text-white uppercase border border-white/10">
+                    {currentItem.type}
+                </span>
+                <span className="text-white/80 text-xs shadow-black drop-shadow-md">@{currentItem.provider}</span>
+            </div>
+            <h2 className="text-2xl font-bold text-white drop-shadow-lg mb-1">{currentItem.title}</h2>
+            <p className="text-white/70 text-sm line-clamp-2 drop-shadow-md">
+                {viewState === 'judging' ? '点击下方按钮进行判定...' : '判定完成，点击查看解析'}
+            </p>
+        </div>
+      </div>
+
+      {/* 3. Floating Judgment Buttons (Bottom) */}
       <AnimatePresence>
         {viewState === 'judging' && (
-            <motion.div 
+            <motion.div
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 100, opacity: 0 }}
-                className="absolute bottom-4 left-0 right-0 z-20 flex justify-center space-x-4 px-6 pb-4"
+                exit={{ y: 50, opacity: 0 }}
+                className="absolute bottom-8 left-0 right-0 z-20 flex justify-center items-center space-x-12"
             >
-                <button
-                onClick={() => handleJudge('ai')}
-                className="flex-1 h-14 bg-app-red text-white rounded-2xl flex items-center justify-center shadow-lg shadow-red-100 active:scale-95 transition-transform"
-                >
-                <span className="font-bold text-sm tracking-widest">{UI_LABELS.voteAi}</span>
-                </button>
+                {/* Bot Button (Left) */}
+                <div className="flex flex-col items-center space-y-2 group">
+                    <button
+                        onClick={() => handleJudge('ai')}
+                        className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform duration-200"
+                    >
+                        <X size={32} className="text-app-red" strokeWidth={3} />
+                    </button>
+                    <span className="text-white font-bold text-sm drop-shadow-md bg-black/20 px-2 rounded-full backdrop-blur-sm">铁是人机</span>
+                </div>
 
-                <button
-                onClick={() => handleJudge('human')}
-                className="flex-1 h-14 bg-app-blue text-white rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100 active:scale-95 transition-transform"
-                >
-                <span className="font-bold text-sm tracking-widest">{UI_LABELS.voteHuman}</span>
-                </button>
+                {/* Human Button (Right) */}
+                <div className="flex flex-col items-center space-y-2 group">
+                    <button
+                        onClick={() => handleJudge('human')}
+                        className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg active:scale-90 transition-transform duration-200"
+                    >
+                        <Heart size={30} className="text-app-blue fill-app-blue" />
+                    </button>
+                    <span className="text-white font-bold text-sm drop-shadow-md bg-black/20 px-2 rounded-full backdrop-blur-sm">包真人的</span>
+                </div>
             </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 4. Result Sticker (After Judgment) */}
+      <AnimatePresence>
+        {viewState === 'revealed' && !showDetails && (
+            <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="absolute bottom-8 left-4 right-4 z-20"
+            >
+                <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-1 h-full bg-app-primary"></div>
+
+                    <div className="flex justify-between items-start pl-3">
+                        <div>
+                             <div className="flex items-center space-x-2 mb-1">
+                                {isCorrect ? (
+                                    <span className="text-app-primary font-black italic text-xl">Bingo! 慧眼如炬</span>
+                                ) : (
+                                    <span className="text-app-red font-black italic text-xl">Oops! 看走眼了</span>
+                                )}
+                            </div>
+                            <p className="text-white/90 text-sm font-medium pr-8 line-clamp-2 leading-relaxed">
+                                {currentItem.explanation}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-4 flex space-x-3 pl-3">
+                        <button
+                            onClick={toggleDetails}
+                            className="flex-1 bg-white text-black text-xs font-bold py-2.5 rounded-full flex items-center justify-center space-x-1 hover:bg-gray-100"
+                        >
+                            <MessageCircle size={14} />
+                            <span>查看评论 & 深度解析</span>
+                        </button>
+                         <button
+                            onClick={handleNext}
+                            className="w-12 bg-white/20 text-white rounded-full flex items-center justify-center hover:bg-white/30"
+                        >
+                            <ChevronUp size={20} className="rotate-90"/>
+                        </button>
+                    </div>
+                </div>
+            </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 5. Details Sheet (Half Screen Overlay) */}
+      <AnimatePresence>
+        {showDetails && (
+            <>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={toggleDetails}
+                    className="absolute inset-0 bg-black/60 z-40"
+                />
+                <motion.div
+                    initial={{ y: '100%' }}
+                    animate={{ y: '20%' }}
+                    exit={{ y: '100%' }}
+                    transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                    className="absolute inset-0 z-50 bg-white rounded-t-3xl overflow-hidden flex flex-col"
+                >
+                    {/* Sheet Handle */}
+                    <div className="h-6 w-full flex justify-center items-center bg-white shrink-0" onClick={toggleDetails}>
+                        <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
+                    </div>
+
+                    {/* Sheet Content */}
+                    <div className="flex-1 overflow-y-auto px-6 pb-20">
+                        {/* Status Header */}
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-2xl font-black text-gray-900">真相档案</h3>
+                            <span className={`px-3 py-1 rounded-full text-xs font-bold ${currentItem.isAi ? 'bg-app-red/10 text-app-red' : 'bg-app-blue/10 text-app-blue'}`}>
+                                {currentItem.isAi ? 'AI 生成' : '真人创作'}
+                            </span>
+                        </div>
+
+                        {/* Model Info */}
+                        <div className="bg-gray-50 rounded-xl p-4 mb-6 flex items-center justify-between">
+                            <div>
+                                <div className="text-xs text-gray-400 font-bold mb-1">来源/模型</div>
+                                <div className="text-lg font-bold text-gray-800">{currentItem.modelTag}</div>
+                            </div>
+                            <div className="text-right">
+                                <div className="text-xs text-gray-400 font-bold mb-1">误判率</div>
+                                <div className="text-xl font-black text-app-primary">{currentItem.deceptionRate}%</div>
+                            </div>
+                        </div>
+
+                        {/* Official Analysis */}
+                        <div className="mb-8">
+                            <div className="flex items-center space-x-2 mb-3">
+                                <Sparkles size={16} className="text-app-primary" />
+                                <h4 className="font-bold text-gray-900">鉴别要点</h4>
+                            </div>
+                            <p className="text-gray-600 text-sm leading-relaxed text-justify">
+                                {currentItem.explanation}
+                            </p>
+                        </div>
+
+                        <hr className="border-gray-100 mb-6" />
+
+                        {/* Comments */}
+                        <div className="mb-4">
+                             <h4 className="font-bold text-gray-900 mb-4">社区讨论 ({currentItem.comments.length})</h4>
+                             <div className="space-y-6">
+                                {currentItem.comments.map(comment => (
+                                    <div key={comment.id} className="flex space-x-3">
+                                        <img src={comment.avatar} className="w-8 h-8 rounded-full bg-gray-200" alt={comment.user} />
+                                        <div className="flex-1">
+                                            <div className="flex items-center space-x-2">
+                                                <span className="text-sm font-bold text-gray-800">{comment.user}</span>
+                                                {comment.isOfficial && (
+                                                    <span className="text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-bold">官方</span>
+                                                )}
+                                            </div>
+                                            <p className="text-sm text-gray-600 mt-1">{comment.text}</p>
+                                        </div>
+                                        <div className="flex flex-col items-center text-gray-400">
+                                            <Heart size={14} />
+                                            <span className="text-[10px] mt-0.5">{comment.likes}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                             </div>
+                        </div>
+                    </div>
+
+                    {/* Bottom Action */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100">
+                        <button
+                            onClick={handleNext}
+                            className="w-full h-12 bg-black text-white rounded-full font-bold shadow-lg flex items-center justify-center space-x-2"
+                        >
+                            <span>继续下一题</span>
+                            <ArrowRight size={16} />
+                        </button>
+                    </div>
+                </motion.div>
+            </>
         )}
       </AnimatePresence>
     </div>
   );
 };
+
+const QuoteIcon = () => (
+    <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" className="text-gray-200" xmlns="http://www.w3.org/2000/svg">
+        <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V5H22.017V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM5.01697 21L5.01697 18C5.01697 16.8954 5.9124 16 7.01697 16H10.017C10.5693 16 11.017 15.5523 11.017 15V9C11.017 8.44772 10.5693 8 10.017 8H6.01697C5.46468 8 5.01697 8.44772 5.01697 9V11C5.01697 11.5523 4.56925 12 4.01697 12H3.01697V5H13.017V15C13.017 18.3137 10.3307 21 7.01697 21H5.01697Z" />
+    </svg>
+);

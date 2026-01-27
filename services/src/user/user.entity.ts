@@ -28,6 +28,24 @@ export class User {
   @Column({ type: 'int', default: 0 })
   streak: number;
 
+  @Column({ type: 'int', default: 0 })
+  maxStreak: number;
+
+  @Column({ type: 'int', default: 0 })
+  totalBotsBusted: number;
+
+  @Column({ type: 'float', default: 0 })
+  weeklyAccuracy: number;
+
+  @Column({ type: 'int', default: 0 })
+  weeklyJudged: number;
+
+  @Column({ type: 'int', default: 0 })
+  weeklyCorrect: number;
+
+  @Column({ type: 'timestamp', nullable: true })
+  lastWeekReset: Date;
+
   @OneToMany(() => Content, content => content.author)
   contents: Content[];
 

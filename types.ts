@@ -6,6 +6,7 @@ export interface Comment {
   avatar: string;
   text: string;
   likes: number;
+  isOfficial?: boolean; // For official analysis
 }
 
 export interface ContentItem {
@@ -21,21 +22,31 @@ export interface ContentItem {
   deceptionRate: number; // 0-100%
   explanation: string; // The "Reveal" text explaining the source
   comments: Comment[];
+  category: 'recommended' | 'hardest';
+}
+
+export interface UserRankItem {
+  id: string;
+  username: string;
+  avatar: string;
+  level: 'AI小白' | '胜似人机' | '人机杀手' | '硅谷天才';
+  bustedCount: number; // Total Bots Busted
+  maxStreak: number;
+  weeklyAccuracy: number;
 }
 
 export interface LeaderboardItem {
   id: string;
-  modelName: string;
-  company: string;
-  type: ContentType;
-  deceptionRate: number;
-  totalTests: number;
+  nickname: string;
+  avatar: string;
+  level: number;
+  totalBotsBusted: number;
+  maxStreak: number;
+  weeklyAccuracy: number;
 }
 
 export enum TabView {
   FEED = 'feed',
   LAB = 'lab',
-  PUBLISH = 'publish',
-  SQUARE = 'square',
   PROFILE = 'profile',
 }
