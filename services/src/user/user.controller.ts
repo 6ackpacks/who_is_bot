@@ -16,6 +16,37 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @Get(':id/stats')
+  async getUserStats(@Param('id') id: string) {
+    const user = await this.userService.findOne(id);
+    if (!user) {
+      return {
+        success: false,
+        message: '用户不存在'
+      };
+    }
+
+    return {
+      success: true,
+      data: {
+        totalJudged: user.totalJudged,
+        accuracy: Math.round(user.accuracy * 10) / 10,
+        correctCount: user.correctCount,
+        streak: user.streak,
+        maxStreak: user.maxStreak,
+        weeklyAccuracy: Math.round(user.weeklyAccuracy * 10) / 10,
+        weeklyJudged: user.weeklyJudged,
+        level: user.level,
+        levelName: this.getLevelName(user.level)
+      }
+    };
+  }
+
+  private getLevelName(level: number): string {
+    const levels = ['AI小白', '胜似人机', '人机杀手', '硅谷天才'];
+    return levels[level - 1] || 'AI小白';
+  }
+
   @Get('uid/:uid')
   findByUid(@Param('uid') uid: string) {
     return this.userService.findByUid(uid);

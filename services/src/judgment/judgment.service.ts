@@ -40,6 +40,10 @@ export class JudgmentService {
       } else {
         content.humanVotes += 1;
       }
+      // 更新正确投票数
+      if (dto.isCorrect) {
+        content.correctVotes += 1;
+      }
       await this.contentRepository.save(content);
     }
 

@@ -31,6 +31,9 @@ ADD COLUMN IF NOT EXISTS total_votes INT DEFAULT 0,
 ADD COLUMN IF NOT EXISTS ai_votes INT DEFAULT 0,
 ADD COLUMN IF NOT EXISTS human_votes INT DEFAULT 0;
 
+-- 添加正确投票数字段
+ALTER TABLE content ADD COLUMN correct_votes INT DEFAULT 0;
+
 -- 3. 修改 users 表
 -- 添加正确数统计字段
 ALTER TABLE users

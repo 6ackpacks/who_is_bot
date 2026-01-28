@@ -43,6 +43,9 @@ export class Content {
   @Column({ name: 'human_votes', type: 'int', default: 0 })
   humanVotes: number;
 
+  @Column({ name: 'correct_votes', type: 'int', default: 0 })
+  correctVotes: number;
+
   @ManyToOne(() => User, user => user.contents)
   author: User;
 
