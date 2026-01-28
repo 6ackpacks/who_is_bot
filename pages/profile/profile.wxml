@@ -103,6 +103,11 @@
         <text class="share-icon">🔗</text>
         <text class="share-text">分享我的侦探名片</text>
       </button>
+
+      <!-- 退出登录按钮 -->
+      <button wx:if="{{isLoggedIn}}" class="logout-btn" bindtap="handleLogout">
+        <text class="logout-text">退出登录</text>
+      </button>
     </view>
 
     <!-- 底部占位 -->

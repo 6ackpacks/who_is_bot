@@ -1,5 +1,5 @@
 // pages/feed/feed.js
-const { MOCK_FEED } = require('../../utils/mockData.js');
+const api = require('../../utils/api.js');
 
 Page({
   data: {
@@ -14,6 +14,7 @@ Page({
     isCorrect: false,
     showAnimation: false,
     loading: false,
+    error: null, // 错误信息
     judgeButtonDisabled: false, // 防止重复点击
     videoPlaying: true // 视频播放状态
   },
@@ -22,27 +23,18 @@ Page({
     this.loadFeedData();
   },
 
-  // 从云托管后端加载数据
+  // 从后端加载数据
   loadFeedData() {
-    this.setData({ loading: true });
+    this.setData({
+      loading: true,
+      error: null
+    });
 
-    wx.cloud.callContainer({
-      config: {
-        env: 'prod-3ge8ht6pded7ed77'
-      },
-      path: '/content/feed',
-      header: {
-        'X-WX-SERVICE': 'who-is-the-bot-api2',
-        'content-type': 'application/json'
-      },
-      method: 'GET',
-      data: {
-        limit: 10
-      },
-      success: res => {
+    api.getFeed({ limit: 20 })
+      .then(res => {
         console.log('获取内容成功', res);
 
-        if (res.data && res.data.length > 0) {
+        if (res.success && res.data && res.data.length > 0) {
           this.setData({
             items: res.data,
             loading: false
@@ -50,31 +42,23 @@ Page({
             this.filterItemsByCategory();
           });
         } else {
-          // 如果后端没有数据，使用 mock 数据
-          console.log('后端无数据，使用 mock 数据');
-          this.setData({
-            items: MOCK_FEED,
-            loading: false
-          }, () => {
-            this.filterItemsByCategory();
-          });
+          throw new Error('数据为空');
         }
-      },
-      fail: err => {
+      })
+      .catch(err => {
         console.error('获取内容失败', err);
-        // 失败时使用 mock 数据
-        wx.showToast({
-          title: '加载失败，使用本地数据',
-          icon: 'none'
-        });
         this.setData({
-          items: MOCK_FEED,
-          loading: false
-        }, () => {
-          this.filterItemsByCategory();
+          loading: false,
+          error: '加载失败，请下拉刷新重试'
         });
-      }
-    });
+
+        // 显示错误提示
+        wx.showToast({
+          title: err.message || '加载失败',
+          icon: 'none',
+          duration: 2000
+        });
+      });
   },
 
   // 根据分类过滤内容
@@ -122,6 +106,18 @@ Page({
     this.setData({
       judgeButtonDisabled: true,
       userChoice: choice
+    });
+
+    // 提交判定结果到后端
+    api.submitJudgment({
+      contentId: this.data.currentItem.id,
+      userChoice: choice,
+      isCorrect: isCorrect
+    }).then(res => {
+      console.log('判定结果已提交', res);
+    }).catch(err => {
+      console.error('提交判定失败', err);
+      // 即使提交失败也继续显示结果
     });
 
     // 短暂延迟后显示结果，增强反馈感

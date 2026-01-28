@@ -14,8 +14,21 @@
     </view>
   </view>
 
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view wx:elif="{{error}}" class="error-container">
+    <text class="error-icon">⚠️</text>
+    <text class="error-text">{{error}}</text>
+    <button class="retry-btn" bindtap="loadFeedData">重新加载</button>
+  </view>
+
   <!-- 内容区域 -->
-  <swiper class="feed-swiper" vertical duration="300" bindchange="onSwiperChange" current="{{currentIndex}}">
+  <swiper wx:else class="feed-swiper" vertical duration="300" bindchange="onSwiperChange" current="{{currentIndex}}">
     <swiper-item wx:for="{{displayItems}}" wx:key="id" class="feed-item">
 
       <!-- 视频内容 -->

@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/login/login",
     "pages/feed/feed",
     "pages/leaderboard/leaderboard",
     "pages/profile/profile"
@@ -14,13 +15,13 @@
   },
   "tabBar": {
     "color": "#999999",
-    "selectedColor": "#000000",
+    "selectedColor": "#10B981",
     "backgroundColor": "#ffffff",
     "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/feed/feed",
-        "text": "首页",
+        "text": "判定",
         "iconPath": "images/tab-home.png",
         "selectedIconPath": "images/tab-home-active.png"
       },

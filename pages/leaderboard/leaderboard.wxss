@@ -81,6 +81,7 @@
 .leaderboard-list {
   height: calc(100vh - 350rpx);
   padding: 15rpx 30rpx;
+  box-sizing: border-box;
 }
 
 .user-item {
@@ -88,11 +89,13 @@
   border-radius: 24rpx;
   padding: 30rpx;
   margin-bottom: 20rpx;
+  margin-right: 0;
   display: grid;
   grid-template-columns: 60rpx 1fr 200rpx;
   align-items: center;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
   border: 2rpx solid #f3f4f6;
+  box-sizing: border-box;
 }
 
 /* ===== 排名图标 ===== */
@@ -227,16 +230,17 @@
 }
 
 .stat-streak {
-  width: 60rpx;
+  width: 70rpx;
   background: #fff7ed;
   border: 2rpx solid #fed7aa;
   border-radius: 16rpx;
-  padding: 12rpx 0;
+  padding: 12rpx 8rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 5rpx;
+  flex-shrink: 0;
 }
 
 .streak-icon {

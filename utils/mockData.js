@@ -66,6 +66,106 @@ const MOCK_FEED = [
     comments: [
       { id: 'c5', user: '细节控', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Annie', text: '不放大看真看不出来，现在MJ太强了。', likes: 102, isOfficial: false }
     ]
+  },
+  {
+    id: '5',
+    type: 'text',
+    category: 'recommended',
+    url: '',
+    text: "在量子力学的框架下，观察者效应揭示了一个深刻的哲学命题：现实是否独立于观察而存在？当我们试图测量一个粒子的位置时，我们不可避免地改变了它的动量。这种不确定性不是技术限制，而是自然界的基本属性。",
+    title: '量子哲学思考',
+    isAi: true,
+    modelTag: 'GPT-4',
+    authorId: 'ai_03',
+    provider: '科学探索者',
+    deceptionRate: 65,
+    explanation: "AI生成的科普文本。虽然术语使用正确，但缺乏真实科研人员的个人见解和争议性观点。真正的物理学家通常会加入更多个人理解和学术争论。",
+    comments: [
+      { id: 'c6', user: '物理狂人', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Physics', text: '说得太教科书了，真正搞量子的不会这么写。', likes: 34, isOfficial: false },
+      { id: 'c7', user: 'AI猎手', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Hunter', text: '典型的GPT风格，一眼就看出来了。', likes: 28, isOfficial: false }
+    ]
+  },
+  {
+    id: '6',
+    type: 'image',
+    category: 'recommended',
+    url: 'https://picsum.photos/600/800?random=12',
+    title: '城市夜景',
+    isAi: true,
+    modelTag: 'DALL-E 3',
+    authorId: 'ai_04',
+    provider: '夜景收藏家',
+    deceptionRate: 76,
+    explanation: "DALL-E 3 生成的城市夜景。整体构图和光影处理很专业，但仔细观察建筑物的窗户排列会发现不符合建筑学规律，且远处的霓虹灯文字模糊不清。",
+    comments: [
+      { id: 'c8', user: '建筑师老王', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Wang', text: '窗户的排列完全不对，这栋楼根本盖不起来。', likes: 56, isOfficial: false }
+    ]
+  },
+  {
+    id: '7',
+    type: 'text',
+    category: 'hardest',
+    url: '',
+    text: "昨晚做梦梦到自己变成了一只猫，在屋顶上跳来跳去，感觉特别自由。醒来后发现枕头掉地上了，估计是睡觉太不老实哈哈哈。今天起床腰还有点疼，年纪大了真不中用。",
+    title: '奇怪的梦',
+    isAi: false,
+    modelTag: '真人',
+    authorId: 'human_03',
+    provider: '做梦大师',
+    deceptionRate: 12,
+    explanation: "真实用户的梦境分享。包含了真实的生理反馈（腰疼）和自嘲式幽默，这种随意的表达方式和逻辑跳跃是AI难以模仿的人类特征。",
+    comments: [
+      { id: 'c9', user: '解梦专家', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dream', text: '哈哈哈笑死，这个太真实了。', likes: 67, isOfficial: false }
+    ]
+  },
+  {
+    id: '8',
+    type: 'image',
+    category: 'hardest',
+    url: 'https://picsum.photos/600/800?random=13',
+    title: '美食摄影',
+    isAi: false,
+    modelTag: '人类摄影师',
+    authorId: 'human_04',
+    provider: '美食博主',
+    deceptionRate: 18,
+    explanation: "专业摄影师拍摄的美食照片。注意食物表面的真实质感、自然的光线反射，以及背景中略微失焦但真实存在的餐具细节。AI生成的食物往往过于完美而失去真实感。",
+    comments: [
+      { id: 'c10', user: '吃货小分队', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Food', text: '看着就很有食欲，AI做不出这种真实感。', likes: 92, isOfficial: false }
+    ]
+  },
+  {
+    id: '9',
+    type: 'text',
+    category: 'recommended',
+    url: '',
+    text: "人工智能的发展正在重塑我们的社会结构。从自动驾驶到医疗诊断，从内容创作到科学研究，AI的应用场景日益广泛。然而，我们也需要警惕技术发展带来的伦理挑战，确保AI的发展符合人类的长远利益。",
+    title: 'AI时代的思考',
+    isAi: true,
+    modelTag: 'Claude 3.5',
+    authorId: 'ai_05',
+    provider: '科技观察者',
+    deceptionRate: 58,
+    explanation: "AI生成的科技评论。文字流畅且观点平衡，但缺乏具体案例和个人经历。真实的科技评论者通常会引用具体数据、新闻事件或个人体验来支撑观点。",
+    comments: [
+      { id: 'c11', user: '科技迷', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tech', text: '说得挺对的，但感觉像是AI写的。', likes: 41, isOfficial: false }
+    ]
+  },
+  {
+    id: '10',
+    type: 'image',
+    category: 'recommended',
+    url: 'https://picsum.photos/600/800?random=14',
+    title: '抽象艺术',
+    isAi: true,
+    modelTag: 'Stable Diffusion',
+    authorId: 'ai_06',
+    provider: '艺术实验室',
+    deceptionRate: 82,
+    explanation: "Stable Diffusion 生成的抽象艺术作品。色彩搭配和构图都很专业，但缺乏艺术家的个人风格和创作意图。真正的抽象艺术背后通常有明确的创作理念和情感表达。",
+    comments: [
+      { id: 'c12', user: '艺术评论家', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Art', text: '技术上很完美，但缺少灵魂。', likes: 73, isOfficial: false }
+    ]
   }
 ];
 
