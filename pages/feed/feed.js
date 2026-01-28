@@ -34,16 +34,36 @@ Page({
       .then(res => {
         console.log('获取内容成功', res);
 
-        if (res.success && res.data && res.data.length > 0) {
-          this.setData({
-            items: res.data,
-            loading: false
-          }, () => {
-            this.filterItemsByCategory();
-          });
+        // 处理两种响应格式：
+        // 1. 直接返回数组: [{...}, {...}]
+        // 2. 包装格式: {success: true, data: [{...}]}
+        let items = [];
+
+        if (Array.isArray(res)) {
+          // 直接是数组
+          items = res;
+        } else if (res.success && res.data) {
+          // 包装格式
+          items = res.data;
+        } else if (res.data && Array.isArray(res.data)) {
+          // 云函数返回格式: {data: [...]}
+          items = res.data;
+        }
+
+        if (items.length > 0) {
+          // 转换云存储URL为HTTPS URL
+          return this.convertCloudUrls(items);
         } else {
           throw new Error('数据为空');
         }
+      })
+      .then(items => {
+        this.setData({
+          items: items,
+          loading: false
+        }, () => {
+          this.filterItemsByCategory();
+        });
       })
       .catch(err => {
         console.error('获取内容失败', err);
@@ -61,11 +81,92 @@ Page({
       });
   },
 
+  // 转换云存储URL为HTTPS URL
+  convertCloudUrls(items) {
+    return new Promise((resolve, reject) => {
+      // 收集所有需要转换的云存储URL
+      const cloudFileIds = [];
+      items.forEach(item => {
+        if (item.url && item.url.startsWith('cloud://')) {
+          cloudFileIds.push(item.url);
+          console.log('发现云存储URL:', item.url, '类型:', item.type);
+        }
+      });
+
+      // 如果没有云存储URL，直接返回
+      if (cloudFileIds.length === 0) {
+        console.log('没有需要转换的云存储URL');
+        resolve(items);
+        return;
+      }
+
+      console.log('需要转换的云存储URL数量:', cloudFileIds.length);
+      console.log('云存储URL列表:', cloudFileIds);
+
+      // 批量获取临时链接
+      wx.cloud.getTempFileURL({
+        fileList: cloudFileIds,
+        success: res => {
+          console.log('云存储URL转换成功，结果:', res);
+
+          // 创建URL映射表
+          const urlMap = {};
+          res.fileList.forEach(file => {
+            if (file.status === 0) {
+              // 转换成功
+              urlMap[file.fileID] = file.tempFileURL;
+              console.log('URL转换成功:', file.fileID, '->', file.tempFileURL);
+            } else {
+              console.error('URL转换失败:', file.fileID, file.errMsg);
+            }
+          });
+
+          // 替换items中的URL
+          items.forEach(item => {
+            if (item.url && urlMap[item.url]) {
+              const oldUrl = item.url;
+              item.url = urlMap[item.url];
+              console.log('替换URL:', oldUrl, '->', item.url);
+            }
+          });
+
+          console.log('所有URL转换完成，最终items:', items);
+          resolve(items);
+        },
+        fail: err => {
+          console.error('获取临时链接失败，错误详情:', err);
+          // 即使失败也返回原始数据，让用户看到其他内容
+          resolve(items);
+        }
+      });
+    });
+  },
+
   // 根据分类过滤内容
   filterItemsByCategory() {
     const { items, activeCategory } = this.data;
-    const filtered = items.filter(item => item.category === activeCategory);
-    const displayItems = filtered.length > 0 ? filtered : items;
+
+    // 暂时不使用分类过滤，因为数据库中没有category字段
+    // 可以根据 deceptionRate 来区分难度
+    let displayItems = items;
+
+    if (activeCategory === 'hardest') {
+      // 按欺骗率排序，显示最难的（欺骗率最高的）
+      displayItems = [...items].sort((a, b) => b.deceptionRate - a.deceptionRate);
+    } else {
+      // 推荐模式：随机排序
+      displayItems = [...items].sort(() => Math.random() - 0.5);
+    }
+
+    // 确保有数据
+    if (displayItems.length === 0) {
+      console.error('没有可显示的内容');
+      this.setData({
+        error: '暂无内容',
+        loading: false
+      });
+      return;
+    }
 
     this.setData({
       displayItems: displayItems,
@@ -192,6 +293,8 @@ Page({
     console.error('Video Error Details:', e.detail);
     console.error('Video Error Message:', e.detail.errMsg);
     console.error('Current video URL:', this.data.currentItem?.url);
+    console.error('Current item type:', this.data.currentItem?.type);
+    console.error('Current item full data:', this.data.currentItem);
     wx.showToast({
       title: '视频加载失败',
       icon: 'none',
@@ -234,6 +337,13 @@ Page({
     } else {
       videoContext.play();
     }
+  },
+
+  // 返回主页
+  goHome() {
+    wx.switchTab({
+      url: '/pages/index/index'
+    });
   },
 
   // 阻止事件冒泡（用于按钮和文字区域）

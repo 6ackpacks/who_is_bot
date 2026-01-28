@@ -1,18 +1,23 @@
-/* pages/feed/feed.wxss - Digital Forensics Lab Style */
+/* pages/feed/feed.wxss - 新版卡片式设计 */
 
-/* ===== Grid Background ===== */
+/* ===== 容器 ===== */
 .feed-container {
   width: 100vw;
-  height: 100vh;
-  background-color: #F8F9FA;
-  background-image:
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
-  position: relative;
+  min-height: 100vh;
+  background-color: #FFFFFF;
 }
 
-/* ===== Loading State ===== */
+.feed-scroll {
+  width: 100%;
+  height: 100vh;
+}
+
+/* 判定状态下禁用滚动 */
+.feed-scroll:has(.judgment-view) {
+  overflow: hidden;
+}
+
+/* ===== 加载状态 ===== */
 .loading-container {
   width: 100%;
   height: 100vh;
@@ -20,7 +25,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #F8F9FA;
+  background: #FFFFFF;
 }
 
 .loading-spinner {
@@ -41,12 +46,11 @@
 
 .loading-text {
   font-size: 28rpx;
-  color: #000000;
-  font-weight: 600;
+  color: #666666;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
-/* ===== Error State ===== */
+/* ===== 错误状态 ===== */
 .error-container {
   width: 100%;
   height: 100vh;
@@ -54,7 +58,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #F8F9FA;
+  background: #FFFFFF;
   padding: 0 60rpx;
 }
 
@@ -65,7 +69,7 @@
 
 .error-text {
   font-size: 28rpx;
-  color: #000000;
+  color: #333333;
   text-align: center;
   margin-bottom: 40rpx;
   line-height: 1.6;
@@ -76,727 +80,368 @@
   padding: 20rpx 60rpx;
   background: #000000;
   color: #ffffff;
-  border-radius: 0;
+  border-radius: 50rpx;
   font-size: 28rpx;
-  font-weight: 900;
-  font-style: italic;
+  font-weight: 600;
   border: none;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  transform: skewX(-5deg);
 }
 
 .retry-btn::after {
   border: none;
 }
 
-.retry-btn:active {
-  background: #333333;
-  transform: skewX(-5deg) scale(0.98);
-}
-
-/* ===== Category Tabs ===== */
-.category-tabs {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 30;
-  padding: 20rpx 30rpx;
-  background: rgba(248, 249, 250, 0.95);
-  backdrop-filter: blur(10rpx);
-  border-bottom: 3rpx solid #000000;
-}
-
-.tabs-wrapper {
+/* ===== 判定视图 ===== */
+.judgment-view {
+  padding: 30rpx 32rpx 140rpx;
+  height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  gap: 30rpx;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.tab-item {
-  font-size: 28rpx;
-  font-weight: 900;
-  font-style: italic;
-  color: rgba(0, 0, 0, 0.3);
-  transition: all 0.3s;
-  padding: 8rpx 16rpx;
-  position: relative;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  transform: skewX(-5deg);
-}
-
-.tab-item.tab-active {
+.page-title {
+  font-size: 44rpx;
+  font-weight: 700;
   color: #000000;
-  transform: skewX(-5deg) scale(1.05);
-  background: #000000;
-  color: #FFFFFF;
+  text-align: center;
+  margin-bottom: 40rpx;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  flex-shrink: 0;
 }
 
-.tab-divider {
-  width: 2rpx;
-  height: 24rpx;
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/* ===== Swiper ===== */
-.feed-swiper {
-  width: 100%;
-  height: 100%;
-}
-
-.feed-item {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-/* ===== Content Area ===== */
+/* ===== 内容区域（引号+卡片） ===== */
 .content-wrapper {
   width: 100%;
-  height: 100%;
-  background-color: #F8F9FA;
   position: relative;
-}
-
-.full-video,
-.full-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Text Content - Card Style */
-.text-content {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 140rpx 40rpx 300rpx;
-  background-color: #F8F9FA;
-}
-
-.text-content-card {
-  width: 100%;
-  max-width: 650rpx;
-  background: #FFFFFF;
-  border: 4rpx solid #000000;
-  box-shadow: 12rpx 12rpx 0 0 rgba(0, 0, 0, 0.1);
-  padding: 50rpx 40rpx;
-  min-height: 400rpx;
-  position: relative;
-}
-
-.quote-icon {
-  position: absolute;
-  top: 20rpx;
-  left: 20rpx;
-  font-size: 60rpx;
-  color: #000000;
-  font-family: Georgia, serif;
-  font-weight: bold;
-  line-height: 1;
-}
-
-.text-content-body {
-  font-size: 32rpx;
-  line-height: 1.8;
-  color: #000000;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  text-align: left;
-  font-weight: 500;
-  padding-left: 60rpx;
-  padding-top: 20rpx;
-}
-
-/* ===== Content Info ===== */
-.content-info {
-  position: absolute;
-  bottom: 240rpx;
-  left: 30rpx;
-  right: 30rpx;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.info-tags {
-  display: flex;
-  align-items: center;
-  gap: 10rpx;
-  margin-bottom: 12rpx;
-  flex-wrap: wrap;
-}
-
-.tag-type {
-  background: #000000;
-  padding: 8rpx 16rpx;
-  border-radius: 0;
-  font-size: 18rpx;
-  font-weight: 900;
-  font-style: italic;
-  color: #FFFFFF;
-  text-transform: uppercase;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  transform: skewX(-5deg);
-}
-
-.tag-provider {
-  color: #000000;
-  font-size: 20rpx;
-  font-weight: 600;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 6rpx 12rpx;
-  border: 2rpx solid #000000;
-}
-
-.info-title {
-  font-size: 36rpx;
-  font-weight: 900;
-  font-style: italic;
-  color: #000000;
-  margin-bottom: 8rpx;
-  line-height: 1.3;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 8rpx 16rpx;
-  display: inline-block;
-  border: 3rpx solid #000000;
-  transform: skewX(-3deg);
-  max-width: 90%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-.info-subtitle {
-  font-size: 22rpx;
-  color: #000000;
-  line-height: 1.4;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 6rpx 12rpx;
-  display: inline-block;
-  border: 2rpx solid #000000;
-}
-
-/* ===== Judgment Buttons ===== */
-.judgment-buttons {
-  position: absolute;
-  bottom: 60rpx;
-  left: 0;
-  right: 0;
-  z-index: 20;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 60rpx;
-}
-
-.btn-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12rpx;
-}
-
-.btn-circle {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 0;
-  background: #FFFFFF;
-  border: 4rpx solid #000000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 8rpx 8rpx 0 0 rgba(0, 0, 0, 0.2);
-  transition: all 0.2s;
-  transform: skewX(-5deg);
-}
-
-.btn-circle:active {
-  transform: skewX(-5deg) scale(0.95);
-  box-shadow: 4rpx 4rpx 0 0 rgba(0, 0, 0, 0.2);
-}
-
-.btn-icon {
-  font-size: 56rpx;
-  font-weight: 900;
-  transform: skewX(5deg);
-}
-
-.btn-ai .btn-icon {
-  color: #EF4444;
-}
-
-.btn-human .btn-icon {
-  color: #3B82F6;
-}
-
-.btn-label {
-  font-size: 24rpx;
-  font-weight: 900;
-  font-style: italic;
-  color: #000000;
-  background: #FFFFFF;
-  padding: 8rpx 20rpx;
-  border-radius: 0;
-  border: 3rpx solid #000000;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  transform: skewX(-5deg);
-}
-
-/* ===== Result Sticker ===== */
-.result-sticker {
-  position: absolute;
-  bottom: 80rpx;
-  left: 40rpx;
-  right: 40rpx;
-  z-index: 20;
-  animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40rpx);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.sticker-accent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 12rpx;
-  height: 100%;
-  background: #000000;
-}
-
-.sticker-content {
-  background: #FFFFFF;
-  border: 4rpx solid #000000;
-  border-radius: 0;
-  padding: 30rpx;
-  padding-left: 50rpx;
-  box-shadow: 12rpx 12rpx 0 0 rgba(0, 0, 0, 0.15);
-}
-
-.sticker-header {
-  margin-bottom: 15rpx;
-}
-
-.sticker-title {
-  font-size: 40rpx;
-  font-weight: 900;
-  font-style: italic;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  transform: skewX(-5deg);
-  display: inline-block;
-}
-
-.title-correct {
-  color: #10B981;
-}
-
-.title-wrong {
-  color: #EF4444;
-}
-
-.sticker-explanation {
-  font-size: 26rpx;
-  color: #000000;
-  line-height: 1.6;
-  margin-bottom: 25rpx;
-  display: block;
-  font-weight: 500;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.sticker-actions {
-  display: flex;
-  gap: 20rpx;
-}
-
-.sticker-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10rpx;
-  padding: 20rpx 30rpx;
-  border-radius: 0;
-  font-size: 24rpx;
-  font-weight: 900;
-  font-style: italic;
-  transition: all 0.2s;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  transform: skewX(-5deg);
-}
-
-.sticker-btn:active {
-  transform: skewX(-5deg) scale(0.95);
-}
-
-.sticker-btn-primary {
   flex: 1;
-  background: #000000;
-  color: #FFFFFF;
-  border: 4rpx solid #000000;
-}
-
-.sticker-btn-next {
-  width: 90rpx;
-  height: 90rpx;
-  background: #FFFFFF;
-  color: #000000;
-  border: 4rpx solid #000000;
-  border-radius: 0;
-  padding: 0;
-}
-
-.next-icon {
-  font-size: 40rpx;
-  font-weight: 900;
-  transform: rotate(-90deg) skewX(5deg);
-}
-
-.btn-icon-small {
-  font-size: 28rpx;
-  transform: skewX(5deg);
-}
-
-/* ===== Details Drawer ===== */
-.details-drawer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 40;
   display: flex;
   flex-direction: column;
-}
-
-.drawer-mask {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 41;
-}
-
-.drawer-content {
-  position: absolute;
-  top: 20%;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: #F8F9FA;
-  border-radius: 0;
-  border-top: 4rpx solid #000000;
-  z-index: 42;
-  display: flex;
-  flex-direction: column;
-  animation: drawerSlideUp 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  justify-content: center;
+  max-height: 55vh;
   overflow: hidden;
 }
 
-@keyframes drawerSlideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
+.quote-icon {
+  font-size: 100rpx;
+  color: #D8D8D8;
+  font-family: Georgia, serif;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: -15rpx;
+  padding-left: 20rpx;
+  flex-shrink: 0;
 }
 
-.drawer-handle {
-  height: 50rpx;
+/* ===== 内容卡片 ===== */
+.content-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 40rpx 35rpx;
+  box-shadow: 0 2rpx 20rpx rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow-y: auto;
+  max-height: 45vh;
+}
+
+/* 图片卡片 - 立体效果 */
+.content-card.image-card {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  max-height: none;
+}
+
+.content-image-wrapper {
+  position: relative;
+  border-radius: 24rpx;
+  overflow: hidden;
+  transform: perspective(1000rpx) rotateX(2deg);
+  box-shadow:
+    0 8rpx 16rpx rgba(0, 0, 0, 0.12),
+    0 20rpx 40rpx rgba(0, 0, 0, 0.08),
+    0 -2rpx 0 rgba(255, 255, 255, 0.8) inset;
+  width: 100%;
+  max-height: 50vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  background: #F8F9FA;
+  background: #f5f5f5;
 }
 
-.handle-bar {
-  width: 80rpx;
-  height: 8rpx;
-  background: #000000;
-  border-radius: 0;
-}
-
-.drawer-scroll {
-  flex: 1;
-  padding: 0 45rpx 160rpx 45rpx;
-  box-sizing: border-box;
+.content-image {
   width: 100%;
+  height: 50vh;
+  display: block;
 }
 
-.drawer-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40rpx;
-}
-
-.drawer-title {
-  font-size: 48rpx;
-  font-weight: 900;
-  font-style: italic;
-  color: #000000;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  transform: skewX(-5deg);
-}
-
-.status-badge {
-  padding: 12rpx 24rpx;
-  border-radius: 0;
-  font-size: 24rpx;
-  font-weight: 900;
-  font-style: italic;
-  border: 3rpx solid;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  transform: skewX(-5deg);
-}
-
-.badge-ai {
-  background: #FFFFFF;
-  color: #EF4444;
-  border-color: #EF4444;
-}
-
-.badge-human {
-  background: #FFFFFF;
-  color: #3B82F6;
-  border-color: #3B82F6;
-}
-
-.model-info-card {
-  background: #FFFFFF;
-  border: 3rpx solid #000000;
-  border-radius: 0;
-  padding: 30rpx;
-  margin-bottom: 40rpx;
-  display: flex;
-  justify-content: space-between;
-  box-shadow: 6rpx 6rpx 0 0 rgba(0, 0, 0, 0.1);
-}
-
-.model-info-left,
-.model-info-right {
-  display: flex;
-  flex-direction: column;
-}
-
-.model-info-right {
-  align-items: flex-end;
-}
-
-.model-label {
-  font-size: 24rpx;
-  color: #666666;
-  font-weight: 900;
-  font-style: italic;
-  margin-bottom: 8rpx;
-  text-transform: uppercase;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.model-name {
-  font-size: 36rpx;
-  font-weight: 900;
-  color: #000000;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.model-rate {
-  font-size: 40rpx;
-  font-weight: 900;
-  font-style: italic;
-  color: #000000;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.analysis-section {
-  margin-bottom: 50rpx;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-.analysis-header {
-  display: flex;
-  align-items: center;
-  gap: 15rpx;
-  margin-bottom: 20rpx;
-}
-
-.analysis-icon {
-  font-size: 32rpx;
-  color: #000000;
-}
-
-.analysis-title {
-  font-size: 32rpx;
-  font-weight: 900;
-  font-style: italic;
-  color: #000000;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.analysis-text {
-  font-size: 28rpx;
-  color: #333333;
-  line-height: 1.8;
-  text-align: justify;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.divider {
-  height: 3rpx;
+.content-video {
+  width: 100%;
+  height: 50vh;
+  display: block;
   background: #000000;
+  border-radius: 24rpx;
+}
+
+.content-text {
+  font-size: 28rpx;
+  line-height: 1.7;
+  color: #1F2937;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  display: block;
+  text-decoration: underline;
+  text-decoration-color: #3B82F6;
+  text-underline-offset: 4rpx;
+}
+
+/* ===== 来源信息 ===== */
+.source-info {
+  font-size: 24rpx;
+  color: #9CA3AF;
+  text-align: center;
   margin-bottom: 40rpx;
+  font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
-.comments-section {
+/* ===== 判定按钮 ===== */
+.action-buttons {
+  display: flex;
+  gap: 20rpx;
+  width: 100%;
+  padding: 0 10rpx;
+  flex-shrink: 0;
+  margin-top: 20rpx;
+}
+
+.btn-judge {
+  flex: 1;
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-judge::after {
+  border: none;
+}
+
+.btn-ai {
+  background: #EF4444;
+  color: #FFFFFF;
+}
+
+.btn-ai:active {
+  background: #DC2626;
+}
+
+.btn-human {
+  background: #3B82F6;
+  color: #FFFFFF;
+}
+
+.btn-human:active {
+  background: #2563EB;
+}
+
+/* ===== 结果视图 ===== */
+.result-view {
+  padding: 40rpx 40rpx 120rpx;
+  min-height: 100vh;
+}
+
+.result-header {
   margin-bottom: 30rpx;
 }
 
-.comments-title {
+.result-title {
   font-size: 32rpx;
-  font-weight: 900;
-  font-style: italic;
+  font-weight: 600;
   color: #000000;
-  margin-bottom: 30rpx;
   display: block;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
-.comments-list {
+/* 结果视图的内容卡片包装器 */
+.content-card-wrapper {
+  position: relative;
+  margin-bottom: 30rpx;
+}
+
+.content-card-wrapper .quote-icon {
+  position: static;
+  font-size: 100rpx;
+  color: #D8D8D8;
+  font-family: Georgia, serif;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: -15rpx;
+  padding-left: 20rpx;
+  display: block;
+}
+
+/* ===== 统计条 ===== */
+.stats-bar {
   display: flex;
-  flex-direction: column;
-  gap: 40rpx;
+  height: 60rpx;
+  border-radius: 30rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
 }
 
-.comment-item {
-  display: flex;
-  gap: 20rpx;
-  background: #FFFFFF;
-  padding: 20rpx;
-  border: 2rpx solid #000000;
-}
-
-.comment-avatar {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 0;
-  background: #000000;
-  flex-shrink: 0;
-  border: 2rpx solid #000000;
-}
-
-.comment-body {
-  flex: 1;
-}
-
-.comment-header {
-  display: flex;
-  align-items: center;
-  gap: 15rpx;
-  margin-bottom: 10rpx;
-}
-
-.comment-user {
-  font-size: 28rpx;
-  font-weight: 900;
-  color: #000000;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.official-badge {
-  font-size: 20rpx;
-  background: #000000;
-  color: #FFFFFF;
-  padding: 4rpx 12rpx;
-  border-radius: 0;
-  font-weight: 900;
-  font-style: italic;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.comment-text {
-  font-size: 28rpx;
-  color: #333333;
-  line-height: 1.6;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.comment-likes {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5rpx;
-  color: #000000;
-}
-
-.like-icon {
-  font-size: 28rpx;
-}
-
-.like-count {
-  font-size: 20rpx;
-  font-weight: 900;
-}
-
-.bottom-spacer {
-  height: 100rpx;
-}
-
-.drawer-footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 30rpx;
-  background: #F8F9FA;
-  border-top: 3rpx solid #000000;
-  z-index: 43;
-}
-
-.next-button {
-  width: 100%;
-  height: 96rpx;
-  background: #000000;
-  color: #FFFFFF;
-  border-radius: 0;
+.stat-item {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15rpx;
-  font-size: 32rpx;
-  font-weight: 900;
-  font-style: italic;
-  box-shadow: 8rpx 8rpx 0 0 rgba(0, 0, 0, 0.2);
-  transition: all 0.2s;
+  transition: width 0.3s;
+}
+
+.stat-ai {
+  background: #EF4444;
+}
+
+.stat-human {
+  background: #3B82F6;
+}
+
+.stat-text {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FFFFFF;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  transform: skewX(-5deg);
-  border: 4rpx solid #000000;
 }
 
-.next-button:active {
-  transform: skewX(-5deg) scale(0.98);
-  box-shadow: 4rpx 4rpx 0 0 rgba(0, 0, 0, 0.2);
+/* ===== 解析说明 ===== */
+.explanation-box {
+  background: #F8F9FA;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 40rpx;
 }
 
-.arrow-icon {
+.explanation-label {
+  font-size: 24rpx;
+  color: #6B7280;
+  display: block;
+  margin-bottom: 15rpx;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.explanation-text {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #374151;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+/* ===== 社区区域 ===== */
+.community-section {
+  margin-bottom: 40rpx;
+}
+
+.community-header {
+  margin-bottom: 20rpx;
+}
+
+.community-title {
   font-size: 32rpx;
-  transform: skewX(5deg);
+  font-weight: 600;
+  color: #000000;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.community-card {
+  background: #F8F9FA;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.community-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: #10B981;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+}
+
+.community-content {
+  flex: 1;
+}
+
+.community-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #000000;
+  display: block;
+  margin-bottom: 8rpx;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.community-desc {
+  font-size: 24rpx;
+  color: #6B7280;
+  line-height: 1.5;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+/* ===== 底部按钮 ===== */
+.bottom-actions {
+  display: flex;
+  gap: 20rpx;
+  padding-top: 20rpx;
+}
+
+.btn-secondary {
+  flex: 1;
+  height: 96rpx;
+  background: #FFFFFF;
+  border: 2rpx solid #E5E7EB;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #374151;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.btn-secondary::after {
+  border: none;
+}
+
+.btn-secondary:active {
+  background: #F9FAFB;
+}
+
+.btn-primary {
+  flex: 1;
+  height: 96rpx;
+  background: #000000;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  border: none;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.btn-primary::after {
+  border: none;
+}
+
+.btn-primary:active {
+  background: #1F2937;
 }

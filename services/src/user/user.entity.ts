@@ -25,6 +25,9 @@ export class User {
   @Column({ type: 'int', default: 0 })
   totalJudged: number;
 
+  @Column({ name: 'correct_count', type: 'int', default: 0 })
+  correctCount: number;
+
   @Column({ type: 'int', default: 0 })
   streak: number;
 

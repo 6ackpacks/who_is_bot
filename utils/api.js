@@ -6,7 +6,7 @@ const auth = require('./auth.js');
 const API_CONFIG = {
   baseURL: 'https://your-api-domain.com',
   timeout: 10000, // 10秒超时
-  useMock: true, // 开发模式使用 Mock 数据
+  useMock: false, // 使用真实数据库
   cloudConfig: {
     env: 'prod-3ge8ht6pded7ed77',
     service: 'who-is-the-bot-api2'

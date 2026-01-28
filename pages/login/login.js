@@ -110,13 +110,33 @@ Page({
       })
       .catch(err => {
         console.error('后端登录失败:', err);
+        console.log('降级到游客模式');
+
+        // 降级到游客模式
+        auth.saveLoginInfo({
+          token: 'guest_token_' + Date.now(),
+          userId: 'guest_' + Date.now(),
+          userInfo: {
+            nickname: userInfo?.nickName || '游客',
+            avatar: userInfo?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guest',
+            level: 1,
+            levelName: 'AI小白'
+          }
+        });
+
         this.setData({ loading: false });
 
+        // 显示游客模式提示
         wx.showToast({
-          title: err.message || '登录失败，请重试',
-          icon: 'none',
-          duration: 2000
+          title: '以游客模式登录',
+          icon: 'success',
+          duration: 1500
         });
+
+        // 延迟跳转到首页
+        setTimeout(() => {
+          this.redirectToHome();
+        }, 1500);
       });
   },
 
