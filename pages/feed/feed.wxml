@@ -58,8 +58,10 @@
       <!-- 文本内容 -->
       <block wx:else>
         <view class="content-wrapper text-content">
-          <view class="quote-icon">"</view>
-          <text class="text-content-body">{{item.text}}</text>
+          <view class="text-content-card">
+            <view class="quote-icon">"</view>
+            <text class="text-content-body">{{item.text}}</text>
+          </view>
         </view>
       </block>
 

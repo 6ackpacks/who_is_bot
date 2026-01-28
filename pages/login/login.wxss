@@ -2,97 +2,209 @@
 
 .login-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #FFFFFF;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+}
+
+/* ===== 弹幕背景 ===== */
+.danmu-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.danmu-row {
+  position: absolute;
+  width: 200%;
+  white-space: nowrap;
+  display: flex;
+  gap: 100rpx;
+}
+
+.danmu-item {
+  display: inline-block;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #000000;
+  padding: 12rpx 24rpx;
+  background: rgba(240, 240, 240, 0.6);
+  border-radius: 8rpx;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* 第一行 - 最快 */
+.danmu-row-1 {
+  top: 15%;
+  animation: danmuScroll 25s linear infinite;
+  opacity: 0.4;
+}
+
+/* 第二行 - 快 */
+.danmu-row-2 {
+  top: 25%;
+  animation: danmuScroll 30s linear infinite;
+  animation-delay: -5s;
+  opacity: 0.3;
+}
+
+/* 第三行 - 中速 */
+.danmu-row-3 {
+  top: 35%;
+  animation: danmuScroll 35s linear infinite;
+  animation-delay: -10s;
+  opacity: 0.5;
+}
+
+/* 第四行 - 慢 */
+.danmu-row-4 {
+  top: 45%;
+  animation: danmuScroll 40s linear infinite;
+  animation-delay: -15s;
+  opacity: 0.35;
+}
+
+/* 第五行 - 最慢 */
+.danmu-row-5 {
+  top: 55%;
+  animation: danmuScroll 45s linear infinite;
+  animation-delay: -20s;
+  opacity: 0.25;
+}
+
+@keyframes danmuScroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ===== 主内容区域 ===== */
+.content-section {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding: 200rpx 60rpx 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 120rpx 60rpx 80rpx;
 }
 
-/* ===== Logo 区域 ===== */
-.logo-section {
+/* 标题 */
+.title-wrapper {
+  margin-bottom: 60rpx;
+  animation: fadeInUp 0.8s ease-out;
+  position: relative;
+  width: 100%;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 80rpx;
 }
 
-.logo-icon {
-  font-size: 160rpx;
-  margin-bottom: 30rpx;
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% {
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30rpx);
+  }
+  to {
+    opacity: 1;
     transform: translateY(0);
   }
+}
+
+.title-image {
+  width: 500rpx;
+  height: auto;
+}
+
+/* Slogan */
+.slogan-wrapper {
+  margin-bottom: 100rpx;
+  animation: fadeInUp 1s ease-out 0.2s both;
+  padding: 0 60rpx;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slogan {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #1a1a1a;
+  letter-spacing: 3rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  text-align: center;
+  display: inline-block;
+  line-height: 1.8;
+  position: relative;
+
+  /* Compensate for letter-spacing to center properly */
+  margin-right: -3rpx;
+
+  /* Elegant background with blur */
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10rpx);
+  padding: 24rpx 48rpx;
+  border-radius: 16rpx;
+
+  /* Subtle border with gradient */
+  border: 2rpx solid transparent;
+  background-clip: padding-box;
+
+  /* Layered shadows for depth and glow */
+  box-shadow:
+    0 0 0 2rpx rgba(123, 47, 255, 0.2),
+    0 8rpx 32rpx rgba(0, 0, 0, 0.12),
+    0 0 40rpx rgba(123, 47, 255, 0.15),
+    inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
+
+  /* Subtle animation */
+  animation: sloganFloat 4s ease-in-out infinite;
+}
+
+@keyframes sloganFloat {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow:
+      0 0 0 2rpx rgba(123, 47, 255, 0.2),
+      0 8rpx 32rpx rgba(0, 0, 0, 0.12),
+      0 0 40rpx rgba(123, 47, 255, 0.15),
+      inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
+  }
   50% {
-    transform: translateY(-20rpx);
+    transform: translateY(-4rpx);
+    box-shadow:
+      0 0 0 2rpx rgba(123, 47, 255, 0.3),
+      0 12rpx 40rpx rgba(0, 0, 0, 0.15),
+      0 0 50rpx rgba(123, 47, 255, 0.25),
+      inset 0 1rpx 0 rgba(255, 255, 255, 0.8);
   }
 }
 
-.app-name {
-  font-size: 56rpx;
-  font-weight: 900;
-  color: #ffffff;
-  margin-bottom: 20rpx;
-  text-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.2);
-}
-
-.app-slogan {
-  font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.9);
-  font-weight: 500;
-}
-
-/* ===== 功能介绍 ===== */
-.features-section {
-  width: 100%;
-  margin-bottom: 80rpx;
-}
-
-.feature-item {
-  display: flex;
-  align-items: center;
-  padding: 30rpx;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(20rpx);
-  border-radius: 24rpx;
-  margin-bottom: 20rpx;
-  border: 2rpx solid rgba(255, 255, 255, 0.2);
-}
-
-.feature-icon {
-  font-size: 48rpx;
-  margin-right: 24rpx;
-}
-
-.feature-text {
-  font-size: 30rpx;
-  color: #ffffff;
-  font-weight: 600;
-}
-
-/* ===== 登录区域 ===== */
-.login-section {
-  width: 100%;
-  margin-bottom: 40rpx;
-}
-
+/* 登录按钮 */
 .login-btn {
-  width: 100%;
+  width: 500rpx;
   height: 100rpx;
-  background: #ffffff;
-  border-radius: 50rpx;
+  background: #FFFFFF;
+  border: 3rpx solid #000000;
+  border-radius: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 15rpx;
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.15);
-  border: none;
   margin-bottom: 30rpx;
+  animation: fadeInUp 1.2s ease-out 0.4s both;
+  transition: all 0.3s;
 }
 
 .login-btn::after {
@@ -100,58 +212,72 @@
 }
 
 .login-btn:active {
-  transform: scale(0.98);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+  background: #000000;
 }
 
-.login-icon {
-  font-size: 40rpx;
-  color: #10B981;
-  font-weight: bold;
+.login-btn:active .btn-text {
+  color: #FFFFFF;
 }
 
-.login-text {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #1f2937;
+.btn-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #000000;
+  letter-spacing: 2rpx;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: color 0.3s;
 }
 
+/* 隐私提示 */
 .privacy-tips {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
+  gap: 8rpx;
+  margin-bottom: 40rpx;
+  animation: fadeIn 1.4s ease-out 0.6s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .tips-text {
   font-size: 22rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: #999999;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .tips-link {
   font-size: 22rpx;
-  color: #ffffff;
-  font-weight: bold;
+  color: #000000;
   text-decoration: underline;
-  margin: 0 5rpx;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* ===== 跳过登录 ===== */
-.skip-section {
-  width: 100%;
-  display: flex;
-  justify-content: center;
+/* 跳过按钮 */
+.skip-wrapper {
+  animation: fadeIn 1.6s ease-out 0.8s both;
 }
 
 .skip-btn {
-  font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.9);
+  font-size: 26rpx;
+  font-weight: 500;
+  color: #999999;
+  letter-spacing: 1rpx;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   padding: 20rpx 40rpx;
-  border-radius: 999rpx;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10rpx);
+  border-bottom: 2rpx solid transparent;
+  transition: all 0.3s;
 }
 
 .skip-btn:active {
-  background: rgba(255, 255, 255, 0.2);
+  color: #000000;
+  border-bottom-color: #000000;
 }

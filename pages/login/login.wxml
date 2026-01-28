@@ -1,52 +1,88 @@
 <!--pages/login/login.wxml-->
 <view class="login-container">
 
-  <!-- Logo 区域 -->
-  <view class="logo-section">
-    <view class="logo-icon">🤖</view>
-    <text class="app-name">谁是人机?</text>
-    <text class="app-slogan">挑战你的AI识别能力</text>
+  <!-- 弹幕背景 -->
+  <view class="danmu-container">
+    <!-- 第一行弹幕 -->
+    <view class="danmu-row danmu-row-1">
+      <text class="danmu-item">这个一看就是AI写的</text>
+      <text class="danmu-item">真人能写出这种文案吗？</text>
+      <text class="danmu-item">AI的痕迹太明显了</text>
+      <text class="danmu-item">我觉得是真人</text>
+      <text class="danmu-item">连续猜对10个了！</text>
+    </view>
+
+    <!-- 第二行弹幕 -->
+    <view class="danmu-row danmu-row-2">
+      <text class="danmu-item">这个图片细节不对劲</text>
+      <text class="danmu-item">人类的情感表达更自然</text>
+      <text class="danmu-item">AI生成的文字太完美了</text>
+      <text class="danmu-item">手指画得不对</text>
+      <text class="danmu-item">这段话逻辑有问题</text>
+    </view>
+
+    <!-- 第三行弹幕 -->
+    <view class="danmu-row danmu-row-3">
+      <text class="danmu-item">准确率已经90%了</text>
+      <text class="danmu-item">AI的套路我太熟了</text>
+      <text class="danmu-item">这次肯定是真人</text>
+      <text class="danmu-item">文字风格太统一</text>
+      <text class="danmu-item">细节决定真假</text>
+    </view>
+
+    <!-- 第四行弹幕 -->
+    <view class="danmu-row danmu-row-4">
+      <text class="danmu-item">光影处理有问题</text>
+      <text class="danmu-item">真人不会这么写</text>
+      <text class="danmu-item">AI味太重了</text>
+      <text class="danmu-item">这个必须是人类</text>
+      <text class="danmu-item">连对5次了！</text>
+    </view>
+
+    <!-- 第五行弹幕 -->
+    <view class="danmu-row danmu-row-5">
+      <text class="danmu-item">背景细节露馅了</text>
+      <text class="danmu-item">情感表达太机械</text>
+      <text class="danmu-item">这是真人的笔触</text>
+      <text class="danmu-item">AI生成无疑</text>
+      <text class="danmu-item">人类的随机性</text>
+    </view>
   </view>
 
-  <!-- 功能介绍 -->
-  <view class="features-section">
-    <view class="feature-item">
-      <text class="feature-icon">🎯</text>
-      <text class="feature-text">判定AI生成内容</text>
+  <!-- 主内容区域 -->
+  <view class="content-section">
+    <!-- 标题 -->
+    <view class="title-wrapper">
+      <image class="title-image" src="/images/title.svg" mode="widthFix"></image>
     </view>
-    <view class="feature-item">
-      <text class="feature-icon">🏆</text>
-      <text class="feature-text">挑战全网排行榜</text>
-    </view>
-    <view class="feature-item">
-      <text class="feature-icon">📊</text>
-      <text class="feature-text">追踪个人成长</text>
-    </view>
-  </view>
 
-  <!-- 登录按钮 -->
-  <view class="login-section">
+    <!-- Slogan -->
+    <view class="slogan-wrapper">
+      <text class="slogan">在数字迷雾中，寻找唯一的真相。</text>
+    </view>
+
+    <!-- 登录按钮 -->
     <button
       class="login-btn"
       bindtap="handleWxLogin"
       loading="{{loading}}"
       disabled="{{loading}}"
     >
-      <text class="login-icon">✓</text>
-      <text class="login-text">{{loading ? '登录中...' : '微信一键登录'}}</text>
+      <text class="btn-text">{{loading ? '验证中...' : '微信号一键登录'}}</text>
     </button>
 
+    <!-- 隐私提示 -->
     <view class="privacy-tips">
       <text class="tips-text">登录即表示同意</text>
-      <text class="tips-link" bindtap="showPrivacy">《用户协议》</text>
+      <text class="tips-link" bindtap="showPrivacy">用户协议</text>
       <text class="tips-text">和</text>
-      <text class="tips-link" bindtap="showPrivacy">《隐私政策》</text>
+      <text class="tips-link" bindtap="showPrivacy">隐私政策</text>
     </view>
-  </view>
 
-  <!-- 跳过登录 -->
-  <view class="skip-section">
-    <text class="skip-btn" bindtap="handleSkip">暂不登录，先看看</text>
+    <!-- 跳过按钮 -->
+    <view class="skip-wrapper">
+      <text class="skip-btn" bindtap="handleSkip">暂不登录，先体验</text>
+    </view>
   </view>
 
 </view>

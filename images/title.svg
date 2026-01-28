@@ -1,0 +1,24 @@
+<svg viewBox="0 0 380 120" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Binary pattern for the "人" character -->
+    <pattern id="binaryPattern" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+      <rect width="30" height="30" fill="black" />
+      <text x="2" y="8" font-family="monospace" font-size="6" fill="white" opacity="0.9">01</text>
+      <text x="2" y="15" font-family="monospace" font-size="6" fill="white" opacity="0.9">10</text>
+      <text x="2" y="22" font-family="monospace" font-size="6" fill="white" opacity="0.9">01</text>
+      <text x="2" y="29" font-family="monospace" font-size="6" fill="white" opacity="0.9">10</text>
+    </pattern>
+  </defs>
+
+  <!-- Main text with italic/skew effect, properly centered -->
+  <g font-family="PingFang SC, -apple-system, sans-serif" font-weight="900" font-size="80" transform="skewX(-8)">
+    <!-- "谁是" in black -->
+    <text x="30" y="80" fill="black">谁是</text>
+
+    <!-- "人" with binary pattern -->
+    <text x="190" y="80" fill="url(#binaryPattern)">人</text>
+
+    <!-- "机" in black -->
+    <text x="270" y="80" fill="black">机</text>
+  </g>
+</svg>
