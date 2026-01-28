@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule as NestScheduleModule } from '@nestjs/schedule';
 import { ContentModule } from './content/content.module';
 import { UserModule } from './user/user.module';
 import { JudgmentModule } from './judgment/judgment.module';
+import { AchievementModule } from './achievement/achievement.module';
+import { ScheduleModule } from './schedule/schedule.module';
 import { HealthController } from './health.controller';
 import { ProxyController } from './proxy.controller';
 
@@ -13,6 +16,7 @@ import { ProxyController } from './proxy.controller';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    NestScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
@@ -32,6 +36,8 @@ import { ProxyController } from './proxy.controller';
     ContentModule,
     UserModule,
     JudgmentModule,
+    AchievementModule,
+    ScheduleModule,
   ],
   controllers: [HealthController, ProxyController],
 })
