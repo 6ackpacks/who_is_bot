@@ -367,6 +367,60 @@ function updateUserInfo(userId, data) {
   });
 }
 
+/**
+ * 获取评论列表
+ */
+function getComments(params) {
+  return cloudRequest({
+    path: '/comments',
+    method: 'GET',
+    data: {
+      contentId: params.contentId
+    }
+  });
+}
+
+/**
+ * 创建评论
+ */
+function createComment(data) {
+  return cloudRequest({
+    path: '/comments',
+    method: 'POST',
+    data: {
+      contentId: data.contentId,
+      userId: data.userId,
+      guestId: data.guestId,
+      content: data.content,
+      parentId: data.parentId
+    }
+  });
+}
+
+/**
+ * 点赞评论
+ */
+function likeComment(commentId) {
+  return cloudRequest({
+    path: `/comments/${commentId}/like`,
+    method: 'POST'
+  });
+}
+
+/**
+ * 删除评论
+ */
+function deleteComment(data) {
+  return cloudRequest({
+    path: `/comments/${data.commentId}`,
+    method: 'DELETE',
+    data: {
+      userId: data.userId,
+      guestId: data.guestId
+    }
+  });
+}
+
 module.exports = {
   request,
   cloudRequest,
@@ -377,5 +431,9 @@ module.exports = {
   wxLogin,
   getUserInfo,
   updateUserInfo,
+  getComments,
+  createComment,
+  likeComment,
+  deleteComment,
   API_CONFIG
 };

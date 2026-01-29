@@ -399,6 +399,213 @@
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
+/* ===== 评论区域 ===== */
+.comments-section {
+  margin-bottom: 40rpx;
+}
+
+.comments-header {
+  margin-bottom: 20rpx;
+}
+
+.comments-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #000000;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+/* 评论输入框 */
+.comment-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 30rpx;
+  background: #F8F9FA;
+  border-radius: 48rpx;
+  padding: 8rpx 8rpx 8rpx 24rpx;
+}
+
+.comment-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #1F2937;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  min-height: 64rpx;
+  line-height: 64rpx;
+}
+
+.comment-submit-btn {
+  padding: 16rpx 32rpx;
+  background: #000000;
+  color: #FFFFFF;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  line-height: 1;
+}
+
+.comment-submit-btn::after {
+  border: none;
+}
+
+.comment-submit-btn:active {
+  background: #1F2937;
+}
+
+/* 评论列表 */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.empty-comments {
+  padding: 60rpx 0;
+  text-align: center;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #9CA3AF;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+/* 评论项 */
+.comment-item {
+  display: flex;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #F8F9FA;
+  border-radius: 16rpx;
+}
+
+.comment-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: #E5E7EB;
+}
+
+.comment-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.comment-nickname {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1F2937;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.comment-level {
+  font-size: 22rpx;
+  color: #FFFFFF;
+  background: #3B82F6;
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.comment-time {
+  font-size: 24rpx;
+  color: #9CA3AF;
+  margin-left: auto;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.comment-content {
+  font-size: 28rpx;
+  line-height: 1.6;
+  color: #374151;
+  margin-bottom: 16rpx;
+  word-wrap: break-word;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+/* 评论操作按钮 */
+.comment-actions {
+  display: flex;
+  gap: 32rpx;
+  align-items: center;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 0;
+}
+
+.action-icon {
+  font-size: 32rpx;
+  line-height: 1;
+}
+
+.action-text {
+  font-size: 24rpx;
+  color: #6B7280;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.action-btn:active .action-text {
+  color: #000000;
+}
+
+/* 回复列表 */
+.replies-list {
+  margin-top: 16rpx;
+  padding-left: 24rpx;
+  border-left: 4rpx solid #E5E7EB;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.reply-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+  font-size: 26rpx;
+  line-height: 1.5;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.reply-author {
+  color: #3B82F6;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.reply-content {
+  color: #374151;
+  flex: 1;
+  word-wrap: break-word;
+}
+
+.reply-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.reply-likes {
+  font-size: 22rpx;
+  color: #9CA3AF;
+}
+
 /* ===== 底部按钮 ===== */
 .bottom-actions {
   display: flex;

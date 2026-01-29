@@ -16,11 +16,29 @@ Page({
     loading: false,
     error: null, // 错误信息
     judgeButtonDisabled: false, // 防止重复点击
-    videoPlaying: true // 视频播放状态
+    videoPlaying: true, // 视频播放状态
+    // 评论相关
+    comments: [],
+    commentInput: '',
+    replyingTo: null,
+    userId: null,
+    guestId: null
   },
 
   onLoad() {
     this.loadFeedData();
+    this.loadUserInfo();
+  },
+
+  // 加载用户信息
+  loadUserInfo() {
+    const userId = wx.getStorageSync('userId');
+    const guestId = wx.getStorageSync('guestId');
+
+    this.setData({
+      userId: userId || null,
+      guestId: guestId || null
+    });
   },
 
   // 从后端加载数据
@@ -229,6 +247,9 @@ Page({
         showAnimation: true
       });
 
+      // 加载评论
+      this.loadComments();
+
       // 动画结束后重置
       setTimeout(() => {
         this.setData({
@@ -350,5 +371,164 @@ Page({
   preventTap(e) {
     // 阻止事件冒泡到视频容器
     return false;
+  },
+
+  // ==================== 评论功能 ====================
+
+  // 加载评论列表
+  loadComments() {
+    if (!this.data.currentItem || !this.data.currentItem.id) {
+      return;
+    }
+
+    api.getComments({ contentId: this.data.currentItem.id })
+      .then(res => {
+        console.log('获取评论成功', res);
+        if (res.success && res.data) {
+          this.setData({
+            comments: res.data.comments || []
+          });
+        }
+      })
+      .catch(err => {
+        console.error('获取评论失败', err);
+      });
+  },
+
+  // 评论输入
+  onCommentInput(e) {
+    this.setData({
+      commentInput: e.detail.value
+    });
+  },
+
+  // 发表评论
+  submitComment() {
+    const { commentInput, currentItem, userId, guestId, replyingTo } = this.data;
+
+    if (!commentInput.trim()) {
+      wx.showToast({
+        title: '请输入评论内容',
+        icon: 'none'
+      });
+      return;
+    }
+
+    if (!userId && !guestId) {
+      wx.showToast({
+        title: '请先登录',
+        icon: 'none'
+      });
+      return;
+    }
+
+    const commentData = {
+      contentId: currentItem.id,
+      content: commentInput.trim()
+    };
+
+    if (userId) {
+      commentData.userId = userId;
+    } else {
+      commentData.guestId = guestId;
+    }
+
+    if (replyingTo) {
+      commentData.parentId = replyingTo.id;
+    }
+
+    api.createComment(commentData)
+      .then(res => {
+        console.log('评论成功', res);
+        wx.showToast({
+          title: '评论成功',
+          icon: 'success'
+        });
+
+        this.setData({
+          commentInput: '',
+          replyingTo: null
+        });
+
+        // 刷新评论列表
+        this.loadComments();
+      })
+      .catch(err => {
+        console.error('评论失败', err);
+        wx.showToast({
+          title: err.message || '评论失败',
+          icon: 'none'
+        });
+      });
+  },
+
+  // 点赞评论
+  onLikeComment(e) {
+    const commentId = e.currentTarget.dataset.id;
+
+    api.likeComment(commentId)
+      .then(res => {
+        console.log('点赞成功', res);
+        // 刷新评论列表
+        this.loadComments();
+      })
+      .catch(err => {
+        console.error('点赞失败', err);
+      });
+  },
+
+  // 回复评论
+  onReplyComment(e) {
+    const comment = e.currentTarget.dataset.comment;
+    this.setData({
+      replyingTo: comment
+    });
+
+    // 聚焦输入框
+    wx.showToast({
+      title: '回复 ' + (comment.user ? comment.user.nickname : '游客'),
+      icon: 'none',
+      duration: 1000
+    });
+  },
+
+  // 删除评论
+  onDeleteComment(e) {
+    const commentId = e.currentTarget.dataset.id;
+    const { userId, guestId } = this.data;
+
+    wx.showModal({
+      title: '确认删除',
+      content: '确定要删除这条评论吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const deleteData = { commentId };
+          if (userId) {
+            deleteData.userId = userId;
+          } else if (guestId) {
+            deleteData.guestId = guestId;
+          }
+
+          api.deleteComment(deleteData)
+            .then(res => {
+              console.log('删除成功', res);
+              wx.showToast({
+                title: '删除成功',
+                icon: 'success'
+              });
+
+              // 刷新评论列表
+              this.loadComments();
+            })
+            .catch(err => {
+              console.error('删除失败', err);
+              wx.showToast({
+                title: err.message || '删除失败',
+                icon: 'none'
+              });
+            });
+        }
+      }
+    });
   }
 });
