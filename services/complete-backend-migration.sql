@@ -34,26 +34,28 @@ CREATE TABLE IF NOT EXISTS user_achievements (
 );
 
 -- 4. 优化数据库索引
+-- 注意：如果索引已存在会报错，但不影响后续执行，可以忽略这些错误
+
 -- judgments 表索引（已在之前的迁移中创建，这里确保存在）
-CREATE INDEX IF NOT EXISTS idx_judgments_user_id ON judgments(user_id);
-CREATE INDEX IF NOT EXISTS idx_judgments_content_id ON judgments(content_id);
-CREATE INDEX IF NOT EXISTS idx_judgments_created_at ON judgments(created_at);
-CREATE INDEX IF NOT EXISTS idx_judgments_guest_id ON judgments(guest_id);
+CREATE INDEX idx_judgments_user_id ON judgments(user_id);
+CREATE INDEX idx_judgments_content_id ON judgments(content_id);
+CREATE INDEX idx_judgments_created_at ON judgments(created_at);
+CREATE INDEX idx_judgments_guest_id ON judgments(guest_id);
 
 -- users 表索引优化
-CREATE INDEX IF NOT EXISTS idx_users_total_judged ON users(total_judged);
-CREATE INDEX IF NOT EXISTS idx_users_accuracy ON users(accuracy);
-CREATE INDEX IF NOT EXISTS idx_users_weekly_judged ON users(weekly_judged);
-CREATE INDEX IF NOT EXISTS idx_users_level ON users(level);
+CREATE INDEX idx_users_total_judged ON users(total_judged);
+CREATE INDEX idx_users_accuracy ON users(accuracy);
+CREATE INDEX idx_users_weekly_judged ON users(weekly_judged);
+CREATE INDEX idx_users_level ON users(level);
 
 -- content 表索引优化
-CREATE INDEX IF NOT EXISTS idx_content_total_votes ON content(total_votes);
-CREATE INDEX IF NOT EXISTS idx_content_is_bot ON content(is_bot);
-CREATE INDEX IF NOT EXISTS idx_content_created_at ON content(created_at);
+CREATE INDEX idx_content_total_votes ON content(total_votes);
+CREATE INDEX idx_content_is_bot ON content(is_bot);
+CREATE INDEX idx_content_created_at ON content(created_at);
 
 -- user_achievements 表索引
-CREATE INDEX IF NOT EXISTS idx_user_achievements_user_id ON user_achievements(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_achievements_achievement_id ON user_achievements(achievement_id);
+CREATE INDEX idx_user_achievements_user_id ON user_achievements(user_id);
+CREATE INDEX idx_user_achievements_achievement_id ON user_achievements(achievement_id);
 
 -- 5. 插入初始成就数据
 INSERT INTO achievements (id, name, description, icon, type, requirement_value, points) VALUES
