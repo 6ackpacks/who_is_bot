@@ -22,7 +22,8 @@ Page({
     commentInput: '',
     replyingTo: null,
     userId: null,
-    guestId: null
+    guestId: null,
+    showComments: false
   },
 
   onLoad() {
@@ -362,8 +363,19 @@ Page({
 
   // 返回主页
   goHome() {
-    wx.switchTab({
-      url: '/pages/index/index'
+    // 重新加载当前页面，回到判定状态
+    this.setData({
+      currentIndex: 0,
+      currentItem: this.data.displayItems[0],
+      viewState: 'judging',
+      showDetails: false,
+      userChoice: null,
+      isCorrect: false,
+      judgeButtonDisabled: false,
+      comments: [],
+      commentInput: '',
+      replyingTo: null,
+      showComments: false
     });
   },
 
@@ -374,6 +386,13 @@ Page({
   },
 
   // ==================== 评论功能 ====================
+
+  // 切换评论显示
+  toggleComments() {
+    this.setData({
+      showComments: !this.data.showComments
+    });
+  },
 
   // 加载评论列表
   loadComments() {

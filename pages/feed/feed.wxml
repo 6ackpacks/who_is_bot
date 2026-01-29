@@ -136,81 +136,101 @@
 
       <!-- 评论区域 -->
       <view class="comments-section">
-        <view class="comments-header">
-          <text class="comments-title">评论 ({{comments.length}})</text>
-        </view>
-
-        <!-- 评论输入框 -->
-        <view class="comment-input-wrapper">
-          <input
-            class="comment-input"
-            placeholder="{{replyingTo ? '回复 ' + replyingTo.user.nickname : '说点什么...'}}"
-            value="{{commentInput}}"
-            bindinput="onCommentInput"
-            maxlength="500"
-            confirm-type="send"
-            bindconfirm="submitComment"
-          />
-          <button class="comment-submit-btn" bindtap="submitComment">发送</button>
-        </view>
-
-        <!-- 评论列表 -->
-        <view class="comments-list">
-          <view wx:if="{{comments.length === 0}}" class="empty-comments">
-            <text class="empty-text">暂无评论，快来抢沙发吧~</text>
+        <!-- 评论预览/入口 -->
+        <view class="comments-preview" bindtap="toggleComments">
+          <view class="comments-preview-header">
+            <text class="comments-preview-title">💬 看大家评论</text>
+            <view class="comments-preview-info">
+              <text class="comments-count">{{comments.length}}条评论</text>
+              <text class="expand-icon">{{showComments ? '▲' : '▼'}}</text>
+            </view>
           </view>
 
-          <block wx:for="{{comments}}" wx:key="id">
-            <view class="comment-item">
-              <!-- 用户头像 -->
-              <image
-                class="comment-avatar"
-                src="{{item.user ? item.user.avatar : '/images/default-avatar.png'}}"
-                mode="aspectFill"
-              />
+          <!-- 显示前2条评论预览 -->
+          <view wx:if="{{!showComments && comments.length > 0}}" class="comments-preview-list">
+            <block wx:for="{{comments}}" wx:key="id" wx:if="{{index < 2}}">
+              <view class="comment-preview-item">
+                <text class="preview-author">{{item.user ? item.user.nickname : '游客'}}</text>
+                <text class="preview-content">: {{item.content}}</text>
+              </view>
+            </block>
+          </view>
+        </view>
 
-              <view class="comment-main">
-                <!-- 用户信息和时间 -->
-                <view class="comment-header">
-                  <text class="comment-nickname">{{item.user ? item.user.nickname : '游客'}}</text>
-                  <text wx:if="{{item.user}}" class="comment-level">Lv.{{item.user.level}}</text>
-                  <text class="comment-time">{{item.createdAt}}</text>
-                </view>
+        <!-- 完整评论区域（展开后显示） -->
+        <view wx:if="{{showComments}}" class="comments-full">
+          <!-- 评论输入框 -->
+          <view class="comment-input-wrapper">
+            <input
+              class="comment-input"
+              placeholder="{{replyingTo ? '回复 ' + replyingTo.user.nickname : '说点什么...'}}"
+              value="{{commentInput}}"
+              bindinput="onCommentInput"
+              maxlength="500"
+              confirm-type="send"
+              bindconfirm="submitComment"
+            />
+            <button class="comment-submit-btn" bindtap="submitComment">发送</button>
+          </view>
 
-                <!-- 评论内容 -->
-                <text class="comment-content">{{item.content}}</text>
+          <!-- 评论列表 -->
+          <view class="comments-list">
+            <view wx:if="{{comments.length === 0}}" class="empty-comments">
+              <text class="empty-text">暂无评论，快来抢沙发吧~</text>
+            </view>
 
-                <!-- 操作按钮 -->
-                <view class="comment-actions">
-                  <view class="action-btn" bindtap="onLikeComment" data-id="{{item.id}}">
-                    <text class="action-icon">👍</text>
-                    <text class="action-text">{{item.likes > 0 ? item.likes : '赞'}}</text>
+            <block wx:for="{{comments}}" wx:key="id">
+              <view class="comment-item">
+                <!-- 用户头像 -->
+                <image
+                  class="comment-avatar"
+                  src="{{item.user ? item.user.avatar : '/images/default-avatar.png'}}"
+                  mode="aspectFill"
+                />
+
+                <view class="comment-main">
+                  <!-- 用户信息和时间 -->
+                  <view class="comment-header">
+                    <text class="comment-nickname">{{item.user ? item.user.nickname : '游客'}}</text>
+                    <text wx:if="{{item.user}}" class="comment-level">Lv.{{item.user.level}}</text>
+                    <text class="comment-time">{{item.createdAt}}</text>
                   </view>
-                  <view class="action-btn" bindtap="onReplyComment" data-comment="{{item}}">
-                    <text class="action-icon">💬</text>
-                    <text class="action-text">回复</text>
-                  </view>
-                  <view wx:if="{{item.userId === userId}}" class="action-btn" bindtap="onDeleteComment" data-id="{{item.id}}">
-                    <text class="action-icon">🗑️</text>
-                    <text class="action-text">删除</text>
-                  </view>
-                </view>
 
-                <!-- 回复列表 -->
-                <view wx:if="{{item.replies && item.replies.length > 0}}" class="replies-list">
-                  <block wx:for="{{item.replies}}" wx:key="id" wx:for-item="reply">
-                    <view class="reply-item">
-                      <text class="reply-author">{{reply.user ? reply.user.nickname : '游客'}}</text>
-                      <text class="reply-content">: {{reply.content}}</text>
-                      <view class="reply-actions">
-                        <text class="reply-likes" wx:if="{{reply.likes > 0}}">👍 {{reply.likes}}</text>
-                      </view>
+                  <!-- 评论内容 -->
+                  <text class="comment-content">{{item.content}}</text>
+
+                  <!-- 操作按钮 -->
+                  <view class="comment-actions">
+                    <view class="action-btn" bindtap="onLikeComment" data-id="{{item.id}}">
+                      <text class="action-icon">👍</text>
+                      <text class="action-text">{{item.likes > 0 ? item.likes : '赞'}}</text>
                     </view>
-                  </block>
+                    <view class="action-btn" bindtap="onReplyComment" data-comment="{{item}}">
+                      <text class="action-icon">💬</text>
+                      <text class="action-text">回复</text>
+                    </view>
+                    <view wx:if="{{item.userId === userId}}" class="action-btn" bindtap="onDeleteComment" data-id="{{item.id}}">
+                      <text class="action-icon">🗑️</text>
+                      <text class="action-text">删除</text>
+                    </view>
+                  </view>
+
+                  <!-- 回复列表 -->
+                  <view wx:if="{{item.replies && item.replies.length > 0}}" class="replies-list">
+                    <block wx:for="{{item.replies}}" wx:key="id" wx:for-item="reply">
+                      <view class="reply-item">
+                        <text class="reply-author">{{reply.user ? reply.user.nickname : '游客'}}</text>
+                        <text class="reply-content">: {{reply.content}}</text>
+                        <view class="reply-actions">
+                          <text class="reply-likes" wx:if="{{reply.likes > 0}}">👍 {{reply.likes}}</text>
+                        </view>
+                      </view>
+                    </block>
+                  </view>
                 </view>
               </view>
-            </view>
-          </block>
+            </block>
+          </view>
         </view>
       </view>
 
