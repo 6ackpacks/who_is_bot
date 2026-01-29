@@ -1,8 +1,8 @@
 -- ============================================
 -- Who-is-the-Bot 数据库重建脚本（保留 content 表）
--- 版本: 2.1
+-- 版本: 2.2
 -- 日期: 2026-01-29
--- 说明: 重建除 content 表外的所有表
+-- 说明: 重建除 content 表外的所有表，包含评论功能
 -- ============================================
 
 -- 设置字符集
@@ -19,6 +19,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- 2. 删除现有表（保留 content 表）
 -- ============================================
 
+DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS user_achievements;
 DROP TABLE IF EXISTS achievements;
 DROP TABLE IF EXISTS judgments;
@@ -153,7 +154,34 @@ INSERT INTO achievements (id, name, description, icon, type, requirement_value, 
   ('ach_streak_50', '连胜传奇', '连续答对50题', 'medal', 'streak', 50, 200);
 
 -- ============================================
--- 10. 验证建表结果
+-- 10. 创建 comments 表（评论功能）
+-- ============================================
+
+CREATE TABLE comments (
+  id VARCHAR(36) PRIMARY KEY,
+  content_id VARCHAR(36) NOT NULL,
+  user_id VARCHAR(36),
+  guest_id VARCHAR(50),
+  content TEXT NOT NULL,
+  likes INT NOT NULL DEFAULT 0,
+  parent_id VARCHAR(36),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+  FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- comments 表索引
+CREATE INDEX idx_comments_content_id ON comments(content_id);
+CREATE INDEX idx_comments_user_id ON comments(user_id);
+CREATE INDEX idx_comments_guest_id ON comments(guest_id);
+CREATE INDEX idx_comments_parent_id ON comments(parent_id);
+CREATE INDEX idx_comments_created_at ON comments(created_at);
+
+-- ============================================
+-- 11. 验证建表结果
 -- ============================================
 
 SELECT '=== 数据库重建完成（content 表已保留） ===' AS message;
@@ -175,6 +203,6 @@ SELECT
   INDEX_LENGTH
 FROM INFORMATION_SCHEMA.TABLES
 WHERE TABLE_SCHEMA = DATABASE()
-  AND TABLE_NAME IN ('users', 'content', 'judgments', 'achievements', 'user_achievements');
+  AND TABLE_NAME IN ('users', 'content', 'judgments', 'achievements', 'user_achievements', 'comments');
 
 SELECT '=== 重建完成，content 数据已保留 ===' AS message;

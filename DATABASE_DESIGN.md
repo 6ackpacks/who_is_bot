@@ -152,6 +152,37 @@
 
 ---
 
+### 6. comments 表（评论）
+
+**表名**: `comments`
+
+| 字段名 | 数据类型 | 约束 | 默认值 | 说明 |
+|--------|---------|------|--------|------|
+| id | VARCHAR(36) | PRIMARY KEY | UUID | 评论ID |
+| content_id | VARCHAR(36) | NOT NULL, FK | - | 内容ID |
+| user_id | VARCHAR(36) | NULL, FK | NULL | 用户ID（游客为NULL） |
+| guest_id | VARCHAR(50) | NULL | NULL | 游客ID |
+| content | TEXT | NOT NULL | - | 评论内容 |
+| likes | INT | NOT NULL | 0 | 点赞数 |
+| parent_id | VARCHAR(36) | NULL, FK | NULL | 父评论ID（支持回复） |
+| created_at | TIMESTAMP | NOT NULL | CURRENT_TIMESTAMP | 创建时间 |
+| updated_at | TIMESTAMP | NOT NULL | CURRENT_TIMESTAMP ON UPDATE | 更新时间 |
+
+**外键**:
+- FOREIGN KEY (content_id) REFERENCES content(id) ON DELETE CASCADE
+- FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+- FOREIGN KEY (parent_id) REFERENCES comments(id) ON DELETE CASCADE
+
+**索引**:
+- PRIMARY KEY: `id`
+- INDEX: `idx_comments_content_id` (content_id)
+- INDEX: `idx_comments_user_id` (user_id)
+- INDEX: `idx_comments_guest_id` (guest_id)
+- INDEX: `idx_comments_parent_id` (parent_id)
+- INDEX: `idx_comments_created_at` (created_at)
+
+---
+
 ## 🔄 表关系图
 
 ```
@@ -159,6 +190,9 @@ users (1) ----< (N) judgments
 content (1) ----< (N) judgments
 users (1) ----< (N) user_achievements
 achievements (1) ----< (N) user_achievements
+content (1) ----< (N) comments
+users (1) ----< (N) comments
+comments (1) ----< (N) comments (自关联，支持回复)
 ```
 
 ---
@@ -208,8 +242,11 @@ achievements (1) ----< (N) user_achievements
 | userChoice | user_choice |
 | isCorrect | is_correct |
 | guestId | guest_id |
-| createdAt | createdAt (保持一致) |
-| updatedAt | updatedAt (保持一致) |
+| contentId | content_id |
+| userId | user_id |
+| parentId | parent_id |
+| createdAt | createdAt / created_at |
+| updatedAt | updatedAt / updated_at |
 
 **其他字段直接使用 camelCase**:
 - totalJudged
@@ -259,6 +296,7 @@ DB_NAME=who_is_the_bot
 - **users 表**: 按 totalJudged、accuracy、weeklyJudged、level 查询频繁
 - **content 表**: 按 total_votes、is_bot、createdAt 查询频繁
 - **judgments 表**: 按 user_id、content_id、created_at 查询频繁
+- **comments 表**: 按 content_id、user_id、created_at 查询频繁
 
 ### 2. 分区建议（可选）
 
@@ -277,10 +315,10 @@ ALTER TABLE judgments PARTITION BY RANGE (YEAR(created_at) * 100 + MONTH(created
 
 ```sql
 -- 优化表
-OPTIMIZE TABLE users, content, judgments, achievements, user_achievements;
+OPTIMIZE TABLE users, content, judgments, achievements, user_achievements, comments;
 
 -- 分析表
-ANALYZE TABLE users, content, judgments, achievements, user_achievements;
+ANALYZE TABLE users, content, judgments, achievements, user_achievements, comments;
 ```
 
 ---

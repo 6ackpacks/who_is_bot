@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { JudgmentModule } from './judgment/judgment.module';
 import { AchievementModule } from './achievement/achievement.module';
 import { ScheduleModule } from './schedule/schedule.module';
+import { CommentModule } from './comment/comment.module';
 import { HealthController } from './health.controller';
 import { ProxyController } from './proxy.controller';
 
@@ -38,6 +39,7 @@ import { ProxyController } from './proxy.controller';
     JudgmentModule,
     AchievementModule,
     ScheduleModule,
+    CommentModule,
   ],
   controllers: [HealthController, ProxyController],
 })
