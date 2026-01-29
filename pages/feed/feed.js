@@ -22,8 +22,7 @@ Page({
     commentInput: '',
     replyingTo: null,
     userId: null,
-    guestId: null,
-    showComments: false
+    guestId: null
   },
 
   onLoad() {
@@ -374,8 +373,7 @@ Page({
       judgeButtonDisabled: false,
       comments: [],
       commentInput: '',
-      replyingTo: null,
-      showComments: false
+      replyingTo: null
     });
   },
 
@@ -386,13 +384,6 @@ Page({
   },
 
   // ==================== 评论功能 ====================
-
-  // 切换评论显示
-  toggleComments() {
-    this.setData({
-      showComments: !this.data.showComments
-    });
-  },
 
   // 加载评论列表
   loadComments() {
