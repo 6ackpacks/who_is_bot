@@ -32,13 +32,16 @@ Page({
 
   // 加载用户信息
   loadUserInfo() {
-    const userId = wx.getStorageSync('userId');
-    const guestId = wx.getStorageSync('guestId');
+    const auth = require('../../utils/auth.js');
+    const userId = auth.getUserId();
+    const guestId = auth.getOrCreateGuestId();
 
     this.setData({
       userId: userId || null,
-      guestId: guestId || null
+      guestId: guestId
     });
+
+    console.log('用户信息已加载:', { userId, guestId });
   },
 
   // 从后端加载数据
@@ -395,8 +398,19 @@ Page({
       .then(res => {
         console.log('获取评论成功', res);
         if (res.success && res.data) {
+          // 格式化评论时间
+          const timeUtil = require('../../utils/time.js');
+          const comments = res.data.comments.map(comment => ({
+            ...comment,
+            createdAt: timeUtil.formatRelativeTime(comment.createdAt),
+            replies: comment.replies ? comment.replies.map(reply => ({
+              ...reply,
+              createdAt: timeUtil.formatRelativeTime(reply.createdAt)
+            })) : []
+          }));
+
           this.setData({
-            comments: res.data.comments || []
+            comments: comments
           });
         }
       })

@@ -5,6 +5,7 @@ const STORAGE_KEYS = {
   USER_ID: 'user_id',
   USER_INFO: 'user_info',
   GUEST_MODE: 'guest_mode',
+  GUEST_ID: 'guest_id',
   LOGIN_TIME: 'login_time'
 };
 
@@ -190,6 +191,25 @@ function updateUserInfo(userInfo) {
 }
 
 /**
+ * 获取或创建游客ID
+ */
+function getOrCreateGuestId() {
+  try {
+    let guestId = wx.getStorageSync(STORAGE_KEYS.GUEST_ID);
+    if (!guestId) {
+      // 生成唯一的游客ID
+      guestId = 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      wx.setStorageSync(STORAGE_KEYS.GUEST_ID, guestId);
+      console.log('创建新的游客ID:', guestId);
+    }
+    return guestId;
+  } catch (err) {
+    console.error('获取游客ID失败:', err);
+    return 'guest_' + Date.now();
+  }
+}
+
+/**
  * 刷新 Token
  */
 function refreshToken() {
@@ -209,5 +229,6 @@ module.exports = {
   logout,
   checkLogin,
   updateUserInfo,
-  refreshToken
+  refreshToken,
+  getOrCreateGuestId
 };
