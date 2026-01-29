@@ -10,7 +10,13 @@ SET NAMES utf8mb4;
 SET CHARACTER SET utf8mb4;
 
 -- ============================================
--- 1. 删除现有表（保留 content 表）
+-- 1. 禁用外键检查
+-- ============================================
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ============================================
+-- 2. 删除现有表（保留 content 表）
 -- ============================================
 
 DROP TABLE IF EXISTS user_achievements;
@@ -21,7 +27,13 @@ DROP TABLE IF EXISTS users;
 -- content 表保留不删除！
 
 -- ============================================
--- 2. 创建 users 表
+-- 3. 启用外键检查
+-- ============================================
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+-- ============================================
+-- 4. 创建 users 表
 -- ============================================
 
 CREATE TABLE users (
@@ -51,7 +63,7 @@ CREATE INDEX idx_users_weekly_judged ON users(weeklyJudged);
 CREATE INDEX idx_users_level ON users(level);
 
 -- ============================================
--- 3. 确保 content 表有正确的字符集和索引
+-- 5. 确保 content 表有正确的字符集和索引
 -- ============================================
 
 -- 修改 content 表字符集（如果需要）
@@ -63,7 +75,7 @@ CREATE INDEX idx_content_is_bot ON content(is_bot);
 CREATE INDEX idx_content_created_at ON content(createdAt);
 
 -- ============================================
--- 4. 创建 judgments 表
+-- 6. 创建 judgments 表
 -- ============================================
 
 CREATE TABLE judgments (
@@ -86,7 +98,7 @@ CREATE INDEX idx_judgments_created_at ON judgments(created_at);
 CREATE INDEX idx_judgments_guest_id ON judgments(guest_id);
 
 -- ============================================
--- 5. 创建 achievements 表
+-- 7. 创建 achievements 表
 -- ============================================
 
 CREATE TABLE achievements (
@@ -101,7 +113,7 @@ CREATE TABLE achievements (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ============================================
--- 6. 创建 user_achievements 表
+-- 8. 创建 user_achievements 表
 -- ============================================
 
 CREATE TABLE user_achievements (
@@ -120,7 +132,7 @@ CREATE INDEX idx_user_achievements_user_id ON user_achievements(user_id);
 CREATE INDEX idx_user_achievements_achievement_id ON user_achievements(achievement_id);
 
 -- ============================================
--- 7. 插入初始成就数据
+-- 9. 插入初始成就数据
 -- ============================================
 
 INSERT INTO achievements (id, name, description, icon, type, requirement_value, points) VALUES
@@ -141,7 +153,7 @@ INSERT INTO achievements (id, name, description, icon, type, requirement_value, 
   ('ach_streak_50', '连胜传奇', '连续答对50题', 'medal', 'streak', 50, 200);
 
 -- ============================================
--- 8. 验证建表结果
+-- 10. 验证建表结果
 -- ============================================
 
 SELECT '=== 数据库重建完成（content 表已保留） ===' AS message;
