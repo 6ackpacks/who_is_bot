@@ -1,26 +1,16 @@
-/* components/icon/icon.wxss - Ant Design Icon Styles */
+/* components/icon/icon.wxss - Icon Styles */
 
 .antd-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   color: inherit;
   font-style: normal;
-  line-height: 0;
+  line-height: 1;
   text-align: center;
   text-transform: none;
-  vertical-align: -0.125em;
+  vertical-align: baseline;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.antd-icon-svg {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-  fill: currentColor;
-  overflow: hidden;
 }
 
 /* Size variants */
@@ -48,12 +38,3 @@
   font-size: 80rpx;
 }
 
-/* Interactive effect */
-.antd-icon-interactive {
-  cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.antd-icon-interactive:active {
-  transform: scale(0.9);
-}
