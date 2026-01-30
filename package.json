@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
-    "@nestjs/schedule": "^6.1.0"
+    "@nestjs/schedule": "^6.1.0",
+    "weui-miniprogram": "^1.5.6"
   }
 }
