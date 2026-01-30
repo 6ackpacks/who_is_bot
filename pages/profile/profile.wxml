@@ -24,7 +24,7 @@
       <view class="progress-section">
         <view class="progress-labels">
           <text class="progress-label-left">Lv.{{userInfo.level}}</text>
-          <text class="progress-label-right">Next: {{userInfo.nextLevel}}</text>
+          <text class="progress-label-right">下一级：{{userInfo.nextLevel}}</text>
         </view>
         <view class="progress-bar">
           <view class="progress-fill" style="width: {{userInfo.progress}}%"></view>
@@ -36,15 +36,15 @@
       <view class="stats-row">
         <view class="stat-item">
           <text class="stat-value">{{stats.totalJudged}}</text>
-          <text class="stat-label">TOTAL JUDGED</text>
+          <text class="stat-label">总判定</text>
         </view>
         <view class="stat-item stat-divider">
           <text class="stat-value stat-highlight">{{stats.accuracy}}%</text>
-          <text class="stat-label">ACCURACY</text>
+          <text class="stat-label">准确率</text>
         </view>
         <view class="stat-item">
           <text class="stat-value stat-streak">{{stats.streak}}</text>
-          <text class="stat-label">BEST STREAK</text>
+          <text class="stat-label">最佳连胜</text>
         </view>
       </view>
     </view>
@@ -59,7 +59,7 @@
       <view class="creator-card">
         <view class="creator-content">
           <view class="lock-icon-wrapper">
-            <text class="lock-icon">🔒</text>
+            <text class="icon icon-lock icon-xl"></text>
           </view>
           <text class="creator-title">上传通道未开启</text>
           <text class="creator-desc">想让大家看看你的高仿人机？</text>
@@ -70,6 +70,24 @@
       </view>
     </view>
 
+    <!-- 判定历史入口 -->
+    <view wx:if="{{isLoggedIn}}" class="history-section">
+      <view class="section-title">最近判定</view>
+
+      <view class="history-entry-card" bindtap="goToHistory">
+        <view class="entry-icon">
+          <text class="icon icon-chart icon-white"></text>
+        </view>
+        <view class="entry-content">
+          <text class="entry-title">查看判定历史</text>
+          <text class="entry-desc">查看你的所有判定记录和详情</text>
+        </view>
+        <view class="entry-arrow">
+          <text class="icon icon-right"></text>
+        </view>
+      </view>
+    </view>
+
     <!-- 我的成就 -->
     <view class="achievements-section">
       <view class="section-title">我的成就</view>
@@ -77,7 +95,7 @@
       <!-- 已获得成就 -->
       <view class="achievement-item achievement-unlocked">
         <view class="achievement-icon icon-unlocked">
-          <text class="icon-text">👁️</text>
+          <text class="icon icon-eye icon-white icon-lg"></text>
         </view>
         <view class="achievement-info">
           <view class="achievement-name">火眼金睛</view>
@@ -89,18 +107,20 @@
       <!-- 锁定成就 -->
       <view class="achievement-item achievement-locked">
         <view class="achievement-icon icon-locked">
-          <text class="icon-text">⚡</text>
+          <text class="icon icon-thunder icon-lg"></text>
         </view>
         <view class="achievement-info">
           <view class="achievement-name">闪电判官</view>
           <view class="achievement-desc">1分钟内完成10次正确判定</view>
         </view>
-        <text class="achievement-status status-locked">🔒</text>
+        <text class="achievement-status status-locked">
+          <text class="icon icon-lock icon-sm"></text>
+        </text>
       </view>
 
       <!-- 分享按钮 -->
       <button class="share-btn" bindtap="handleShare">
-        <text class="share-icon">🔗</text>
+        <text class="icon icon-link icon-white"></text>
         <text class="share-text">分享我的侦探名片</text>
       </button>
 

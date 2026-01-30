@@ -1,13 +1,26 @@
-/* pages/profile/profile.wxss - 增强版赛博侦探档案 */
+/* pages/profile/profile-enhanced.wxss - 增强版个人页面 */
 
+/* ===== 容器 ===== */
 .profile-container {
   width: 100%;
   min-height: 100vh;
-  background-color: #F8F9FA;
+  background: linear-gradient(180deg, #0A0E27 0%, #1A1F3A 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景装饰 */
+.profile-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
+    radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 .profile-scroll {
@@ -18,40 +31,63 @@
 
 /* ===== 个人信息头部 ===== */
 .profile-header {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20rpx);
   padding: 80rpx 40rpx 50rpx;
   margin-bottom: 40rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
-  animation: slideInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border-bottom: 2rpx solid rgba(59, 130, 246, 0.2);
+  position: relative;
+  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.profile-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent);
 }
 
 /* 头像 */
 .avatar-wrapper {
   margin-bottom: 30rpx;
-  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+  animation: scaleInBounce 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
 }
 
 .avatar-gradient {
   width: 180rpx;
   height: 180rpx;
   border-radius: 50%;
-  background: #FFFFFF;
-  padding: 8rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
+  padding: 6rpx;
+  box-shadow:
+    0 8rpx 32rpx rgba(59, 130, 246, 0.4),
+    0 0 60rpx rgba(59, 130, 246, 0.3);
+  position: relative;
+  animation: pulseGlow 3s ease-in-out infinite;
 }
 
-.avatar-gradient:active {
-  transform: scale(0.95);
+.avatar-gradient::before {
+  content: '';
+  position: absolute;
+  inset: -6rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3B82F6, #8B5CF6);
+  opacity: 0.5;
+  filter: blur(20rpx);
+  z-index: -1;
 }
 
 .avatar-image {
   width: 100%;
   height: 100%;
   border-radius: 50%;
+  border: 4rpx solid rgba(10, 14, 39, 0.8);
 }
 
 /* 用户名 */
@@ -59,11 +95,12 @@
   font-size: 48rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
+  color: #FFFFFF;
   margin-bottom: 20rpx;
   letter-spacing: -1rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  animation: fadeIn 0.5s ease-out 0.2s backwards;
+  text-shadow: 0 0 30rpx rgba(59, 130, 246, 0.6);
+  animation: fadeIn 0.6s ease-out 0.4s backwards;
 }
 
 /* 等级徽章 */
@@ -72,30 +109,22 @@
   align-items: center;
   gap: 12rpx;
   padding: 12rpx 28rpx;
-  background: #000000;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
   border-radius: 50rpx;
   margin-bottom: 40rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
-  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+  box-shadow:
+    0 4rpx 16rpx rgba(59, 130, 246, 0.4),
+    0 0 40rpx rgba(59, 130, 246, 0.3);
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
 }
 
 .level-dot {
   width: 12rpx;
   height: 12rpx;
   border-radius: 50%;
-  background: #3B82F6;
+  background: #FFFFFF;
   animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.2);
-  }
+  box-shadow: 0 0 10rpx rgba(255, 255, 255, 0.8);
 }
 
 .level-text {
@@ -110,7 +139,7 @@
 .progress-section {
   width: 100%;
   margin-bottom: 40rpx;
-  animation: fadeIn 0.5s ease-out 0.4s backwards;
+  animation: fadeIn 0.8s ease-out 0.6s backwards;
 }
 
 .progress-labels {
@@ -123,26 +152,29 @@
 .progress-label-right {
   font-size: 22rpx;
   font-weight: 600;
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.6);
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
 .progress-bar {
   width: 100%;
-  height: 16rpx;
-  background: #E5E7EB;
+  height: 20rpx;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 50rpx;
   overflow: hidden;
   position: relative;
   margin-bottom: 16rpx;
+  box-shadow: inset 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(90deg, #3B82F6 0%, #8B5CF6 100%);
   border-radius: 50rpx;
-  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
+  box-shadow: 0 0 20rpx rgba(59, 130, 246, 0.6);
+  animation: progressBar 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .progress-fill::after {
@@ -152,22 +184,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%);
   animation: shimmer 2s infinite;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
 }
 
 .progress-hint {
   font-size: 20rpx;
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.5);
   text-align: center;
   display: block;
   font-family: "PingFang SC", -apple-system, sans-serif;
@@ -178,52 +201,57 @@
   display: flex;
   gap: 20rpx;
   width: 100%;
-  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
 }
 
 .stat-item {
   flex: 1;
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10rpx);
   padding: 30rpx 20rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12rpx;
   border-radius: 20rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  border: 2rpx solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+.stat-item:nth-child(1) { animation-delay: 0.7s; }
+.stat-item:nth-child(2) { animation-delay: 0.8s; }
+.stat-item:nth-child(3) { animation-delay: 0.9s; }
 
 .stat-item:active {
   transform: translateY(-4rpx);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-}
-
-.stat-divider {
-  /* No border needed with gap */
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.3);
 }
 
 .stat-value {
   font-size: 44rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
+  color: #FFFFFF;
   line-height: 1;
   font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: countUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stat-highlight {
   color: #3B82F6;
+  text-shadow: 0 0 20rpx rgba(59, 130, 246, 0.6);
 }
 
 .stat-streak {
   color: #EF4444;
+  text-shadow: 0 0 20rpx rgba(239, 68, 68, 0.6);
 }
 
 .stat-label {
   font-size: 18rpx;
   font-weight: 700;
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 1rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
@@ -233,7 +261,7 @@
 .creator-section {
   padding: 0 40rpx;
   margin-bottom: 40rpx;
-  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1s backwards;
 }
 
 .section-header {
@@ -247,34 +275,41 @@
   font-size: 32rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
+  color: #FFFFFF;
   letter-spacing: -0.5rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
 .beta-badge {
   padding: 6rpx 16rpx;
-  background: #3B82F6;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
   color: #FFFFFF;
   font-size: 18rpx;
   font-weight: 700;
   border-radius: 12rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 2rpx 8rpx rgba(59, 130, 246, 0.4);
 }
 
 .creator-card {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10rpx);
   border-radius: 20rpx;
   padding: 50rpx 40rpx;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 2rpx solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
 }
 
-.creator-card:active {
-  transform: scale(0.99);
+.creator-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent);
 }
 
 .creator-content {
@@ -289,12 +324,13 @@
 .lock-icon-wrapper {
   width: 100rpx;
   height: 100rpx;
-  background: #F3F4F6;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 30rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -302,14 +338,14 @@
   font-size: 32rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
+  color: #FFFFFF;
   margin-bottom: 16rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
 .creator-desc {
   font-size: 24rpx;
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.6);
   line-height: 1.6;
   margin-bottom: 8rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
@@ -318,19 +354,19 @@
 .highlight-text {
   color: #3B82F6;
   font-weight: 700;
+  text-shadow: 0 0 10rpx rgba(59, 130, 246, 0.5);
 }
 
 .creator-btn {
   margin-top: 30rpx;
   padding: 20rpx 50rpx;
-  background: #E5E7EB;
-  color: #9CA3AF;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
   border-radius: 50rpx;
   font-size: 26rpx;
   font-weight: 700;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  border: none;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
 }
 
 .creator-btn::after {
@@ -343,7 +379,7 @@
   right: -100rpx;
   width: 300rpx;
   height: 300rpx;
-  background: #F8F9FA;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
   border-radius: 50%;
   z-index: 0;
 }
@@ -352,14 +388,16 @@
 .history-section {
   padding: 0 40rpx;
   margin-bottom: 40rpx;
-  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.1s backwards;
 }
 
 .history-entry-card {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10rpx);
   border-radius: 20rpx;
   padding: 40rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  border: 2rpx solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   gap: 24rpx;
@@ -368,23 +406,20 @@
 
 .history-entry-card:active {
   transform: scale(0.98);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
 }
 
 .entry-icon {
   width: 80rpx;
   height: 80rpx;
-  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.history-entry-card:active .entry-icon {
-  transform: scale(0.9);
+  box-shadow: 0 4rpx 16rpx rgba(59, 130, 246, 0.4);
 }
 
 .entry-content {
@@ -397,13 +432,13 @@
 .entry-title {
   font-size: 30rpx;
   font-weight: 700;
-  color: #000000;
+  color: #FFFFFF;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
 .entry-desc {
   font-size: 24rpx;
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.5);
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
@@ -412,51 +447,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.history-entry-card:active .entry-arrow {
-  transform: translateX(4rpx);
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* ===== 我的成就 ===== */
 .achievements-section {
   padding: 0 40rpx;
   margin-bottom: 40rpx;
-  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.2s backwards;
 }
 
 .achievement-item {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10rpx);
   border-radius: 20rpx;
   padding: 30rpx;
   margin-bottom: 20rpx;
   display: flex;
   align-items: center;
   gap: 24rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  border: 2rpx solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.achievement-item:nth-child(1) {
-  animation-delay: 0.45s;
-}
-
-.achievement-item:nth-child(2) {
-  animation-delay: 0.5s;
 }
 
 .achievement-item:active {
   transform: scale(0.98);
 }
 
-.achievement-unlocked {
-  /* No special styling needed */
-}
-
 .achievement-locked {
-  opacity: 0.6;
+  opacity: 0.5;
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .achievement-icon {
@@ -467,19 +488,16 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.achievement-item:active .achievement-icon {
-  transform: scale(0.9);
 }
 
 .icon-unlocked {
-  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  box-shadow: 0 4rpx 16rpx rgba(59, 130, 246, 0.4);
 }
 
 .icon-locked {
-  background: #E5E7EB;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
 }
 
 .achievement-info {
@@ -490,14 +508,14 @@
 .achievement-name {
   font-size: 28rpx;
   font-weight: 700;
-  color: #000000;
+  color: #FFFFFF;
   margin-bottom: 8rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
 .achievement-desc {
   font-size: 22rpx;
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.5);
   line-height: 1.4;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
@@ -514,21 +532,21 @@
 }
 
 .status-locked {
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.3);
 }
 
 /* 分享按钮 */
 .share-btn {
   width: 100%;
   padding: 28rpx;
-  background: #3B82F6;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
   border-radius: 20rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12rpx;
   margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
+  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.4);
   border: none;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -538,9 +556,8 @@
 }
 
 .share-btn:active {
-  background: #2563EB;
-  transform: scale(0.98);
-  box-shadow: 0 2rpx 8rpx rgba(59, 130, 246, 0.3);
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
 }
 
 .share-text {
@@ -554,10 +571,10 @@
 .logout-btn {
   width: 100%;
   padding: 28rpx;
-  background: #FFFFFF;
+  background: rgba(239, 68, 68, 0.1);
   border-radius: 20rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
-  border: none;
+  border: 2rpx solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -567,7 +584,7 @@
 
 .logout-btn:active {
   transform: scale(0.98);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
+  background: rgba(239, 68, 68, 0.15);
 }
 
 .logout-text {

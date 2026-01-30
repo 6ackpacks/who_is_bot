@@ -1,12 +1,10 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Judgment } from './judgment.entity';
 import { Content } from '../content/content.entity';
 import { User } from '../user/user.entity';
 import { SubmitJudgmentDto } from './dto/submit-judgment.dto';
-import { AchievementService } from '../achievement/achievement.service';
-import { RateLimitService } from '../common/rate-limit.service';
 
 @Injectable()
 export class JudgmentService {
@@ -17,163 +15,187 @@ export class JudgmentService {
     private contentRepository: Repository<Content>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    @Inject(forwardRef(() => AchievementService))
-    private achievementService: AchievementService,
-    private rateLimitService: RateLimitService,
   ) {}
 
   async submitJudgment(dto: SubmitJudgmentDto) {
-    // 频率限制检查
-    const identifier = dto.userId || dto.guestId;
-    if (!this.rateLimitService.checkLimit(identifier)) {
-      const resetTime = this.rateLimitService.getResetTime(identifier);
-      return {
-        success: false,
-        message: `请求过于频繁，请在 ${resetTime} 秒后重试`,
-        code: 'RATE_LIMIT_EXCEEDED',
+    try {
+      // 1. 检查是否已经判定过
+      const existingJudgment = await this.judgmentRepository.findOne({
+        where: dto.userId
+          ? { userId: dto.userId, contentId: dto.contentId }
+          : { guestId: dto.guestId, contentId: dto.contentId },
+      });
+
+      if (existingJudgment) {
+        return {
+          success: false,
+          message: '您已经判定过这个内容了',
+          code: 'ALREADY_JUDGED',
+        };
+      }
+
+      // 2. 记录判定
+      const judgment = this.judgmentRepository.create({
+        userId: dto.userId || null,
+        contentId: dto.contentId,
+        userChoice: dto.userChoice,
+        isCorrect: dto.isCorrect,
+        guestId: dto.guestId || null,
+      });
+
+      await this.judgmentRepository.save(judgment);
+
+      // 3. 更新内容统计
+      await this.updateContentStats(dto);
+
+      // 4. 更新用户统计（如果是登录用户）
+      if (dto.userId) {
+        await this.updateUserStats(dto);
+      }
+
+      // 5. 获取更新后的内容统计数据
+      const updatedContent = await this.contentRepository.findOne({
+        where: { id: dto.contentId },
+      });
+
+      // 计算统计百分比
+      const contentStats = {
+        totalVotes: updatedContent.totalVotes,
+        aiVotes: updatedContent.aiVotes,
+        humanVotes: updatedContent.humanVotes,
+        correctVotes: updatedContent.correctVotes,
+        aiPercentage: updatedContent.totalVotes > 0
+          ? Math.round((updatedContent.aiVotes / updatedContent.totalVotes) * 100)
+          : 0,
+        humanPercentage: updatedContent.totalVotes > 0
+          ? Math.round((updatedContent.humanVotes / updatedContent.totalVotes) * 100)
+          : 0,
+        correctPercentage: updatedContent.totalVotes > 0
+          ? Math.round((updatedContent.correctVotes / updatedContent.totalVotes) * 100)
+          : 0,
       };
-    }
 
-    // 防刷机制：检查是否已经判定过这个内容
-    const existingJudgment = await this.judgmentRepository.findOne({
-      where: dto.userId
-        ? { user: { id: dto.userId }, content: { id: dto.contentId } }
-        : { guestId: dto.guestId, content: { id: dto.contentId } },
-    });
-
-    if (existingJudgment) {
       return {
-        success: false,
-        message: '您已经判定过这个内容了',
-        code: 'ALREADY_JUDGED',
+        success: true,
+        message: '判定已记录',
+        stats: contentStats,
       };
+    } catch (error) {
+      console.error('提交判定失败:', error);
+      throw error;
     }
+  }
 
-    // 1. 记录判定
-    const judgment = this.judgmentRepository.create({
-      user: dto.userId ? { id: dto.userId } : null,
-      content: { id: dto.contentId },
-      userChoice: dto.userChoice,
-      isCorrect: dto.isCorrect,
-      guestId: dto.guestId,
-    });
-    await this.judgmentRepository.save(judgment);
-
-    // 2. 更新内容统计
+  /**
+   * 更新内容统计
+   */
+  private async updateContentStats(dto: SubmitJudgmentDto) {
     const content = await this.contentRepository.findOne({
       where: { id: dto.contentId },
     });
 
     if (content) {
       content.totalVotes += 1;
+
       if (dto.userChoice === 'ai') {
         content.aiVotes += 1;
       } else {
         content.humanVotes += 1;
       }
-      // 更新正确投票数
+
       if (dto.isCorrect) {
         content.correctVotes += 1;
       }
+
       await this.contentRepository.save(content);
     }
+  }
 
-    // 3. 更新用户统计（仅登录用户）
-    if (dto.userId) {
-      const user = await this.userRepository.findOne({
-        where: { id: dto.userId },
-      });
+  /**
+   * 更新用户统计
+   */
+  private async updateUserStats(dto: SubmitJudgmentDto) {
+    const user = await this.userRepository.findOne({
+      where: { id: dto.userId },
+    });
 
-      if (user) {
-        user.totalJudged += 1;
+    if (user) {
+      // 更新总判定数
+      user.totalJudged += 1;
 
-        if (dto.isCorrect) {
-          user.correctCount += 1;
-          user.streak += 1;
-          user.maxStreak = Math.max(user.maxStreak, user.streak);
-        } else {
-          user.streak = 0;
-        }
-
-        // 计算总体准确率
-        user.accuracy = (user.correctCount / user.totalJudged) * 100;
-
-        // 更新周统计
-        user.weeklyJudged += 1;
-        if (dto.isCorrect) {
-          user.weeklyCorrect += 1;
-        }
-        user.weeklyAccuracy = (user.weeklyCorrect / user.weeklyJudged) * 100;
-
-        // 检查并更新等级
-        const newLevel = this.calculateUserLevel(user);
-        const leveledUp = newLevel > user.level;
-        if (leveledUp) {
-          user.level = newLevel;
-        }
-
-        await this.userRepository.save(user);
-
-        // 检查并解锁成就
-        const newAchievements = await this.achievementService.checkAndUnlockAchievements(user);
-
-        return {
-          success: true,
-          message: '判定已记录',
-          data: {
-            leveledUp,
-            newLevel: leveledUp ? newLevel : undefined,
-            newAchievements: newAchievements.length > 0 ? newAchievements : undefined,
-          },
-        };
+      // 更新正确数和连胜
+      if (dto.isCorrect) {
+        user.correctCount += 1;
+        user.streak += 1;
+        user.maxStreak = Math.max(user.maxStreak, user.streak);
+      } else {
+        user.streak = 0;
       }
-    }
 
-    return {
-      success: true,
-      message: '判定已记录',
-    };
+      // 计算总体准确率
+      user.accuracy = (user.correctCount / user.totalJudged) * 100;
+
+      // 更新周统计
+      user.weeklyJudged += 1;
+      if (dto.isCorrect) {
+        user.weeklyCorrect += 1;
+      }
+      user.weeklyAccuracy = (user.weeklyCorrect / user.weeklyJudged) * 100;
+
+      // 检查并更新等级
+      const newLevel = this.calculateUserLevel(user);
+      if (newLevel > user.level) {
+        user.level = newLevel;
+      }
+
+      await this.userRepository.save(user);
+    }
   }
 
   /**
    * 计算用户等级
    * 等级规则：
-   * 1. AI小白: 0次判定
-   * 2. 胜似人机: 100次判定 + 70%准确率
-   * 3. 人机杀手: 500次判定 + 80%准确率
-   * 4. 硅谷天才: 1000次判定 + 90%准确率
+   * - 1级: 0-9次判定
+   * - 2级: 10-49次判定
+   * - 3级: 50-99次判定
+   * - 4级: 100-499次判定
+   * - 5级: 500+次判定
    */
-  private calculateUserLevel(user: any): number {
-    const levelThresholds = [
-      { level: 4, minJudged: 1000, minAccuracy: 90 },  // 硅谷天才
-      { level: 3, minJudged: 500, minAccuracy: 80 },   // 人机杀手
-      { level: 2, minJudged: 100, minAccuracy: 70 },   // 胜似人机
-      { level: 1, minJudged: 0, minAccuracy: 0 },      // AI小白
-    ];
-
-    for (const threshold of levelThresholds) {
-      if (user.totalJudged >= threshold.minJudged &&
-          user.accuracy >= threshold.minAccuracy) {
-        return threshold.level;
-      }
-    }
-
-    return 1; // 默认等级
+  private calculateUserLevel(user: User): number {
+    const judged = user.totalJudged;
+    if (judged >= 500) return 5;
+    if (judged >= 100) return 4;
+    if (judged >= 50) return 3;
+    if (judged >= 10) return 2;
+    return 1;
   }
 
   async getUserJudgments(userId: string) {
-    return this.judgmentRepository.find({
-      where: { user: { id: userId } },
-      relations: ['content'],
+    const judgments = await this.judgmentRepository.find({
+      where: { userId },
       order: { createdAt: 'DESC' },
+      take: 20,
     });
-  }
 
-  async getContentJudgments(contentId: string) {
-    return this.judgmentRepository.find({
-      where: { content: { id: contentId } },
-      relations: ['user'],
-      order: { createdAt: 'DESC' },
-    });
+    // 获取每个判定对应的内容信息
+    const judgmentsWithContent = await Promise.all(
+      judgments.map(async (judgment) => {
+        const content = await this.contentRepository.findOne({
+          where: { id: judgment.contentId },
+        });
+
+        return {
+          id: judgment.id,
+          contentId: judgment.contentId,
+          contentTitle: content ? content.title : '内容已删除',
+          contentType: content ? content.type : 'text',
+          userChoice: judgment.userChoice,
+          isCorrect: judgment.isCorrect,
+          createdAt: judgment.createdAt,
+        };
+      })
+    );
+
+    return judgmentsWithContent;
   }
 }

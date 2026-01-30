@@ -18,7 +18,6 @@ export class UserService {
   async findOne(id: string): Promise<User> {
     return this.userRepository.findOne({
       where: { id },
-      relations: ['contents', 'comments'],
     });
   }
 
@@ -39,13 +38,13 @@ export class UserService {
   }
 
   async getLeaderboard(limit: number = 50): Promise<User[]> {
-    return this.userRepository.find({
-      order: {
-        totalJudged: 'DESC',  // 按总判定数排序
-        accuracy: 'DESC',      // 准确率作为第二排序
-      },
-      take: limit,
-    });
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.totalJudged >= :minJudged', { minJudged: 5 })
+      .orderBy('user.accuracy', 'DESC')
+      .addOrderBy('user.totalJudged', 'DESC')
+      .take(limit)
+      .getMany();
   }
 
   async updateLeaderboardStats(

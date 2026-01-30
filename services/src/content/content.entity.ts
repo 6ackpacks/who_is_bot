@@ -1,6 +1,5 @@
-import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
 import { User } from '../user/user.entity';
-import { Comment } from './comment.entity';
 
 @Entity('content')
 export class Content {
@@ -48,9 +47,6 @@ export class Content {
 
   @ManyToOne(() => User, user => user.contents)
   author: User;
-
-  @OneToMany(() => Comment, comment => comment.content)
-  comments: Comment[];
 
   @CreateDateColumn()
   createdAt: Date;

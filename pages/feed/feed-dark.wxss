@@ -1,0 +1,467 @@
+/* pages/feed/feed-enhanced.wxss - 增强版设计 */
+
+/* ===== 容器 ===== */
+.feed-container {
+  width: 100vw;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #0A0E27 0%, #1A1F3A 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景装饰 */
+.feed-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* 网格背景 */
+.feed-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+  background-size: 40rpx 40rpx;
+  pointer-events: none;
+}
+
+.feed-scroll {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== 增强的加载状态 ===== */
+.loading-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.loading-spinner {
+  width: 100rpx;
+  height: 100rpx;
+  border: 8rpx solid rgba(59, 130, 246, 0.2);
+  border-top-color: #3B82F6;
+  border-radius: 50%;
+  animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  margin-bottom: 40rpx;
+  box-shadow: 0 0 30rpx rgba(59, 130, 246, 0.3);
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ===== 增强的错误状态 ===== */
+.error-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 60rpx;
+}
+
+.error-text {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  margin-bottom: 40rpx;
+  line-height: 1.8;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.retry-btn {
+  padding: 24rpx 60rpx;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  color: #ffffff;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.retry-btn::after {
+  border: none;
+}
+
+.retry-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
+}
+
+/* ===== 判定视图 ===== */
+.judgment-view {
+  padding: 60rpx 32rpx 140rpx;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.page-title {
+  font-size: 56rpx;
+  font-weight: 900;
+  color: #FFFFFF;
+  text-align: center;
+  margin-bottom: 40rpx;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  flex-shrink: 0;
+  text-shadow: 0 0 40rpx rgba(59, 130, 246, 0.6);
+  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== 内容区域 ===== */
+.content-wrapper {
+  width: 100%;
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-height: 55vh;
+  overflow: hidden;
+  animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+}
+
+.quote-icon {
+  font-size: 120rpx;
+  color: rgba(59, 130, 246, 0.2);
+  font-family: Georgia, serif;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: -20rpx;
+  padding-left: 20rpx;
+  flex-shrink: 0;
+  animation: fadeIn 0.8s ease-out 0.4s backwards;
+}
+
+/* ===== 增强的内容卡片 ===== */
+.content-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20rpx);
+  border-radius: 24rpx;
+  padding: 40rpx 35rpx;
+  border: 2rpx solid rgba(59, 130, 246, 0.2);
+  box-shadow:
+    0 8rpx 32rpx rgba(0, 0, 0, 0.3),
+    inset 0 1rpx 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow-y: auto;
+  max-height: 45vh;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.content-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+}
+
+/* 图片/视频卡片 */
+.content-card.image-card {
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+  max-height: none;
+}
+
+.content-image-wrapper {
+  position: relative;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow:
+    0 20rpx 60rpx rgba(0, 0, 0, 0.4),
+    0 0 0 2rpx rgba(59, 130, 246, 0.3);
+  width: 100%;
+  max-height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.content-image-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.content-image {
+  width: 100%;
+  height: 50vh;
+  display: block;
+}
+
+.content-video {
+  width: 100%;
+  height: 50vh;
+  display: block;
+  background: #000000;
+  border-radius: 24rpx;
+}
+
+.content-text {
+  font-size: 32rpx;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  display: block;
+  position: relative;
+  padding-left: 20rpx;
+}
+
+.content-text::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4rpx;
+  background: linear-gradient(180deg, #3B82F6, #8B5CF6);
+  border-radius: 2rpx;
+}
+
+/* ===== 来源信息 ===== */
+.source-info {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  margin-bottom: 40rpx;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: fadeIn 1s ease-out 0.6s backwards;
+}
+
+/* ===== 增强的判定按钮 ===== */
+.action-buttons {
+  display: flex;
+  gap: 24rpx;
+  width: 100%;
+  padding: 0 10rpx;
+  flex-shrink: 0;
+  margin-top: 20rpx;
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+}
+
+.btn-judge {
+  flex: 1;
+  height: 96rpx;
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 700;
+  border: none;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.3);
+}
+
+.btn-judge::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-judge:active::before {
+  width: 300%;
+  height: 300%;
+}
+
+.btn-judge::after {
+  border: none;
+}
+
+.btn-ai {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: #FFFFFF;
+}
+
+.btn-ai:active {
+  transform: scale(0.96);
+  box-shadow: 0 4rpx 12rpx rgba(239, 68, 68, 0.4);
+}
+
+.btn-human {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  color: #FFFFFF;
+}
+
+.btn-human:active {
+  transform: scale(0.96);
+  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.4);
+}
+
+/* ===== 结果视图 ===== */
+.result-view {
+  padding: 40rpx 40rpx 120rpx;
+  min-height: 100vh;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.result-header {
+  margin-bottom: 30rpx;
+  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.result-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  display: block;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+}
+
+/* ===== 增强的统计条 ===== */
+.stats-bar {
+  display: flex;
+  height: 72rpx;
+  border-radius: 36rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3);
+  animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.stat-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.stat-ai {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+}
+
+.stat-human {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+}
+
+.stat-text {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== 底部按钮 ===== */
+.bottom-actions {
+  display: flex;
+  gap: 20rpx;
+  padding-top: 20rpx;
+  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+}
+
+.btn-secondary {
+  flex: 1;
+  height: 96rpx;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10rpx);
+  border: 2rpx solid rgba(255, 255, 255, 0.2);
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-secondary::after {
+  border: none;
+}
+
+.btn-secondary:active {
+  transform: scale(0.96);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-primary {
+  flex: 1;
+  height: 96rpx;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  border-radius: 48rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  border: none;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary::after {
+  border: none;
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
+}

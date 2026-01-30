@@ -88,6 +88,13 @@ Page({
     }
   },
 
+  // 跳转到判定历史页面
+  goToHistory() {
+    wx.navigateTo({
+      url: '/pages/history/history'
+    });
+  },
+
   // 获取下一等级
   getNextLevel(currentLevel) {
     const levels = ['AI小白', '胜似人机', '人机杀手', '硅谷天才'];

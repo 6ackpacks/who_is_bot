@@ -62,19 +62,17 @@ Page({
       'AI小白': 'level-1'
     };
 
-    // 按 bustedCount 排序并添加 levelClass
-    return users
-      .sort((a, b) => b.bustedCount - a.bustedCount)
-      .map(user => ({
-        ...user,
-        levelClass: levelMap[user.level] || 'level-1',
-        // 确保所有必需字段都存在
-        username: user.username || user.nickname || '匿名用户',
-        avatar: user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Anonymous',
-        weeklyAccuracy: user.weeklyAccuracy || user.accuracy || 0,
-        bustedCount: user.bustedCount || user.totalJudged || 0,
-        maxStreak: user.maxStreak || user.streak || 0
-      }));
+    // 处理数据并添加 levelClass
+    return users.map(user => ({
+      ...user,
+      levelClass: levelMap[user.level] || 'level-1',
+      // 确保所有必需字段都存在
+      username: user.username || user.nickname || '匿名用户',
+      avatar: user.avatar || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132',
+      weeklyAccuracy: user.weeklyAccuracy || user.accuracy || 0,
+      accuracy: Math.round((user.accuracy || 0) * 10) / 10, // 保留一位小数
+      totalJudged: user.totalJudged || 0
+    }));
   },
 
   // 重新加载

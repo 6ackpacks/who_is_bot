@@ -3,7 +3,8 @@
     "pages/login/login",
     "pages/feed/feed",
     "pages/leaderboard/leaderboard",
-    "pages/profile/profile"
+    "pages/profile/profile",
+    "pages/history/history"
   ],
   "cloud": true,
   "window": {

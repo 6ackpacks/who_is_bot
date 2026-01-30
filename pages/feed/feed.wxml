@@ -9,7 +9,7 @@
 
   <!-- 错误状态 -->
   <view wx:elif="{{error}}" class="error-container">
-    <text class="error-icon">⚠️</text>
+    <text class="icon icon-warning icon-xxl icon-warning"></text>
     <text class="error-text">{{error}}</text>
     <button class="retry-btn" bindtap="loadFeedData">重新加载</button>
   </view>
@@ -90,7 +90,7 @@
 
       <!-- 来源信息 -->
       <view class="source-info">
-        该内容是 {{currentItem.isAi ? '🤖 AI' : '👤 真人'}} {{currentItem.provider}} 数据提供。
+        该内容是 {{currentItem.isAi ? '' : ''}} <text wx:if="{{currentItem.isAi}}" class="icon icon-robot icon-sm"></text><text wx:else class="icon icon-user icon-sm"></text> {{currentItem.isAi ? 'AI' : '真人'}} {{currentItem.provider}} 数据提供。
       </view>
 
       <!-- 内容卡片 -->
@@ -137,7 +137,7 @@
       <!-- 评论区域 -->
       <view class="comments-section">
         <view class="comments-header">
-          <text class="comments-title">💬 大家的评论 ({{comments.length}})</text>
+          <text class="comments-title"><text class="icon icon-comment icon-sm"></text> 大家的评论 ({{comments.length}})</text>
         </view>
 
         <!-- 评论输入框 -->
@@ -165,7 +165,7 @@
               <!-- 用户头像 -->
               <image
                 class="comment-avatar"
-                src="{{item.user ? item.user.avatar : '/images/default-avatar.png'}}"
+                src="{{item.user ? item.user.avatar : 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"
                 mode="aspectFill"
               />
 
@@ -183,15 +183,15 @@
                 <!-- 操作按钮 -->
                 <view class="comment-actions">
                   <view class="action-btn" bindtap="onLikeComment" data-id="{{item.id}}">
-                    <text class="action-icon">👍</text>
+                    <text class="icon icon-like icon-sm"></text>
                     <text class="action-text">{{item.likes > 0 ? item.likes : '赞'}}</text>
                   </view>
                   <view class="action-btn" bindtap="onReplyComment" data-comment="{{item}}">
-                    <text class="action-icon">💬</text>
+                    <text class="icon icon-comment icon-sm"></text>
                     <text class="action-text">回复</text>
                   </view>
                   <view wx:if="{{item.userId === userId}}" class="action-btn" bindtap="onDeleteComment" data-id="{{item.id}}">
-                    <text class="action-icon">🗑️</text>
+                    <text class="icon icon-delete icon-sm"></text>
                     <text class="action-text">删除</text>
                   </view>
                 </view>
@@ -203,7 +203,9 @@
                       <text class="reply-author">{{reply.user ? reply.user.nickname : '游客'}}</text>
                       <text class="reply-content">: {{reply.content}}</text>
                       <view class="reply-actions">
-                        <text class="reply-likes" wx:if="{{reply.likes > 0}}">👍 {{reply.likes}}</text>
+                        <text class="reply-likes" wx:if="{{reply.likes > 0}}">
+                          <text class="icon icon-like icon-xs"></text> {{reply.likes}}
+                        </text>
                       </view>
                     </view>
                   </block>

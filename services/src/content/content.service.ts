@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Content } from './content.entity';
-import { Comment } from './comment.entity';
 import { CreateContentDto } from './dto/create-content.dto';
 
 @Injectable()
@@ -10,13 +9,10 @@ export class ContentService {
   constructor(
     @InjectRepository(Content)
     private contentRepository: Repository<Content>,
-    @InjectRepository(Comment)
-    private commentRepository: Repository<Comment>,
   ) {}
 
   async findAll(): Promise<Content[]> {
     return this.contentRepository.find({
-      relations: ['author', 'comments', 'comments.user'],
       order: { createdAt: 'DESC' },
     });
   }

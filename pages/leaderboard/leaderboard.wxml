@@ -18,7 +18,7 @@
 
   <!-- 错误状态 -->
   <view wx:elif="{{error}}" class="error-container">
-    <text class="error-icon">⚠️</text>
+    <text class="icon icon-warning icon-xxl icon-warning"></text>
     <text class="error-text">{{error}}</text>
     <button class="retry-btn" bindtap="handleRetry">重新加载</button>
   </view>
@@ -28,10 +28,10 @@
     <!-- 表头 -->
     <view class="table-header">
       <text class="th-rank">#</text>
-      <text class="th-detective">DETECTIVE</text>
+      <text class="th-detective">侦探</text>
       <view class="th-stats">
-        <text class="th-busted">BUSTED</text>
-        <text class="th-strk">STRK</text>
+        <text class="th-accuracy">正确率</text>
+        <text class="th-total">总答题</text>
       </view>
     </view>
 
@@ -41,9 +41,9 @@
 
       <!-- 排名图标 -->
       <view class="rank-icon">
-        <text wx:if="{{index === 0}}" class="icon-trophy">🏆</text>
-        <text wx:elif="{{index === 1}}" class="icon-medal silver">🥈</text>
-        <text wx:elif="{{index === 2}}" class="icon-medal bronze">🥉</text>
+        <text wx:if="{{index === 0}}" class="icon icon-trophy icon-xl" style="color: #FFD700;"></text>
+        <text wx:elif="{{index === 1}}" class="icon icon-trophy icon-xl" style="color: #C0C0C0;"></text>
+        <text wx:elif="{{index === 2}}" class="icon icon-trophy icon-xl" style="color: #CD7F32;"></text>
         <text wx:else class="rank-number">{{index + 1}}</text>
       </view>
 
@@ -53,12 +53,12 @@
         <view class="user-details">
           <view class="user-name-row">
             <text class="user-name">{{item.username}}</text>
+          </view>
+          <view class="user-meta">
             <view class="level-badge badge-{{item.levelClass}}">
               <text class="badge-text">{{item.level}}</text>
             </view>
-          </view>
-          <view class="user-accuracy">
-            <text class="accuracy-icon">↗</text>
+            <text class="icon icon-fire icon-sm" style="color: #EF4444;"></text>
             <text class="accuracy-text">周准确率 {{item.weeklyAccuracy}}%</text>
           </view>
         </view>
@@ -66,11 +66,8 @@
 
       <!-- 统计数据 -->
       <view class="user-stats">
-        <text class="stat-busted">{{item.bustedCount}}</text>
-        <view class="stat-streak">
-          <text class="streak-icon">⚡</text>
-          <text class="streak-value">{{item.maxStreak}}</text>
-        </view>
+        <text class="stat-accuracy">{{item.accuracy}}%</text>
+        <text class="stat-total">{{item.totalJudged}}</text>
       </view>
 
     </view>

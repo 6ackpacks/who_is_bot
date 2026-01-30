@@ -1,19 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from '../user/user.entity';
-import { Content } from '../content/content.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity('judgments')
 export class Judgment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
+  @Column({ name: 'user_id', type: 'varchar', length: 36, nullable: true })
+  userId: string;
 
-  @ManyToOne(() => Content, { nullable: false, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'content_id' })
-  content: Content;
+  @Column({ name: 'content_id', type: 'varchar', length: 36 })
+  contentId: string;
 
   @Column({ name: 'user_choice', type: 'varchar', length: 10 })
   userChoice: string; // 'ai' or 'human'

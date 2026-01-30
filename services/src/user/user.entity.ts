@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Content } from '../content/content.entity';
-import { Comment } from '../content/comment.entity';
 
 @Entity('users')
 export class User {
@@ -51,9 +50,6 @@ export class User {
 
   @OneToMany(() => Content, content => content.author)
   contents: Content[];
-
-  @OneToMany(() => Comment, comment => comment.user)
-  comments: Comment[];
 
   @CreateDateColumn()
   createdAt: Date;

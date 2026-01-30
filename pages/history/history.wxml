@@ -1,0 +1,68 @@
+<!--pages/history/history.wxml-->
+<view class="history-container">
+
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="header-title">
+      <text class="title-main">我的</text>
+      <text class="title-highlight">判定历史</text>
+    </view>
+    <text class="header-subtitle">点击记录查看题目详情</text>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view wx:elif="{{error}}" class="error-container">
+    <text class="icon icon-warning icon-xxl icon-warning"></text>
+    <text class="error-text">{{error}}</text>
+    <button class="retry-btn" bindtap="handleRetry">重新加载</button>
+  </view>
+
+  <!-- 判定历史列表 -->
+  <scroll-view wx:else scroll-y class="history-scroll">
+    <view class="history-list">
+      <view wx:if="{{judgmentHistory.length === 0}}" class="empty-container">
+        <text class="icon icon-text icon-xxl icon-info"></text>
+        <text class="empty-text">还没有判定记录</text>
+        <text class="empty-hint">去首页开始判定吧！</text>
+      </view>
+
+      <view wx:for="{{judgmentHistory}}" wx:key="id" class="history-item" bindtap="goToDetail" data-content-id="{{item.contentId}}">
+        <view class="history-header">
+          <view class="history-type-badge">
+            <text wx:if="{{item.contentType === 'video'}}" class="icon icon-video icon-white"></text>
+            <text wx:elif="{{item.contentType === 'image'}}" class="icon icon-image icon-white"></text>
+            <text wx:else class="icon icon-text icon-white"></text>
+          </view>
+          <view class="history-content">
+            <text class="history-title">{{item.contentTitle}}</text>
+            <text class="history-time">{{item.createdAt}}</text>
+          </view>
+          <view class="history-result {{item.isCorrect ? 'result-correct' : 'result-wrong'}}">
+            <text wx:if="{{item.isCorrect}}" class="icon icon-check"></text>
+            <text wx:else class="icon icon-close"></text>
+          </view>
+        </view>
+        <view class="history-choice">
+          你的选择: <text class="choice-badge choice-{{item.userChoice}}">
+            <text wx:if="{{item.userChoice === 'ai'}}" class="icon icon-robot icon-sm"></text>
+            <text wx:else class="icon icon-user icon-sm"></text>
+            {{item.userChoice === 'ai' ? ' AI' : ' 真人'}}
+          </text>
+        </view>
+        <view class="detail-hint">
+          点击查看详情 <text class="icon icon-right icon-sm"></text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部占位 -->
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+</view>

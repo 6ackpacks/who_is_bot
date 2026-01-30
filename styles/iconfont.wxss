@@ -1,0 +1,341 @@
+/* iconfont.wxss - 专业图标字体系统 */
+/* 使用更专业的 Unicode 字符 */
+
+/* 图标字体基础类 */
+.icon {
+  display: inline-block;
+  font-style: normal;
+  line-height: 1;
+  text-align: center;
+  text-transform: none;
+  vertical-align: baseline;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 视频图标 */
+.icon-video::before {
+  content: '▶';
+  font-size: 1.2em;
+}
+
+/* 图片图标 */
+.icon-image::before {
+  content: '🖼';
+  font-size: 1em;
+}
+
+/* 文本图标 */
+.icon-text::before {
+  content: '📝';
+  font-size: 1em;
+}
+
+/* 正确/成功图标 */
+.icon-check::before {
+  content: '✓';
+  font-weight: bold;
+}
+
+/* 错误/失败图标 */
+.icon-close::before {
+  content: '✕';
+  font-weight: bold;
+}
+
+/* 警告图标 */
+.icon-warning::before {
+  content: '⚠';
+  font-size: 1.2em;
+}
+
+/* AI机器人图标 */
+.icon-robot::before {
+  content: '🤖';
+  font-size: 1em;
+}
+
+/* 用户/真人图标 */
+.icon-user::before {
+  content: '👤';
+  font-size: 1em;
+}
+
+/* 统计/图表图标 */
+.icon-chart::before {
+  content: '📊';
+  font-size: 1em;
+}
+
+/* 眼睛图标 */
+.icon-eye::before {
+  content: '👁';
+  font-size: 1em;
+}
+
+/* 闪电图标 */
+.icon-thunder::before {
+  content: '⚡';
+  font-size: 1em;
+}
+
+/* 链接/分享图标 */
+.icon-link::before {
+  content: '🔗';
+  font-size: 1em;
+}
+
+/* 锁定图标 */
+.icon-lock::before {
+  content: '🔒';
+  font-size: 1em;
+}
+
+/* 右箭头 */
+.icon-right::before {
+  content: '›';
+  font-size: 1.5em;
+  font-weight: 300;
+}
+
+/* 加载/旋转图标 */
+.icon-loading::before {
+  content: '◐';
+  animation: icon-spin 1s linear infinite;
+}
+
+@keyframes icon-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 火焰图标 */
+.icon-fire::before {
+  content: '🔥';
+  font-size: 1em;
+}
+
+/* 奖杯图标 */
+.icon-trophy::before {
+  content: '🏆';
+  font-size: 1em;
+}
+
+/* 皇冠图标 */
+.icon-crown::before {
+  content: '👑';
+  font-size: 1em;
+}
+
+/* 星星图标 */
+.icon-star::before {
+  content: '⭐';
+  font-size: 1em;
+}
+
+/* 心形图标 */
+.icon-heart::before {
+  content: '❤';
+  font-size: 1em;
+}
+
+/* 评论图标 */
+.icon-comment::before {
+  content: '💬';
+  font-size: 1em;
+}
+
+/* 点赞图标 */
+.icon-like::before {
+  content: '👍';
+  font-size: 1em;
+}
+
+/* 主页图标 */
+.icon-home::before {
+  content: '🏠';
+  font-size: 1em;
+}
+
+/* 设置图标 */
+.icon-setting::before {
+  content: '⚙';
+  font-size: 1.2em;
+}
+
+/* 搜索图标 */
+.icon-search::before {
+  content: '🔍';
+  font-size: 1em;
+}
+
+/* 刷新图标 */
+.icon-reload::before {
+  content: '🔄';
+  font-size: 1em;
+}
+
+/* 返回图标 */
+.icon-back::before {
+  content: '←';
+  font-size: 1.3em;
+}
+
+/* 更多图标 */
+.icon-more::before {
+  content: '⋯';
+  font-size: 1.3em;
+}
+
+/* 上传图标 */
+.icon-upload::before {
+  content: '📤';
+  font-size: 1em;
+}
+
+/* 下载图标 */
+.icon-download::before {
+  content: '📥';
+  font-size: 1em;
+}
+
+/* 删除图标 */
+.icon-delete::before {
+  content: '🗑';
+  font-size: 1em;
+}
+
+/* 编辑图标 */
+.icon-edit::before {
+  content: '✏';
+  font-size: 1.1em;
+}
+
+/* 时间图标 */
+.icon-time::before {
+  content: '🕐';
+  font-size: 1em;
+}
+
+/* 位置图标 */
+.icon-location::before {
+  content: '📍';
+  font-size: 1em;
+}
+
+/* 消息图标 */
+.icon-message::before {
+  content: '✉';
+  font-size: 1.1em;
+}
+
+/* 通知图标 */
+.icon-notification::before {
+  content: '🔔';
+  font-size: 1em;
+}
+
+/* 发送图标 */
+.icon-send::before {
+  content: '📮';
+  font-size: 1em;
+}
+
+/* 图标尺寸变体 */
+.icon-xs {
+  font-size: 20rpx;
+}
+
+.icon-sm {
+  font-size: 28rpx;
+}
+
+.icon-md {
+  font-size: 36rpx;
+}
+
+.icon-lg {
+  font-size: 48rpx;
+}
+
+.icon-xl {
+  font-size: 64rpx;
+}
+
+.icon-xxl {
+  font-size: 80rpx;
+}
+
+/* 图标颜色变体 */
+.icon-primary {
+  color: #3B82F6;
+}
+
+.icon-success {
+  color: #10B981;
+}
+
+.icon-warning {
+  color: #F59E0B;
+}
+
+.icon-danger {
+  color: #EF4444;
+}
+
+.icon-info {
+  color: #6B7280;
+}
+
+.icon-white {
+  color: #FFFFFF;
+}
+
+.icon-black {
+  color: #000000;
+}
+
+/* 图标交互效果 */
+.icon-interactive {
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.icon-interactive:active {
+  transform: scale(0.9);
+}
+
+/* 图标动画效果 */
+.icon-bounce {
+  animation: icon-bounce 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes icon-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.icon-pulse {
+  animation: icon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes icon-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.95);
+  }
+}

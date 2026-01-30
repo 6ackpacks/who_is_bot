@@ -1,0 +1,100 @@
+<!--pages/detail/detail.wxml-->
+<view class="detail-container">
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view wx:elif="{{error}}" class="error-container">
+    <text class="icon icon-warning icon-xxl icon-warning"></text>
+    <text class="error-text">{{error}}</text>
+    <button class="retry-btn" bindtap="handleRetry">重新加载</button>
+  </view>
+
+  <!-- 内容详情 -->
+  <scroll-view wx:else scroll-y class="detail-scroll">
+    <view class="detail-content">
+
+      <!-- 页面标题 -->
+      <view class="page-header">
+        <text class="page-title">题目详情</text>
+        <text class="page-subtitle">查看完整内容和解析</text>
+      </view>
+
+      <!-- 内容卡片 -->
+      <view class="content-section">
+        <view class="section-label">原始内容</view>
+
+        <!-- 文本内容 -->
+        <view wx:if="{{content.type === 'text'}}" class="content-card">
+          <view class="quote-icon">"</view>
+          <text class="content-text">{{content.content}}</text>
+        </view>
+
+        <!-- 图片内容 -->
+        <view wx:elif="{{content.type === 'image'}}" class="content-card image-card">
+          <view class="content-image-wrapper">
+            <image src="{{content.url}}" class="content-image" mode="aspectFit"></image>
+          </view>
+        </view>
+
+        <!-- 视频内容 -->
+        <view wx:elif="{{content.type === 'video'}}" class="content-card video-card">
+          <video
+            src="{{content.url}}"
+            class="content-video"
+            controls
+            show-center-play-btn
+            enable-play-gesture
+          ></video>
+        </view>
+      </view>
+
+      <!-- 答案揭晓 -->
+      <view class="answer-section">
+        <view class="section-label">答案揭晓</view>
+        <view class="answer-card">
+          <view class="answer-badge answer-{{content.isAI ? 'ai' : 'human'}}">
+            <text wx:if="{{content.isAI}}" class="icon icon-robot"></text>
+            <text wx:else class="icon icon-user"></text>
+            {{content.isAI ? ' AI生成' : ' 真人创作'}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 统计数据 -->
+      <view class="stats-section">
+        <view class="section-label">社区判定</view>
+        <view class="stats-bar">
+          <view class="stat-item stat-ai" style="width: {{content.aiVotes}}%">
+            <text class="stat-text">AI {{content.aiVotes}}%</text>
+          </view>
+          <view class="stat-item stat-human" style="width: {{content.humanVotes}}%">
+            <text class="stat-text">真人 {{content.humanVotes}}%</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 解析说明 -->
+      <view class="explanation-section">
+        <view class="section-label">专家解析</view>
+        <view class="explanation-card">
+          <text class="explanation-text">{{content.explanation || '暂无解析'}}</text>
+        </view>
+      </view>
+
+      <!-- 底部按钮 -->
+      <view class="bottom-actions">
+        <button class="btn-primary" bindtap="goHome">返回首页</button>
+      </view>
+
+      <!-- 底部占位 -->
+      <view class="bottom-spacer"></view>
+
+    </view>
+  </scroll-view>
+
+</view>

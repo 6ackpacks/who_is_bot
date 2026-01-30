@@ -15,9 +15,4 @@ export class JudgmentController {
   getUserJudgments(@Param('userId') userId: string) {
     return this.judgmentService.getUserJudgments(userId);
   }
-
-  @Get('content/:contentId')
-  getContentJudgments(@Param('contentId') contentId: string) {
-    return this.judgmentService.getContentJudgments(contentId);
-  }
 }

@@ -18,125 +18,53 @@ Page({
     this.redirectUrl = options.redirect || '/pages/feed/feed';
   },
 
-  // 微信登录
+  // 模拟登录
   handleWxLogin() {
     if (this.data.loading) return;
 
     this.setData({ loading: true });
 
-    // 1. 先获取用户信息（必须在用户点击事件中直接调用）
-    wx.getUserProfile({
-      desc: '用于完善用户资料',
-      success: (profileRes) => {
-        console.log('获取用户信息成功:', profileRes.userInfo);
+    // 使用模拟登录
+    const mockUser = {
+      nickname: '测试用户' + Math.floor(Math.random() * 1000),
+      avatar: 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'
+    };
 
-        // 2. 获取用户信息成功后，再调用微信登录获取 code
-        wx.login({
-          success: (loginRes) => {
-            if (loginRes.code) {
-              console.log('获取微信 code 成功:', loginRes.code);
-
-              // 3. 调用后端登录接口
-              this.loginToBackend(loginRes.code, profileRes.userInfo);
-            } else {
-              console.error('获取微信 code 失败:', loginRes.errMsg);
-              this.setData({ loading: false });
-              wx.showToast({
-                title: '登录失败，请重试',
-                icon: 'none'
-              });
-            }
-          },
-          fail: (err) => {
-            console.error('wx.login 调用失败:', err);
-            this.setData({ loading: false });
-            wx.showToast({
-              title: '登录失败',
-              icon: 'none'
-            });
-          }
-        });
-      },
-      fail: (err) => {
-        console.error('获取用户信息失败:', err);
-        this.setData({ loading: false });
-
-        // 用户拒绝授权，提示用户
-        wx.showModal({
-          title: '提示',
-          content: '需要获取您的昵称和头像，以便为您提供更好的服务',
-          confirmText: '重新授权',
-          success: (modalRes) => {
-            if (modalRes.confirm) {
-              // 用户点击重新授权，再次调用登录
-              this.handleWxLogin();
-            }
-          }
-        });
-      }
-    });
-  },
-
-  // 调用后端登录接口
-  loginToBackend(code, userInfo) {
-    api.wxLogin(code, userInfo)
+    api.mockLogin(mockUser)
       .then(res => {
-        console.log('后端登录成功:', res);
+        console.log('模拟登录成功:', res);
 
         if (res.success && res.data) {
-          // 4. 保存登录信息
+          // 保存用户信息
           auth.saveLoginInfo({
-            token: res.data.token,
-            userId: res.data.userId,
-            userInfo: res.data.userInfo || userInfo
+            token: 'mock_token_' + Date.now(),
+            userId: res.data.id,
+            userInfo: res.data
           });
 
           this.setData({ loading: false });
 
-          // 5. 显示登录成功提示
           wx.showToast({
             title: '登录成功',
             icon: 'success',
             duration: 1500
           });
 
-          // 6. 延迟跳转到首页
+          // 延迟跳转，让用户看到成功提示
           setTimeout(() => {
             this.redirectToHome();
           }, 1500);
         } else {
-          throw new Error(res.message || '登录失败');
+          throw new Error('登录失败');
         }
       })
       .catch(err => {
-        console.error('后端登录失败:', err);
-        console.log('降级到游客模式');
-
-        // 降级到游客模式
-        auth.saveLoginInfo({
-          token: 'guest_token_' + Date.now(),
-          userId: 'guest_' + Date.now(),
-          userInfo: {
-            nickname: userInfo?.nickName || '游客',
-            avatar: userInfo?.avatarUrl || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guest',
-            level: 1,
-            levelName: 'AI小白'
-          }
-        });
-
+        console.error('登录失败:', err);
         this.setData({ loading: false });
-
-        // 显示游客模式提示
         wx.showToast({
-          title: '以游客模式登录',
-          icon: 'success',
-          duration: 1500
+          title: '登录失败，请重试',
+          icon: 'none'
         });
-
-        // 延迟跳转到首页
-        setTimeout(() => {
-          this.redirectToHome();
-        }, 1500);
       });
   },
 
@@ -147,7 +75,7 @@ Page({
     });
   },
 
-  // 跳过登录
+  // 跳过登录（游客模式）
   handleSkip() {
     wx.showModal({
       title: '提示',

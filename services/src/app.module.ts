@@ -8,6 +8,7 @@ import { JudgmentModule } from './judgment/judgment.module';
 import { AchievementModule } from './achievement/achievement.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { CommentModule } from './comment/comment.module';
+import { AuthModule } from './auth/auth.module';
 import { HealthController } from './health.controller';
 import { ProxyController } from './proxy.controller';
 
@@ -28,7 +29,7 @@ import { ProxyController } from './proxy.controller';
         password: configService.get('DB_PASS', 'root'),
         database: configService.get('DB_NAME', 'who_is_the_bot'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: process.env.NODE_ENV !== 'production',
+        synchronize: false,
         autoLoadEntities: true,
         retryAttempts: 3,
         retryDelay: 3000,
@@ -40,6 +41,7 @@ import { ProxyController } from './proxy.controller';
     AchievementModule,
     ScheduleModule,
     CommentModule,
+    AuthModule,
   ],
   controllers: [HealthController, ProxyController],
 })

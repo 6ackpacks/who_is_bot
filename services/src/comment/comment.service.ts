@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { Comment } from './comment.entity';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { Content } from '../content/content.entity';
@@ -59,7 +59,7 @@ export class CommentService {
       contentId: dto.contentId,
       userId: dto.userId || null,
       guestId: dto.guestId || null,
-      content: dto.content,
+      text: dto.content,
       parentId: dto.parentId || null,
     });
 
@@ -79,12 +79,27 @@ export class CommentService {
       throw new NotFoundException('内容不存在');
     }
 
-    // 获取所有评论（包含用户信息）
+    // 获取所有评论
     const comments = await this.commentRepository.find({
       where: { contentId },
-      relations: ['user'],
       order: { createdAt: 'DESC' },
     });
+
+    // 获取所有相关的用户ID
+    const userIds = comments
+      .filter(c => c.userId)
+      .map(c => c.userId)
+      .filter((id, index, self) => self.indexOf(id) === index); // 去重
+
+    // 批量查询用户信息
+    const users = userIds.length > 0
+      ? await this.userRepository.find({
+          where: { id: In(userIds) },
+        })
+      : [];
+
+    // 创建用户ID到用户对象的映射
+    const userMap = new Map(users.map(u => [u.id, u]));
 
     // 组织评论结构（顶级评论和回复）
     const topLevelComments = comments.filter(c => !c.parentId);
@@ -92,10 +107,10 @@ export class CommentService {
 
     // 为每个顶级评论添加回复
     const commentsWithReplies = topLevelComments.map(comment => ({
-      ...this.formatComment(comment),
+      ...this.formatComment(comment, userMap),
       replies: replies
         .filter(r => r.parentId === comment.id)
-        .map(r => this.formatComment(r)),
+        .map(r => this.formatComment(r, userMap)),
     }));
 
     return {
@@ -155,30 +170,40 @@ export class CommentService {
   private async getCommentWithDetails(commentId: string) {
     const comment = await this.commentRepository.findOne({
       where: { id: commentId },
-      relations: ['user'],
     });
 
     if (!comment) {
       throw new NotFoundException('评论不存在');
     }
 
-    return this.formatComment(comment);
+    // 如果有用户ID，查询用户信息
+    let user = null;
+    if (comment.userId) {
+      user = await this.userRepository.findOne({
+        where: { id: comment.userId },
+      });
+    }
+
+    const userMap = user ? new Map([[user.id, user]]) : new Map();
+    return this.formatComment(comment, userMap);
   }
 
-  private formatComment(comment: Comment) {
+  private formatComment(comment: Comment, userMap: Map<string, any>) {
+    const user = comment.userId ? userMap.get(comment.userId) : null;
+
     return {
       id: comment.id,
       contentId: comment.contentId,
-      content: comment.content,
+      content: comment.text,
       likes: comment.likes,
       createdAt: comment.createdAt,
       updatedAt: comment.updatedAt,
-      user: comment.user
+      user: user
         ? {
-            id: comment.user.id,
-            nickname: comment.user.nickname,
-            avatar: comment.user.avatar,
-            level: comment.user.level,
+            id: user.id,
+            nickname: user.nickname,
+            avatar: user.avatar,
+            level: user.level,
           }
         : null,
       isGuest: !comment.userId,
