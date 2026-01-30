@@ -1,16 +1,78 @@
-/* components/icon/icon.wxss - Icon Styles */
+/* components/icon/icon.wxss - Clean Geometric Icon System */
 
 .antd-icon {
   display: inline-block;
-  color: inherit;
   font-style: normal;
   line-height: 1;
   text-align: center;
-  text-transform: none;
-  vertical-align: baseline;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+  font-weight: normal;
+  color: inherit;
+  vertical-align: middle;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.antd-icon::before {
+  display: inline-block;
+}
+
+/* Trophy Icon - Using Unicode Trophy */
+.antd-icon-trophy::before {
+  content: "🏆";
+}
+
+/* Bar Chart Icon - Using Unicode Chart */
+.antd-icon-bar-chart::before {
+  content: "📊";
+}
+
+/* ID Card Icon - Using Unicode Card */
+.antd-icon-idcard::before {
+  content: "🎫";
+}
+
+/* Appstore Icon - Using Unicode Grid */
+.antd-icon-appstore::before {
+  content: "▦";
+  font-size: 1.2em;
+}
+
+/* Setting Icon - Using Unicode Gear */
+.antd-icon-setting::before {
+  content: "⚙";
+  font-size: 1.1em;
+}
+
+/* Info Circle Icon - Using Unicode Info */
+.antd-icon-info-circle::before {
+  content: "ⓘ";
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+/* Check Circle Icon - Using Unicode Check */
+.antd-icon-check-circle::before {
+  content: "✓";
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* Close Circle Icon - Using Unicode X */
+.antd-icon-close-circle::before {
+  content: "✕";
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+/* Moon Icon - Using Unicode Moon */
+.antd-icon-moon::before {
+  content: "☾";
+  font-size: 1.2em;
+}
+
+/* Sun Icon - Using Unicode Sun */
+.antd-icon-sun::before {
+  content: "☀";
+  font-size: 1.1em;
 }
 
 /* Size variants */
