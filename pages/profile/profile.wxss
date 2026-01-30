@@ -1,5 +1,14 @@
 /* pages/profile/profile.wxss - NetEase Cloud Music Inspired with Deep Midnight Theme */
 
+/* ===== Icon Colors ===== */
+.icon-cyan {
+  color: #00F2FF;
+}
+
+.icon-white {
+  color: #FFFFFF;
+}
+
 /* ===== 容器 ===== */
 .profile-container {
   width: 100%;

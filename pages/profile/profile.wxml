@@ -57,25 +57,25 @@
     <view class="icon-buttons-row">
       <view class="icon-btn" bindtap="scrollToAchievements">
         <view class="icon-btn-circle">
-          <text class="icon icon-trophy"></text>
+          <antd-icon type="trophy" size="lg" custom-class="icon-cyan"></antd-icon>
         </view>
         <text class="icon-btn-label">我的成就</text>
       </view>
       <view class="icon-btn" bindtap="goToLeaderboard">
         <view class="icon-btn-circle">
-          <text class="icon icon-rank"></text>
+          <antd-icon type="bar-chart" size="lg" custom-class="icon-cyan"></antd-icon>
         </view>
         <text class="icon-btn-label">排行榜</text>
       </view>
       <view class="icon-btn" bindtap="handleShare">
         <view class="icon-btn-circle">
-          <text class="icon icon-card"></text>
+          <antd-icon type="idcard" size="lg" custom-class="icon-cyan"></antd-icon>
         </view>
         <text class="icon-btn-label">侦探名片</text>
       </view>
       <view class="icon-btn" bindtap="showMoreMenu">
         <view class="icon-btn-circle">
-          <text class="icon icon-grid"></text>
+          <antd-icon type="appstore" size="lg" custom-class="icon-cyan"></antd-icon>
         </view>
         <text class="icon-btn-label">更多</text>
       </view>
@@ -101,7 +101,7 @@
         <view class="list-container">
           <view wx:for="{{achievements}}" wx:key="id" class="list-item achievement-item {{item.unlocked ? '' : 'achievement-locked'}}">
             <view class="list-icon achievement-icon {{item.unlocked ? 'icon-unlocked' : 'icon-locked'}}">
-              <text class="icon {{item.icon}}"></text>
+              <antd-icon type="{{item.iconType}}" size="lg" custom-class="icon-white"></antd-icon>
             </view>
             <view class="list-content">
               <view class="list-title">{{item.name}}</view>
@@ -118,7 +118,7 @@
       <view wx:if="{{activeTab === 'creator'}}" class="content-section">
         <view class="creator-panel">
           <view class="creator-lock-icon">
-            <text class="icon icon-lock"></text>
+            <antd-icon type="setting" size="xxl" custom-style="color: rgba(255, 255, 255, 0.3);"></antd-icon>
           </view>
           <view class="creator-title">上传通道未开启</view>
           <view class="creator-desc">想让大家看看你的高仿人机？</view>
@@ -159,7 +159,7 @@
       <view class="more-items">
         <view class="more-item" bindtap="handleThemeToggle">
           <view class="more-item-icon">
-            <text class="icon {{currentTheme === 'dark' ? 'icon-moon' : 'icon-sun'}}"></text>
+            <antd-icon type="{{currentTheme === 'dark' ? 'moon' : 'sun'}}" size="lg" custom-class="icon-cyan"></antd-icon>
           </view>
           <view class="more-item-content">
             <text class="more-item-title">{{currentTheme === 'dark' ? '暗色模式' : '亮色模式'}}</text>
@@ -168,7 +168,7 @@
         </view>
         <view class="more-item" bindtap="goToSettings">
           <view class="more-item-icon">
-            <text class="icon icon-settings"></text>
+            <antd-icon type="setting" size="lg" custom-class="icon-cyan"></antd-icon>
           </view>
           <view class="more-item-content">
             <text class="more-item-title">设置</text>
@@ -177,7 +177,7 @@
         </view>
         <view class="more-item" bindtap="goToAbout">
           <view class="more-item-icon">
-            <text class="icon icon-info"></text>
+            <antd-icon type="info-circle" size="lg" custom-class="icon-cyan"></antd-icon>
           </view>
           <view class="more-item-content">
             <text class="more-item-title">关于</text>

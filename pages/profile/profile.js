@@ -53,28 +53,28 @@ Page({
         id: 1,
         name: '火眼金睛',
         description: '连续准确率达到 90%',
-        icon: 'icon-eye',
+        iconType: 'check-circle',
         unlocked: true
       },
       {
         id: 2,
         name: '百战老将',
         description: '完成 100 次判定',
-        icon: 'icon-trophy',
+        iconType: 'trophy',
         unlocked: true
       },
       {
         id: 3,
         name: '闪电判官',
         description: '1分钟内完成10次正确判定',
-        icon: 'icon-thunder',
+        iconType: 'check-circle',
         unlocked: false
       },
       {
         id: 4,
         name: '完美侦探',
         description: '连续50次判定全部正确',
-        icon: 'icon-star',
+        iconType: 'trophy',
         unlocked: false
       }
     ]
