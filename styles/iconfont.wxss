@@ -311,6 +311,61 @@
   transform: scale(0.9);
 }
 
+/* 排行榜图标 */
+.icon-rank::before {
+  content: '📈';
+  font-size: 1em;
+}
+
+/* 名片图标 */
+.icon-card::before {
+  content: '🎴';
+  font-size: 1em;
+}
+
+/* 网格/更多图标 */
+.icon-grid::before {
+  content: '⊞';
+  font-size: 1.2em;
+}
+
+/* 月亮/暗色模式图标 */
+.icon-moon::before {
+  content: '🌙';
+  font-size: 1em;
+}
+
+/* 太阳/亮色模式图标 */
+.icon-sun::before {
+  content: '☀';
+  font-size: 1.1em;
+}
+
+/* 设置图标（别名） */
+.icon-settings::before {
+  content: '⚙';
+  font-size: 1.2em;
+}
+
+/* 信息图标 */
+.icon-info::before {
+  content: 'ℹ';
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/* 正确圆圈图标 */
+.icon-check-circle::before {
+  content: '✓';
+  font-weight: bold;
+}
+
+/* 错误圆圈图标 */
+.icon-close-circle::before {
+  content: '✕';
+  font-weight: bold;
+}
+
 /* 图标动画效果 */
 .icon-bounce {
   animation: icon-bounce 0.6s cubic-bezier(0.16, 1, 0.3, 1);

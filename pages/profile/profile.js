@@ -22,7 +22,7 @@ Page({
     },
     isLoggedIn: false,
     currentTheme: 'dark',
-    activeTab: 'history', // 当前激活的 Tab
+    activeTab: 'achievements', // 当前激活的 Tab，默认显示成就
     showMore: false, // 是否显示更多菜单
 
     // 最近判定记录（示例数据）

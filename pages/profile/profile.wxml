@@ -55,12 +55,6 @@
 
     <!-- Icon Buttons 行 -->
     <view class="icon-buttons-row">
-      <view class="icon-btn" bindtap="goToHistory">
-        <view class="icon-btn-circle">
-          <text class="icon icon-chart"></text>
-        </view>
-        <text class="icon-btn-label">判题记录</text>
-      </view>
       <view class="icon-btn" bindtap="scrollToAchievements">
         <view class="icon-btn-circle">
           <text class="icon icon-trophy"></text>
@@ -89,10 +83,6 @@
 
     <!-- Tab 切换器 -->
     <view class="tab-switcher">
-      <view class="tab-item {{activeTab === 'history' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="history">
-        <text class="tab-text">判定记录</text>
-        <view class="tab-indicator"></view>
-      </view>
       <view class="tab-item {{activeTab === 'achievements' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="achievements">
         <text class="tab-text">荣誉勋章</text>
         <view class="tab-indicator"></view>
@@ -105,29 +95,6 @@
 
     <!-- Tab 内容区域 -->
     <view class="tab-content">
-
-      <!-- 判定记录 Tab -->
-      <view wx:if="{{activeTab === 'history'}}" class="content-section">
-        <view wx:if="{{recentJudgments.length > 0}}" class="list-container">
-          <view wx:for="{{recentJudgments}}" wx:key="id" class="list-item" bindtap="goToDetail" data-id="{{item.id}}">
-            <view class="list-icon">
-              <text class="icon {{item.isCorrect ? 'icon-check-circle' : 'icon-close-circle'}}"></text>
-            </view>
-            <view class="list-content">
-              <view class="list-title">{{item.contentType === 'text' ? '文本内容' : item.contentType === 'image' ? '图片内容' : '视频内容'}}</view>
-              <view class="list-subtitle">{{item.time}}</view>
-            </view>
-            <view class="list-status {{item.isCorrect ? 'status-correct' : 'status-wrong'}}">
-              {{item.isCorrect ? '正确' : '错误'}}
-            </view>
-          </view>
-        </view>
-        <view wx:else class="empty-state">
-          <text class="empty-icon">📊</text>
-          <text class="empty-text">暂无判定记录</text>
-          <text class="empty-hint">开始你的第一次判定吧</text>
-        </view>
-      </view>
 
       <!-- 荣誉勋章 Tab -->
       <view wx:if="{{activeTab === 'achievements'}}" class="content-section">
