@@ -23,6 +23,22 @@
   pointer-events: none;
 }
 
+/* 赛博朋克网格背景 */
+.leaderboard-container::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.05) 1px, transparent 1px);
+  background-size: 50rpx 50rpx;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 /* ===== 页面标题 ===== */
 .page-header {
   background: rgba(255, 255, 255, 0.03);
