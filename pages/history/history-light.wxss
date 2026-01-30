@@ -1,26 +1,10 @@
-/* pages/history/history-enhanced.wxss - 增强版判定历史 */
+/* pages/history/history.wxss - 增强版判定历史页面 */
 
 /* ===== 容器 ===== */
 .history-container {
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(180deg, #050B1F 0%, #0D1B2A 50%, #1B263B 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-/* 背景装饰 */
-.history-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    radial-gradient(circle at 40% 30%, rgba(59, 130, 246, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 60% 70%, rgba(139, 92, 246, 0.12) 0%, transparent 50%);
-  pointer-events: none;
+  background-color: #F8F9FA;
 }
 
 .history-scroll {
@@ -30,23 +14,11 @@
 
 /* ===== 页面标题 ===== */
 .page-header {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20rpx);
+  background: #FFFFFF;
   padding: 60rpx 40rpx 40rpx;
   margin-bottom: 20rpx;
-  border-bottom: 2rpx solid rgba(59, 130, 246, 0.2);
-  position: relative;
-  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.page-header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 2rpx;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  animation: slideInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .header-title {
@@ -59,8 +31,9 @@
 .title-main {
   font-size: 48rpx;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #000000;
   font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .title-highlight {
@@ -68,13 +41,14 @@
   font-weight: 700;
   color: #3B82F6;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  text-shadow: 0 0 20rpx rgba(59, 130, 246, 0.6);
+  animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
 }
 
 .header-subtitle {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.5);
+  color: #9CA3AF;
   font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: fadeIn 0.5s ease-out 0.2s backwards;
 }
 
 /* ===== 加载状态 ===== */
@@ -85,22 +59,29 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .loading-spinner {
-  width: 100rpx;
-  height: 100rpx;
-  border: 8rpx solid rgba(59, 130, 246, 0.2);
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid rgba(0, 0, 0, 0.1);
   border-top-color: #3B82F6;
   border-radius: 50%;
-  animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-  margin-bottom: 40rpx;
-  box-shadow: 0 0 30rpx rgba(59, 130, 246, 0.4);
+  animation: spin 1s linear infinite;
+  margin-bottom: 30rpx;
+  box-shadow: 0 0 20rpx rgba(59, 130, 246, 0.2);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: #9CA3AF;
   font-family: "PingFang SC", -apple-system, sans-serif;
   animation: pulse 2s ease-in-out infinite;
 }
@@ -114,28 +95,37 @@
   align-items: center;
   justify-content: center;
   padding: 0 60rpx;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.error-icon {
+  font-size: 100rpx;
+  margin-bottom: 30rpx;
+  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .error-text {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: #6B7280;
   text-align: center;
   margin-bottom: 40rpx;
   line-height: 1.6;
   font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .retry-btn {
-  padding: 24rpx 60rpx;
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  padding: 20rpx 60rpx;
+  background: #3B82F6;
   color: #FFFFFF;
   border-radius: 50rpx;
   font-size: 28rpx;
   font-weight: 600;
   border: none;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.4);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .retry-btn::after {
@@ -143,8 +133,9 @@
 }
 
 .retry-btn:active {
-  transform: translateY(2rpx);
-  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
+  background: #2563EB;
+  transform: scale(0.96);
+  box-shadow: 0 2rpx 8rpx rgba(59, 130, 246, 0.3);
 }
 
 /* ===== 历史记录列表 ===== */
@@ -159,62 +150,59 @@
   align-items: center;
   justify-content: center;
   padding: 120rpx 60rpx;
-  animation: fadeIn 0.6s ease-out;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .empty-text {
   font-size: 32rpx;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.7);
+  color: #6B7280;
   margin-bottom: 16rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .empty-hint {
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.5);
+  color: #9CA3AF;
   font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ===== 历史记录项 ===== */
 .history-item {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10rpx);
+  background: #FFFFFF;
   border-radius: 20rpx;
   padding: 32rpx;
   margin-bottom: 20rpx;
-  border: 2rpx solid rgba(59, 130, 246, 0.2);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
+  animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 为每个项目添加延迟动画 */
-.history-item:nth-child(1) { animation-delay: 0.1s; }
-.history-item:nth-child(2) { animation-delay: 0.15s; }
-.history-item:nth-child(3) { animation-delay: 0.2s; }
-.history-item:nth-child(4) { animation-delay: 0.25s; }
-.history-item:nth-child(5) { animation-delay: 0.3s; }
-.history-item:nth-child(6) { animation-delay: 0.35s; }
-.history-item:nth-child(7) { animation-delay: 0.4s; }
-.history-item:nth-child(8) { animation-delay: 0.45s; }
+.history-item:nth-child(1) {
+  animation-delay: 0.1s;
+}
 
-.history-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2rpx;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+.history-item:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.history-item:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.history-item:nth-child(4) {
+  animation-delay: 0.25s;
+}
+
+.history-item:nth-child(5) {
+  animation-delay: 0.3s;
 }
 
 .history-item:active {
   transform: scale(0.98);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
 }
 
 /* 历史记录头部 */
@@ -228,13 +216,17 @@
 .history-type-badge {
   width: 64rpx;
   height: 64rpx;
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.4);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.history-item:active .history-type-badge {
+  transform: scale(0.9);
 }
 
 .history-content {
@@ -248,7 +240,7 @@
 .history-title {
   font-size: 30rpx;
   font-weight: 600;
-  color: #FFFFFF;
+  color: #1F2937;
   font-family: "PingFang SC", -apple-system, sans-serif;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -257,7 +249,7 @@
 
 .history-time {
   font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.5);
+  color: #9CA3AF;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
@@ -270,51 +262,50 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 28rpx;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.history-item:active .history-result {
+  transform: scale(0.9);
 }
 
 .result-correct {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  background: #10B981;
   color: #FFFFFF;
-  box-shadow: 0 4rpx 12rpx rgba(16, 185, 129, 0.4);
 }
 
 .result-wrong {
-  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  background: #EF4444;
   color: #FFFFFF;
-  box-shadow: 0 4rpx 12rpx rgba(239, 68, 68, 0.4);
 }
 
 /* 用户选择 */
 .history-choice {
   font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.6);
+  color: #6B7280;
   margin-bottom: 12rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
 .choice-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6rpx;
+  display: inline-block;
   padding: 6rpx 16rpx;
   border-radius: 12rpx;
   font-size: 24rpx;
   font-weight: 600;
   margin-left: 8rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .choice-ai {
-  background: rgba(239, 68, 68, 0.15);
+  background: #FEE2E2;
   color: #EF4444;
-  border: 1rpx solid rgba(239, 68, 68, 0.3);
 }
 
 .choice-human {
-  background: rgba(59, 130, 246, 0.15);
+  background: #DBEAFE;
   color: #3B82F6;
-  border: 1rpx solid rgba(59, 130, 246, 0.3);
 }
 
 /* 详情提示 */
@@ -323,10 +314,11 @@
   color: #3B82F6;
   text-align: right;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 4rpx;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.history-item:active .detail-hint {
+  transform: translateX(4rpx);
 }
 
 /* ===== 底部占位 ===== */

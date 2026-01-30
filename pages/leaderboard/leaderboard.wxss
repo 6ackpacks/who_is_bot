@@ -1,103 +1,47 @@
-/* pages/leaderboard/leaderboard.wxss - 增强版赛博侦探榜单 */
+/* pages/leaderboard/leaderboard-enhanced.wxss - 增强版排行榜 */
 
+/* ===== 容器 ===== */
 .leaderboard-container {
+  width: 100%;
   min-height: 100vh;
-  background-color: #F8F9FA;
+  background: linear-gradient(180deg, #050B1F 0%, #0D1B2A 50%, #1B263B 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 背景装饰 */
+.leaderboard-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-image:
-    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
-  background-size: 20px 20px;
-  padding-bottom: 120rpx;
-}
-
-/* ===== 加载状态 ===== */
-.loading-container {
-  width: 100%;
-  padding: 200rpx 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.loading-spinner {
-  width: 80rpx;
-  height: 80rpx;
-  border: 6rpx solid rgba(59, 130, 246, 0.2);
-  border-top-color: #3B82F6;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-bottom: 30rpx;
-  box-shadow: 0 0 20rpx rgba(59, 130, 246, 0.2);
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.loading-text {
-  font-size: 28rpx;
-  color: #666666;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  font-weight: 600;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-/* ===== 错误状态 ===== */
-.error-container {
-  width: 100%;
-  padding: 200rpx 60rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s ease-out;
-}
-
-.error-text {
-  font-size: 28rpx;
-  color: #333333;
-  text-align: center;
-  margin-bottom: 40rpx;
-  line-height: 1.6;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.retry-btn {
-  padding: 20rpx 60rpx;
-  background: #3B82F6;
-  color: #FFFFFF;
-  border-radius: 50rpx;
-  font-size: 28rpx;
-  font-weight: 600;
-  border: none;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
-  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.retry-btn::after {
-  border: none;
-}
-
-.retry-btn:active {
-  background: #2563EB;
-  transform: scale(0.96);
-  box-shadow: 0 2rpx 8rpx rgba(59, 130, 246, 0.3);
+    radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+  pointer-events: none;
 }
 
 /* ===== 页面标题 ===== */
 .page-header {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20rpx);
   padding: 80rpx 40rpx 50rpx;
   margin-bottom: 30rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
-  animation: slideInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  border-bottom: 2rpx solid rgba(59, 130, 246, 0.2);
+  position: relative;
+  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.page-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2rpx;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.6), transparent);
 }
 
 .header-title {
@@ -107,38 +51,98 @@
 .title-main {
   font-size: 52rpx;
   font-weight: 900;
+  color: #FFFFFF;
   font-style: italic;
-  color: #000000;
-  display: block;
   letter-spacing: -1rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  line-height: 1.2;
-  animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  text-shadow: 0 0 30rpx rgba(59, 130, 246, 0.5);
 }
 
 .title-highlight {
   font-size: 52rpx;
   font-weight: 900;
+  color: #3B82F6;
   font-style: italic;
-  color: #000000;
-  display: block;
   letter-spacing: -1rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  line-height: 1.2;
-  text-decoration: underline;
-  text-decoration-color: #3B82F6;
-  text-decoration-thickness: 4rpx;
-  text-underline-offset: 6rpx;
-  animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+  text-shadow: 0 0 30rpx rgba(59, 130, 246, 0.8);
+  animation: neonGlow 2s ease-in-out infinite;
 }
 
 .header-subtitle {
-  font-size: 22rpx;
-  color: #9CA3AF;
-  font-weight: 500;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.5);
   font-family: "PingFang SC", -apple-system, sans-serif;
-  letter-spacing: 0.5rpx;
-  animation: fadeIn 0.5s ease-out 0.2s backwards;
+}
+
+/* ===== 加载状态 ===== */
+.loading-container {
+  width: 100%;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  width: 100rpx;
+  height: 100rpx;
+  border: 8rpx solid rgba(59, 130, 246, 0.2);
+  border-top-color: #3B82F6;
+  border-radius: 50%;
+  animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  margin-bottom: 40rpx;
+  box-shadow: 0 0 30rpx rgba(59, 130, 246, 0.4);
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ===== 错误状态 ===== */
+.error-container {
+  width: 100%;
+  height: 60vh;
+  padding: 200rpx 60rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-text {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  margin-bottom: 40rpx;
+  line-height: 1.6;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.retry-btn {
+  padding: 24rpx 60rpx;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  color: #FFFFFF;
+  border-radius: 50rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.retry-btn::after {
+  border: none;
+}
+
+.retry-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
 }
 
 /* ===== 表头 ===== */
@@ -146,24 +150,17 @@
   display: grid;
   grid-template-columns: 100rpx 1fr 220rpx;
   align-items: center;
-  padding: 25rpx 40rpx;
-  background: #FFFFFF;
-  border-radius: 20rpx 20rpx 0 0;
-  margin: 0 30rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
-  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
-}
-
-.th-rank,
-.th-detective,
-.th-accuracy,
-.th-total {
-  font-size: 20rpx;
+  padding: 24rpx 40rpx;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10rpx);
+  border-bottom: 2rpx solid rgba(59, 130, 246, 0.2);
+  font-size: 24rpx;
   font-weight: 700;
-  color: #6B7280;
+  color: rgba(255, 255, 255, 0.6);
   text-transform: uppercase;
-  letter-spacing: 2rpx;
+  letter-spacing: 1rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: fadeIn 0.6s ease-out 0.2s backwards;
 }
 
 .th-rank {
@@ -199,7 +196,8 @@
 }
 
 .user-item {
-  background: #FFFFFF;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10rpx);
   padding: 28rpx 32rpx;
   display: grid;
   grid-template-columns: 100rpx 1fr 220rpx;
@@ -207,40 +205,31 @@
   box-sizing: border-box;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
-  border-bottom: 1rpx solid #F3F4F6;
-  animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  border-bottom: 1rpx solid rgba(59, 130, 246, 0.1);
+  animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.user-item:nth-child(1) {
-  animation-delay: 0.15s;
-}
-
-.user-item:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.user-item:nth-child(3) {
-  animation-delay: 0.25s;
-}
-
-.user-item:nth-child(4) {
-  animation-delay: 0.3s;
-}
-
-.user-item:nth-child(5) {
-  animation-delay: 0.35s;
-}
-
-.user-item:active {
-  transform: scale(0.99);
-  background: #F9FAFB;
-}
+/* 为每个项目添加延迟动画 */
+.user-item:nth-child(1) { animation-delay: 0.1s; }
+.user-item:nth-child(2) { animation-delay: 0.15s; }
+.user-item:nth-child(3) { animation-delay: 0.2s; }
+.user-item:nth-child(4) { animation-delay: 0.25s; }
+.user-item:nth-child(5) { animation-delay: 0.3s; }
+.user-item:nth-child(6) { animation-delay: 0.35s; }
+.user-item:nth-child(7) { animation-delay: 0.4s; }
+.user-item:nth-child(8) { animation-delay: 0.45s; }
+.user-item:nth-child(9) { animation-delay: 0.5s; }
+.user-item:nth-child(10) { animation-delay: 0.55s; }
 
 .user-item:last-child {
   border-radius: 0 0 20rpx 20rpx;
   border-bottom: none;
   margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+
+.user-item:active {
+  transform: scale(0.98);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .user-item::before {
@@ -251,25 +240,29 @@
   bottom: 0;
   width: 4rpx;
   background: transparent;
-  transition: background 0.2s;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* 前三名特殊样式 */
 .user-item:nth-child(1)::before {
   background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
+  box-shadow: 0 0 20rpx rgba(255, 215, 0, 0.6);
 }
 
 .user-item:nth-child(2)::before {
   background: linear-gradient(180deg, #C0C0C0 0%, #A8A8A8 100%);
+  box-shadow: 0 0 20rpx rgba(192, 192, 192, 0.6);
 }
 
 .user-item:nth-child(3)::before {
   background: linear-gradient(180deg, #CD7F32 0%, #B8860B 100%);
+  box-shadow: 0 0 20rpx rgba(205, 127, 50, 0.6);
 }
 
 .user-item:nth-child(1),
 .user-item:nth-child(2),
 .user-item:nth-child(3) {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.02) 0%, #FFFFFF 100%);
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.08) 0%, rgba(255, 255, 255, 0.05) 100%);
 }
 
 /* ===== 排名图标 ===== */
@@ -278,14 +271,13 @@
   align-items: center;
   justify-content: center;
   width: 100rpx;
-  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .rank-number {
   font-size: 36rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
+  color: rgba(255, 255, 255, 0.8);
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
@@ -295,48 +287,51 @@
   align-items: center;
   gap: 20rpx;
   min-width: 0;
-  padding-left: 10rpx;
 }
 
 .user-avatar {
-  width: 88rpx;
-  height: 88rpx;
+  width: 80rpx;
+  height: 80rpx;
   border-radius: 50%;
-  background: #F3F4F6;
   flex-shrink: 0;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 3rpx solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .user-item:active .user-avatar {
-  transform: scale(0.95);
+  transform: scale(1.05);
+  border-color: rgba(59, 130, 246, 0.6);
 }
 
 .user-details {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
 }
 
 .user-name-row {
   display: flex;
   align-items: center;
-  margin-bottom: 8rpx;
+  gap: 12rpx;
 }
 
 .user-name {
   font-size: 30rpx;
   font-weight: 700;
-  color: #000000;
+  color: #FFFFFF;
+  font-family: "PingFang SC", -apple-system, sans-serif;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
 .user-meta {
   display: flex;
   align-items: center;
-  gap: 8rpx;
+  gap: 12rpx;
 }
 
 .level-badge {
@@ -344,31 +339,36 @@
   border-radius: 10rpx;
   font-size: 18rpx;
   font-weight: 700;
-  background: #F3F4F6;
-  color: #6B7280;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
   flex-shrink: 0;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1rpx solid rgba(255, 255, 255, 0.2);
 }
 
 .badge-level-4 {
-  background: #000000;
+  background: linear-gradient(135deg, #000000 0%, #1F2937 100%);
   color: #FFFFFF;
+  border-color: #3B82F6;
+  box-shadow: 0 0 10rpx rgba(59, 130, 246, 0.5);
 }
 
 .badge-level-3 {
-  background: #EF4444;
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: #FFFFFF;
+  border-color: #EF4444;
 }
 
 .badge-level-2 {
-  background: #3B82F6;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
   color: #FFFFFF;
+  border-color: #3B82F6;
 }
 
 .badge-level-1 {
-  background: #F3F4F6;
-  color: #6B7280;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .badge-text {
@@ -377,7 +377,7 @@
 
 .accuracy-text {
   font-size: 22rpx;
-  color: #9CA3AF;
+  color: rgba(255, 255, 255, 0.5);
   font-weight: 500;
   font-family: "PingFang SC", -apple-system, sans-serif;
 }
@@ -385,7 +385,6 @@
 /* ===== 统计数据 ===== */
 .user-stats {
   display: flex;
-  align-items: center;
   justify-content: flex-end;
   gap: 50rpx;
   padding-right: 10rpx;
@@ -399,18 +398,14 @@
   width: 80rpx;
   text-align: right;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.user-item:active .stat-accuracy {
-  transform: scale(1.05);
+  text-shadow: 0 0 10rpx rgba(59, 130, 246, 0.5);
 }
 
 .stat-total {
   font-size: 32rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
+  color: rgba(255, 255, 255, 0.9);
   width: 80rpx;
   text-align: right;
   font-family: "PingFang SC", -apple-system, sans-serif;
