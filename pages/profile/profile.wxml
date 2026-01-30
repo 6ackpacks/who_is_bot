@@ -1,150 +1,176 @@
-<!--pages/profile/profile.wxml-->
+<!--pages/profile/profile.wxml - NetEase Cloud Music Inspired Layout-->
 <view class="profile-container theme-{{currentTheme}}">
   <scroll-view scroll-y class="profile-scroll">
 
-    <!-- 个人信息头部 -->
-    <view class="profile-header">
-      <!-- 头像（带渐变边框） -->
-      <view class="avatar-wrapper">
-        <view class="avatar-gradient">
+    <!-- 顶部更多按钮 -->
+    <view class="top-bar">
+      <view class="more-btn" bindtap="showMoreMenu">
+        <text class="icon icon-more"></text>
+      </view>
+    </view>
+
+    <!-- 沉浸式头部背景 -->
+    <view class="immersive-header">
+      <!-- 背景装饰 -->
+      <view class="header-bg-gradient"></view>
+
+      <!-- 头像居中 -->
+      <view class="avatar-section">
+        <view class="avatar-ring">
           <image src="{{userInfo.avatar}}" class="avatar-image" mode="aspectFill"></image>
         </view>
       </view>
 
-      <!-- 用户名 -->
-      <view class="username">{{userInfo.nickname}}</view>
+      <!-- 昵称 -->
+      <view class="nickname">{{userInfo.nickname}}</view>
 
-      <!-- 等级徽章 -->
-      <view class="level-badge-row">
-        <view class="level-dot"></view>
-        <text class="level-text">{{userInfo.levelName}}</text>
+      <!-- 等级和称号徽章 -->
+      <view class="badges-row">
+        <view class="badge badge-level">
+          <text class="badge-text">Lv.{{userInfo.level}}</text>
+        </view>
+        <view class="badge badge-title">
+          <text class="badge-text">{{userInfo.levelName}}</text>
+        </view>
       </view>
 
-      <!-- 进度条 -->
-      <view class="progress-section">
-        <view class="progress-labels">
-          <text class="progress-label-left">Lv.{{userInfo.level}}</text>
-          <text class="progress-label-right">下一级：{{userInfo.nextLevel}}</text>
+      <!-- 数据面板 - 横向毛玻璃卡片 -->
+      <view class="stats-panel">
+        <view class="stat-card">
+          <view class="stat-value">{{stats.totalJudged}}</view>
+          <view class="stat-label">总判定</view>
         </view>
-        <view class="progress-bar">
-          <view class="progress-fill" style="width: {{userInfo.progress}}%"></view>
+        <view class="stat-divider"></view>
+        <view class="stat-card">
+          <view class="stat-value stat-highlight">{{stats.accuracy}}%</view>
+          <view class="stat-label">准确率</view>
         </view>
-        <text class="progress-hint">还需识破 {{userInfo.remaining}} 个 AI 伪装即可升级</text>
-      </view>
-
-      <!-- 统计数据 -->
-      <view class="stats-row">
-        <view class="stat-item">
-          <text class="stat-value">{{stats.totalJudged}}</text>
-          <text class="stat-label">总判定</text>
-        </view>
-        <view class="stat-item stat-divider">
-          <text class="stat-value stat-highlight">{{stats.accuracy}}%</text>
-          <text class="stat-label">准确率</text>
-        </view>
-        <view class="stat-item">
-          <text class="stat-value stat-streak">{{stats.streak}}</text>
-          <text class="stat-label">最佳连胜</text>
+        <view class="stat-divider"></view>
+        <view class="stat-card">
+          <view class="stat-value stat-streak">{{stats.streak}}</view>
+          <view class="stat-label">连胜</view>
         </view>
       </view>
     </view>
 
-    <!-- 创作者中心 -->
-    <view class="creator-section">
-      <view class="section-header">
-        <text class="section-title">创作者中心</text>
-        <view class="beta-badge">Beta</view>
+    <!-- Icon Buttons 行 -->
+    <view class="icon-buttons-row">
+      <view class="icon-btn" bindtap="goToHistory">
+        <view class="icon-btn-circle">
+          <text class="icon icon-chart"></text>
+        </view>
+        <text class="icon-btn-label">判题记录</text>
+      </view>
+      <view class="icon-btn" bindtap="scrollToAchievements">
+        <view class="icon-btn-circle">
+          <text class="icon icon-trophy"></text>
+        </view>
+        <text class="icon-btn-label">我的成就</text>
+      </view>
+      <view class="icon-btn" bindtap="goToLeaderboard">
+        <view class="icon-btn-circle">
+          <text class="icon icon-rank"></text>
+        </view>
+        <text class="icon-btn-label">排行榜</text>
+      </view>
+      <view class="icon-btn" bindtap="handleShare">
+        <view class="icon-btn-circle">
+          <text class="icon icon-card"></text>
+        </view>
+        <text class="icon-btn-label">侦探名片</text>
+      </view>
+      <view class="icon-btn" bindtap="showMoreMenu">
+        <view class="icon-btn-circle">
+          <text class="icon icon-grid"></text>
+        </view>
+        <text class="icon-btn-label">更多</text>
+      </view>
+    </view>
+
+    <!-- Tab 切换器 -->
+    <view class="tab-switcher">
+      <view class="tab-item {{activeTab === 'history' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="history">
+        <text class="tab-text">判定记录</text>
+        <view class="tab-indicator"></view>
+      </view>
+      <view class="tab-item {{activeTab === 'achievements' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="achievements">
+        <text class="tab-text">荣誉勋章</text>
+        <view class="tab-indicator"></view>
+      </view>
+      <view class="tab-item {{activeTab === 'creator' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="creator">
+        <text class="tab-text">创作者中心</text>
+        <view class="tab-indicator"></view>
+      </view>
+    </view>
+
+    <!-- Tab 内容区域 -->
+    <view class="tab-content">
+
+      <!-- 判定记录 Tab -->
+      <view wx:if="{{activeTab === 'history'}}" class="content-section">
+        <view wx:if="{{recentJudgments.length > 0}}" class="list-container">
+          <view wx:for="{{recentJudgments}}" wx:key="id" class="list-item" bindtap="goToDetail" data-id="{{item.id}}">
+            <view class="list-icon">
+              <text class="icon {{item.isCorrect ? 'icon-check-circle' : 'icon-close-circle'}}"></text>
+            </view>
+            <view class="list-content">
+              <view class="list-title">{{item.contentType === 'text' ? '文本内容' : item.contentType === 'image' ? '图片内容' : '视频内容'}}</view>
+              <view class="list-subtitle">{{item.time}}</view>
+            </view>
+            <view class="list-status {{item.isCorrect ? 'status-correct' : 'status-wrong'}}">
+              {{item.isCorrect ? '正确' : '错误'}}
+            </view>
+          </view>
+        </view>
+        <view wx:else class="empty-state">
+          <text class="empty-icon">📊</text>
+          <text class="empty-text">暂无判定记录</text>
+          <text class="empty-hint">开始你的第一次判定吧</text>
+        </view>
       </view>
 
-      <view class="creator-card">
-        <view class="creator-content">
-          <view class="lock-icon-wrapper">
-            <text class="icon icon-lock icon-xl"></text>
+      <!-- 荣誉勋章 Tab -->
+      <view wx:if="{{activeTab === 'achievements'}}" class="content-section">
+        <view class="list-container">
+          <view wx:for="{{achievements}}" wx:key="id" class="list-item achievement-item {{item.unlocked ? '' : 'achievement-locked'}}">
+            <view class="list-icon achievement-icon {{item.unlocked ? 'icon-unlocked' : 'icon-locked'}}">
+              <text class="icon {{item.icon}}"></text>
+            </view>
+            <view class="list-content">
+              <view class="list-title">{{item.name}}</view>
+              <view class="list-subtitle">{{item.description}}</view>
+            </view>
+            <view class="list-status {{item.unlocked ? 'status-unlocked' : 'status-locked'}}">
+              {{item.unlocked ? '已获得' : '未解锁'}}
+            </view>
           </view>
-          <text class="creator-title">上传通道未开启</text>
-          <text class="creator-desc">想让大家看看你的高仿人机？</text>
-          <text class="creator-desc">达到 <text class="highlight-text">硅谷天才</text> 等级后解锁上传权限</text>
+        </view>
+      </view>
+
+      <!-- 创作者中心 Tab -->
+      <view wx:if="{{activeTab === 'creator'}}" class="content-section">
+        <view class="creator-panel">
+          <view class="creator-lock-icon">
+            <text class="icon icon-lock"></text>
+          </view>
+          <view class="creator-title">上传通道未开启</view>
+          <view class="creator-desc">想让大家看看你的高仿人机？</view>
+          <view class="creator-desc">达到 <text class="highlight-text">硅谷天才</text> 等级后解锁上传权限</view>
+          <view class="creator-progress">
+            <view class="progress-bar-mini">
+              <view class="progress-fill-mini" style="width: {{userInfo.progress}}%"></view>
+            </view>
+            <text class="progress-text">当前进度 {{userInfo.progress}}%</text>
+          </view>
           <button class="creator-btn" disabled>申请内测资格</button>
         </view>
-        <view class="creator-bg-circle"></view>
       </view>
+
     </view>
 
-    <!-- 判定历史入口 -->
-    <view wx:if="{{isLoggedIn}}" class="history-section">
-      <view class="section-title">最近判定</view>
-
-      <view class="history-entry-card" bindtap="goToHistory">
-        <view class="entry-icon">
-          <text class="icon icon-chart icon-white"></text>
-        </view>
-        <view class="entry-content">
-          <text class="entry-title">查看判定历史</text>
-          <text class="entry-desc">查看你的所有判定记录和详情</text>
-        </view>
-        <view class="entry-arrow">
-          <text class="icon icon-right"></text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 我的成就 -->
-    <view class="achievements-section">
-      <view class="section-title">我的成就</view>
-
-      <!-- 已获得成就 -->
-      <view class="achievement-item achievement-unlocked">
-        <view class="achievement-icon icon-unlocked">
-          <text class="icon icon-eye icon-white icon-lg"></text>
-        </view>
-        <view class="achievement-info">
-          <view class="achievement-name">火眼金睛</view>
-          <view class="achievement-desc">连续准确率达到 90%</view>
-        </view>
-        <text class="achievement-status status-unlocked">已获得</text>
-      </view>
-
-      <!-- 锁定成就 -->
-      <view class="achievement-item achievement-locked">
-        <view class="achievement-icon icon-locked">
-          <text class="icon icon-thunder icon-lg"></text>
-        </view>
-        <view class="achievement-info">
-          <view class="achievement-name">闪电判官</view>
-          <view class="achievement-desc">1分钟内完成10次正确判定</view>
-        </view>
-        <text class="achievement-status status-locked">
-          <text class="icon icon-lock icon-sm"></text>
-        </text>
-      </view>
-
-      <!-- 主题切换按钮 -->
-      <view class="theme-toggle-section">
-        <view class="section-subtitle">外观设置</view>
-        <view class="theme-toggle-card" bindtap="handleThemeToggle">
-          <view class="theme-toggle-content">
-            <view class="theme-icon">
-              <text class="icon {{currentTheme === 'dark' ? 'icon-moon' : 'icon-sun'}} icon-white icon-lg"></text>
-            </view>
-            <view class="theme-info">
-              <text class="theme-title">{{currentTheme === 'dark' ? '暗色模式' : '亮色模式'}}</text>
-              <text class="theme-desc">点击切换到{{currentTheme === 'dark' ? '亮色' : '暗色'}}主题</text>
-            </view>
-          </view>
-          <view class="theme-arrow">
-            <text class="icon icon-right"></text>
-          </view>
-        </view>
-      </view>
-
-      <!-- 分享按钮 -->
-      <button class="share-btn" bindtap="handleShare">
-        <text class="icon icon-link icon-white"></text>
-        <text class="share-text">分享我的侦探名片</text>
-      </button>
-
-      <!-- 退出登录按钮 -->
-      <button wx:if="{{isLoggedIn}}" class="logout-btn" bindtap="handleLogout">
+    <!-- 退出登录按钮 -->
+    <view wx:if="{{isLoggedIn}}" class="logout-section">
+      <button class="logout-btn" bindtap="handleLogout">
         <text class="logout-text">退出登录</text>
       </button>
     </view>
@@ -153,4 +179,46 @@
     <view class="bottom-spacer"></view>
 
   </scroll-view>
+
+  <!-- 更多菜单弹窗 -->
+  <view wx:if="{{showMore}}" class="more-overlay" bindtap="hideMoreMenu">
+    <view class="more-menu" catchtap="stopPropagation">
+      <view class="more-header">
+        <text class="more-title">更多功能</text>
+        <view class="more-close" bindtap="hideMoreMenu">
+          <text class="icon icon-close"></text>
+        </view>
+      </view>
+      <view class="more-items">
+        <view class="more-item" bindtap="handleThemeToggle">
+          <view class="more-item-icon">
+            <text class="icon {{currentTheme === 'dark' ? 'icon-moon' : 'icon-sun'}}"></text>
+          </view>
+          <view class="more-item-content">
+            <text class="more-item-title">{{currentTheme === 'dark' ? '暗色模式' : '亮色模式'}}</text>
+            <text class="more-item-desc">切换到{{currentTheme === 'dark' ? '亮色' : '暗色'}}主题</text>
+          </view>
+        </view>
+        <view class="more-item" bindtap="goToSettings">
+          <view class="more-item-icon">
+            <text class="icon icon-settings"></text>
+          </view>
+          <view class="more-item-content">
+            <text class="more-item-title">设置</text>
+            <text class="more-item-desc">个性化设置</text>
+          </view>
+        </view>
+        <view class="more-item" bindtap="goToAbout">
+          <view class="more-item-icon">
+            <text class="icon icon-info"></text>
+          </view>
+          <view class="more-item-content">
+            <text class="more-item-title">关于</text>
+            <text class="more-item-desc">版本信息</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
 </view>
