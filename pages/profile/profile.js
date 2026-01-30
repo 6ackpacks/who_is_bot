@@ -89,6 +89,11 @@ Page({
     // 每次显示页面时检查登录状态和主题
     this.initTheme();
     this.checkLoginAndLoadData();
+
+    // 更新自定义 tabBar 选中状态
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setSelected('pages/profile/profile');
+    }
   },
 
   // 初始化主题

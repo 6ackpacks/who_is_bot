@@ -1,13 +1,25 @@
-<!--pages/leaderboard/leaderboard.wxml-->
+<!--pages/leaderboard/leaderboard.wxml - Immersive Redesign-->
 <view class="leaderboard-container theme-{{currentTheme}}">
 
-  <!-- 页面标题 -->
-  <view class="page-header">
-    <view class="header-title">
-      <text class="title-main">全网最强</text>
-      <text class="title-highlight">赛博侦探榜</text>
+  <!-- 网格背景层 -->
+  <view class="grid-background"></view>
+
+  <!-- 沉浸式大卡片页眉 -->
+  <view class="immersive-header" style="transform: translateY({{scrollY * 0.3}}rpx);">
+    <view class="header-gradient"></view>
+
+    <view class="header-content">
+      <view class="header-title">
+        <text class="title-text">全网最强</text>
+        <text class="title-highlight">赛博侦探榜</text>
+      </view>
+      <text class="header-subtitle">每周实时更新排行 · 寻找人类最强鹰眼</text>
+
+      <!-- 当前用户排名标签 -->
+      <view class="user-rank-badge">
+        <text class="rank-badge-text">当前排名：Lv.{{currentUserLevel}} | No.{{currentUserRank}}</text>
+      </view>
     </view>
-    <text class="header-subtitle">每日 24:00 更新 · 寻找人类最强鹰眼</text>
   </view>
 
   <!-- 加载状态 -->
@@ -18,56 +30,45 @@
 
   <!-- 错误状态 -->
   <view wx:elif="{{error}}" class="error-container">
-    <text class="icon icon-warning icon-xxl icon-warning"></text>
     <text class="error-text">{{error}}</text>
     <button class="retry-btn" bindtap="handleRetry">重新加载</button>
   </view>
 
-  <!-- 排行榜内容 -->
-  <view wx:else>
-    <!-- 表头 -->
-    <view class="table-header">
-      <text class="th-rank">#</text>
-      <text class="th-detective">侦探</text>
-      <view class="th-stats">
-        <text class="th-accuracy">正确率</text>
-        <text class="th-total">总答题</text>
-      </view>
-    </view>
+  <!-- 排行榜列表 - 无Tab，直接展示 -->
+  <scroll-view wx:else scroll-y class="leaderboard-list" bindscroll="handleScroll">
+    <view wx:for="{{users}}" wx:key="id" class="user-item rank-{{index + 1}}">
 
-    <!-- 排行榜列表 -->
-    <scroll-view scroll-y class="leaderboard-list">
-    <view wx:for="{{users}}" wx:key="id" class="user-item">
-
-      <!-- 排名图标 -->
-      <view class="rank-icon">
-        <text wx:if="{{index === 0}}" class="icon icon-trophy icon-xl" style="color: #FFD700;"></text>
-        <text wx:elif="{{index === 1}}" class="icon icon-trophy icon-xl" style="color: #C0C0C0;"></text>
-        <text wx:elif="{{index === 2}}" class="icon icon-trophy icon-xl" style="color: #CD7F32;"></text>
+      <!-- 排名数字 -->
+      <view class="rank-section">
+        <text wx:if="{{index === 0}}" class="rank-medal gold">1</text>
+        <text wx:elif="{{index === 1}}" class="rank-medal silver">2</text>
+        <text wx:elif="{{index === 2}}" class="rank-medal bronze">3</text>
         <text wx:else class="rank-number">{{index + 1}}</text>
       </view>
 
+      <!-- 头像 -->
+      <image src="{{item.avatar}}" class="user-avatar"></image>
+
       <!-- 用户信息 -->
       <view class="user-info">
-        <image src="{{item.avatar}}" class="user-avatar"></image>
-        <view class="user-details">
-          <view class="user-name-row">
-            <text class="user-name">{{item.username}}</text>
-          </view>
-          <view class="user-meta">
-            <view class="level-badge badge-{{item.levelClass}}">
-              <text class="badge-text">{{item.level}}</text>
-            </view>
-            <text class="icon icon-fire icon-sm" style="color: #EF4444;"></text>
-            <text class="accuracy-text">周准确率 {{item.weeklyAccuracy}}%</text>
+        <text class="user-name">{{item.username}}</text>
+        <view class="user-meta">
+          <view class="level-badge badge-{{item.levelClass}}">
+            <text class="badge-text">{{item.level}}</text>
           </view>
         </view>
       </view>
 
-      <!-- 统计数据 -->
+      <!-- 统计数据 - 等宽数字字体 -->
       <view class="user-stats">
-        <text class="stat-accuracy">{{item.accuracy}}%</text>
-        <text class="stat-total">{{item.totalJudged}}</text>
+        <view class="stat-item">
+          <text class="stat-label">周准确率</text>
+          <text class="stat-value monospace">{{item.weeklyAccuracy}}%</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-label">总题目</text>
+          <text class="stat-value monospace">{{item.totalJudged}}</text>
+        </view>
       </view>
 
     </view>
@@ -75,6 +76,5 @@
     <!-- 底部占位 -->
     <view class="bottom-spacer"></view>
   </scroll-view>
-  </view>
 
 </view>

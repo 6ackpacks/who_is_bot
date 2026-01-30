@@ -1,0 +1,60 @@
+/* custom-tab-bar/index.wxss - 赛博朋克风格大字体 TabBar */
+
+.custom-tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100rpx;
+  background: #0F111A;
+  display: flex;
+  padding-bottom: env(safe-area-inset-bottom);
+  border-top: 1rpx solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.3);
+  z-index: 99999;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tab-item:active {
+  transform: scale(0.95);
+}
+
+.tab-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #8B92A8;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  letter-spacing: 1rpx;
+}
+
+/* 选中状态 */
+.tab-item-active .tab-text {
+  color: #00F2FF;
+  font-weight: 700;
+  font-size: 34rpx;
+  text-shadow: 0 0 10rpx rgba(0, 242, 255, 0.5);
+}
+
+/* 选中指示器 */
+.tab-item-active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 4rpx;
+  background: linear-gradient(90deg, transparent, #00F2FF, transparent);
+  border-radius: 2rpx;
+  box-shadow: 0 0 10rpx rgba(0, 242, 255, 0.6);
+}

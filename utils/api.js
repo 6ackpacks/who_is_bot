@@ -5,9 +5,9 @@ const auth = require('./auth.js');
 // API 配置
 const API_CONFIG = {
   baseURL: 'https://your-api-domain.com',
-  timeout: 10000, // 10秒超时
+  timeout: 30000, // 增加到30秒超时
   useMock: false, // 使用真实数据库
-  useLocal: true, // 使用本地服务器（开发模式）
+  useLocal: false, // 切换到云托管模式
   localURL: 'http://172.16.41.182', // 本地服务器地址
   cloudConfig: {
     env: 'prod-3ge8ht6pded7ed77',
@@ -441,6 +441,50 @@ function getLeaderboard(params = {}) {
 }
 
 /**
+ * 获取用户排名
+ */
+function getUserRank(userId) {
+  if (API_CONFIG.useMock) {
+    return Promise.resolve({
+      success: true,
+      data: {
+        rank: Math.floor(Math.random() * 200) + 1
+      }
+    });
+  }
+
+  // 获取排行榜数据，然后找到用户的排名
+  return getLeaderboard({ limit: 100, type: 'weekly' })
+    .then(res => {
+      if (res.success && res.data) {
+        const users = res.data;
+        const userIndex = users.findIndex(user => user.id === userId);
+
+        if (userIndex !== -1) {
+          return {
+            success: true,
+            data: {
+              rank: userIndex + 1
+            }
+          };
+        } else {
+          return {
+            success: true,
+            data: {
+              rank: '未上榜'
+            }
+          };
+        }
+      }
+
+      return {
+        success: false,
+        message: '获取排名失败'
+      };
+    });
+}
+
+/**
  * 微信登录
  */
 function wxLogin(code, userInfo) {
@@ -555,6 +599,7 @@ module.exports = {
   submitJudgment,
   getUserStats,
   getUserJudgments,
+  getUserRank,
   getContentById,
   getLeaderboard,
   wxLogin,

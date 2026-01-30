@@ -3,9 +3,8 @@
 .antd-icon {
   display: inline-block;
   vertical-align: middle;
-  font-size: 10px;
-  width: 2.4em;
-  height: 2.4em;
+  width: 1em;
+  height: 1em;
   -webkit-mask-position: 50% 50%;
   mask-position: 50% 50%;
   -webkit-mask-repeat: no-repeat;
@@ -13,6 +12,7 @@
   -webkit-mask-size: 100%;
   mask-size: 100%;
   background-color: currentColor;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Trophy Icon - using success icon */
@@ -98,4 +98,21 @@
 
 .antd-icon-xxl {
   font-size: 80rpx;
+}
+
+/* Color variants - must be in component WXSS for custom-class to work */
+.icon-cyan {
+  color: #00F2FF !important;
+}
+
+.icon-white {
+  color: #FFFFFF !important;
+}
+
+.icon-locked {
+  color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.icon-unlocked {
+  color: #00F2FF !important;
 }

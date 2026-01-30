@@ -15,6 +15,7 @@
   min-height: 100vh;
   background: #0F111A;
   position: relative;
+  padding-bottom: 120rpx;
 }
 
 .profile-scroll {

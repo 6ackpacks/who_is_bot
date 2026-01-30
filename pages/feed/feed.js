@@ -36,6 +36,11 @@ Page({
   onShow() {
     // 每次显示页面时重新加载主题
     this.initTheme();
+
+    // 更新自定义 tabBar 选中状态
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setSelected('pages/feed/feed');
+    }
   },
 
   // 初始化主题

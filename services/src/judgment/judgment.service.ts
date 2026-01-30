@@ -34,9 +34,16 @@ export class JudgmentService {
         };
       }
 
-      // 2. 记录判定
+      // 2. 为游客创建或获取临时用户记录
+      let effectiveUserId = dto.userId;
+      if (!dto.userId && dto.guestId) {
+        const guestUser = await this.getOrCreateGuestUser(dto.guestId);
+        effectiveUserId = guestUser.id;
+      }
+
+      // 3. 记录判定
       const judgment = this.judgmentRepository.create({
-        userId: dto.userId || null,
+        userId: effectiveUserId || null,
         contentId: dto.contentId,
         userChoice: dto.userChoice,
         isCorrect: dto.isCorrect,
@@ -45,12 +52,12 @@ export class JudgmentService {
 
       await this.judgmentRepository.save(judgment);
 
-      // 3. 更新内容统计
+      // 4. 更新内容统计
       await this.updateContentStats(dto);
 
-      // 4. 更新用户统计（如果是登录用户）
-      if (dto.userId) {
-        await this.updateUserStats(dto);
+      // 5. 更新用户统计（登录用户或游客临时用户）
+      if (effectiveUserId) {
+        await this.updateUserStats({ ...dto, userId: effectiveUserId });
       }
 
       // 5. 获取更新后的内容统计数据
@@ -155,15 +162,13 @@ export class JudgmentService {
   /**
    * 计算用户等级
    * 等级规则：
-   * - 1级: 0-9次判定
-   * - 2级: 10-49次判定
-   * - 3级: 50-99次判定
-   * - 4级: 100-499次判定
-   * - 5级: 500+次判定
+   * - 1级 (AI小白): 0-9次判定
+   * - 2级 (胜似人机): 10-49次判定
+   * - 3级 (人机杀手): 50-99次判定
+   * - 4级 (硅谷天才): 100+次判定
    */
   private calculateUserLevel(user: User): number {
     const judged = user.totalJudged;
-    if (judged >= 500) return 5;
     if (judged >= 100) return 4;
     if (judged >= 50) return 3;
     if (judged >= 10) return 2;
@@ -197,5 +202,42 @@ export class JudgmentService {
     );
 
     return judgmentsWithContent;
+  }
+
+  /**
+   * 为游客创建或获取临时用户记录
+   * 游客用户使用 guestId 作为 uid，可以追踪统计数据
+   */
+  private async getOrCreateGuestUser(guestId: string): Promise<User> {
+    // 尝试查找已存在的游客用户（通过 uid = guestId）
+    let guestUser = await this.userRepository.findOne({
+      where: { uid: guestId },
+    });
+
+    // 如果不存在，创建新的游客用户
+    if (!guestUser) {
+      const randomSuffix = Math.floor(Math.random() * 10000);
+      guestUser = this.userRepository.create({
+        uid: guestId,
+        nickname: `游客${randomSuffix}`,
+        avatar: 'https://via.placeholder.com/100/0F111A/00F2FF?text=Guest',
+        level: 1,
+        accuracy: 0,
+        totalJudged: 0,
+        correctCount: 0,
+        streak: 0,
+        maxStreak: 0,
+        totalBotsBusted: 0,
+        weeklyAccuracy: 0,
+        weeklyJudged: 0,
+        weeklyCorrect: 0,
+        lastWeekReset: new Date(),
+      });
+
+      await this.userRepository.save(guestUser);
+      console.log(`创建游客临时用户: ${guestId} -> ${guestUser.id}`);
+    }
+
+    return guestUser;
   }
 }

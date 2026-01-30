@@ -13,10 +13,10 @@ export class LeaderboardController {
     // 格式化数据以匹配前端需求
     const formattedUsers = users.map(user => ({
       id: user.id,
-      username: user.nickname,
+      nickname: user.nickname,
       avatar: user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Anonymous',
       level: this.getLevelName(user.level),
-      bustedCount: user.totalJudged,
+      totalJudged: user.totalJudged,
       maxStreak: user.maxStreak,
       weeklyAccuracy: Math.round(user.weeklyAccuracy * 10) / 10, // 保留一位小数
     }));
