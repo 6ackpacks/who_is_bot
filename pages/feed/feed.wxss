@@ -744,8 +744,13 @@
   color: rgba(15, 23, 42, 0.8);
 }
 
+.theme-light .category-tabs {
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 2rpx solid rgba(0, 212, 255, 0.2);
+}
+
 .theme-light .category-tab {
-  color: rgba(15, 23, 42, 0.5);
+  color: rgba(15, 23, 42, 0.6);
 }
 
 .theme-light .category-tab.active {
@@ -753,21 +758,48 @@
 }
 
 .theme-light .content-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 2rpx solid rgba(0, 212, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2rpx solid rgba(0, 212, 255, 0.2);
 }
 
 .theme-light .content-text {
   color: rgba(15, 23, 42, 0.95);
 }
 
+.theme-light .quote-icon {
+  color: rgba(0, 212, 255, 0.1);
+}
+
 .theme-light .judge-section-title {
   color: rgba(15, 23, 42, 0.6);
 }
 
+.theme-light .judge-buttons {
+  background: rgba(255, 255, 255, 0.9);
+  border-top: 2rpx solid rgba(0, 212, 255, 0.2);
+}
+
+.theme-light .judge-btn {
+  border: 2rpx solid rgba(0, 0, 0, 0.1);
+}
+
+.theme-light .judge-btn-ai {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+}
+
+.theme-light .judge-btn-human {
+  background: rgba(0, 212, 255, 0.1);
+  color: #00D4FF;
+}
+
+.theme-light .btn-label {
+  color: inherit;
+}
+
 .theme-light .result-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 2rpx solid rgba(0, 212, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2rpx solid rgba(0, 212, 255, 0.2);
 }
 
 .theme-light .result-label {
@@ -787,8 +819,8 @@
 }
 
 .theme-light .explanation-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 2rpx solid rgba(0, 212, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2rpx solid rgba(0, 212, 255, 0.2);
 }
 
 .theme-light .explanation-title {
@@ -804,8 +836,8 @@
 }
 
 .theme-light .comment-item {
-  background: rgba(255, 255, 255, 0.6);
-  border: 1rpx solid rgba(0, 212, 255, 0.1);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1rpx solid rgba(0, 212, 255, 0.15);
 }
 
 .theme-light .comment-author {
@@ -821,8 +853,8 @@
 }
 
 .theme-light .comment-input-wrapper {
-  background: rgba(255, 255, 255, 0.8);
-  border: 2rpx solid rgba(0, 212, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2rpx solid rgba(0, 212, 255, 0.2);
 }
 
 .theme-light .comment-input {
@@ -841,6 +873,7 @@
 .theme-light .btn-secondary {
   background: rgba(0, 0, 0, 0.05);
   color: #0F172A;
+  border: 2rpx solid rgba(0, 0, 0, 0.1);
 }
 
 .theme-light .btn-primary {

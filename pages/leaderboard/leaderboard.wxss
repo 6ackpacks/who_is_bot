@@ -451,20 +451,22 @@
 }
 
 .theme-light .page-header {
-  background: rgba(255, 255, 255, 0.8);
-  border-bottom: 2rpx solid rgba(0, 212, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 2rpx solid rgba(0, 212, 255, 0.3);
 }
 
 .theme-light .title-main {
   color: #0F172A;
+  text-shadow: none;
 }
 
 .theme-light .title-highlight {
   color: #00D4FF;
+  text-shadow: none;
 }
 
 .theme-light .header-subtitle {
-  color: rgba(15, 23, 42, 0.5);
+  color: rgba(15, 23, 42, 0.6);
 }
 
 .theme-light .loading-text {
@@ -476,24 +478,28 @@
 }
 
 .theme-light .table-header {
-  background: rgba(255, 255, 255, 0.8);
-  border-bottom: 2rpx solid rgba(0, 212, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 2rpx solid rgba(0, 212, 255, 0.3);
   color: rgba(15, 23, 42, 0.6);
 }
 
 .theme-light .user-item {
-  background: rgba(255, 255, 255, 0.8);
-  border-bottom: 1rpx solid rgba(0, 212, 255, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1rpx solid rgba(0, 212, 255, 0.15);
 }
 
 .theme-light .user-item:nth-child(1),
 .theme-light .user-item:nth-child(2),
 .theme-light .user-item:nth-child(3) {
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, rgba(255, 255, 255, 0.8) 100%);
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.08) 0%, rgba(255, 255, 255, 0.9) 100%);
 }
 
 .theme-light .rank-number {
   color: rgba(15, 23, 42, 0.8);
+}
+
+.theme-light .user-avatar {
+  border: 3rpx solid rgba(0, 212, 255, 0.3);
 }
 
 .theme-light .user-name {
@@ -503,7 +509,32 @@
 .theme-light .level-badge {
   background: rgba(0, 0, 0, 0.05);
   color: rgba(15, 23, 42, 0.7);
-  border: 1rpx solid rgba(0, 0, 0, 0.1);
+  border: 1rpx solid rgba(0, 0, 0, 0.15);
+}
+
+.theme-light .badge-level-4 {
+  background: linear-gradient(135deg, #0F172A 0%, #1F2937 100%);
+  color: #FFFFFF;
+  border-color: #00D4FF;
+  box-shadow: 0 0 10rpx rgba(0, 212, 255, 0.4);
+}
+
+.theme-light .badge-level-3 {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  color: #FFFFFF;
+  border-color: #EF4444;
+}
+
+.theme-light .badge-level-2 {
+  background: linear-gradient(135deg, #00D4FF 0%, #0096CC 100%);
+  color: #000000;
+  border-color: #00D4FF;
+}
+
+.theme-light .badge-level-1 {
+  background: rgba(0, 0, 0, 0.05);
+  color: rgba(15, 23, 42, 0.7);
+  border-color: rgba(0, 0, 0, 0.15);
 }
 
 .theme-light .accuracy-text {
@@ -512,6 +543,7 @@
 
 .theme-light .stat-accuracy {
   color: #00D4FF;
+  text-shadow: none;
 }
 
 .theme-light .stat-total {

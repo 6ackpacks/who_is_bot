@@ -436,10 +436,11 @@
 
 .theme-light .page-title {
   color: #0F172A;
+  text-shadow: none;
 }
 
 .theme-light .page-subtitle {
-  color: rgba(15, 23, 42, 0.5);
+  color: rgba(15, 23, 42, 0.6);
 }
 
 .theme-light .section-label {
@@ -447,26 +448,42 @@
 }
 
 .theme-light .content-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 2rpx solid rgba(0, 212, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2rpx solid rgba(0, 212, 255, 0.2);
 }
 
 .theme-light .quote-icon {
-  color: rgba(0, 212, 255, 0.1);
+  color: rgba(0, 212, 255, 0.08);
 }
 
 .theme-light .content-text {
   color: rgba(15, 23, 42, 0.95);
 }
 
+.theme-light .image-card {
+  border: 2rpx solid rgba(0, 212, 255, 0.2);
+}
+
 .theme-light .answer-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 2rpx solid rgba(0, 212, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2rpx solid rgba(0, 212, 255, 0.2);
+}
+
+.theme-light .answer-badge {
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
+}
+
+.theme-light .stats-section {
+  margin-bottom: 40rpx;
+}
+
+.theme-light .stat-text {
+  color: #FFFFFF;
 }
 
 .theme-light .explanation-card {
-  background: rgba(255, 255, 255, 0.8);
-  border: 2rpx solid rgba(0, 212, 255, 0.15);
+  background: rgba(255, 255, 255, 0.9);
+  border: 2rpx solid rgba(0, 212, 255, 0.2);
 }
 
 .theme-light .explanation-text {
