@@ -27,7 +27,7 @@ import { ProxyController } from './proxy.controller';
         port: configService.get('DB_PORT', 3306),
         username: configService.get('DB_USER', 'root'),
         password: configService.get('DB_PASS', 'root'),
-        database: configService.get('DB_NAME', 'who_is_the_bot'),
+        database: configService.get('DB_NAME', 'who_is_bot'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false,
         autoLoadEntities: true,
