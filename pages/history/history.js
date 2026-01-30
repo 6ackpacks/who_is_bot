@@ -1,16 +1,28 @@
 // pages/history/history.js
 const auth = require('../../utils/auth.js');
 const api = require('../../utils/api.js');
+const theme = require('../../utils/theme.js');
 
 Page({
   data: {
     judgmentHistory: [],
     loading: true,
-    error: ''
+    error: '',
+    currentTheme: 'dark'
   },
 
   onLoad() {
+    this.initTheme();
     this.loadHistory();
+  },
+
+  onShow() {
+    this.initTheme();
+  },
+
+  initTheme() {
+    const currentTheme = theme.getTheme();
+    this.setData({ currentTheme });
   },
 
   // 加载判定历史

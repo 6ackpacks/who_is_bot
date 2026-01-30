@@ -1,5 +1,5 @@
 <!--pages/leaderboard/leaderboard.wxml-->
-<view class="leaderboard-container">
+<view class="leaderboard-container theme-{{currentTheme}}">
 
   <!-- 页面标题 -->
   <view class="page-header">

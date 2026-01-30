@@ -1,5 +1,5 @@
 <!--pages/history/history.wxml-->
-<view class="history-container">
+<view class="history-container theme-{{currentTheme}}">
 
   <!-- 页面标题 -->
   <view class="page-header">

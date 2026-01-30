@@ -1,5 +1,6 @@
 // pages/feed/feed.js
 const api = require('../../utils/api.js');
+const theme = require('../../utils/theme.js');
 
 Page({
   data: {
@@ -22,12 +23,25 @@ Page({
     commentInput: '',
     replyingTo: null,
     userId: null,
-    guestId: null
+    guestId: null,
+    currentTheme: 'dark' // 当前主题
   },
 
   onLoad() {
+    this.initTheme();
     this.loadFeedData();
     this.loadUserInfo();
+  },
+
+  onShow() {
+    // 每次显示页面时重新加载主题
+    this.initTheme();
+  },
+
+  // 初始化主题
+  initTheme() {
+    const currentTheme = theme.getTheme();
+    this.setData({ currentTheme });
   },
 
   // 加载用户信息

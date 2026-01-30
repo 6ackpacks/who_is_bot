@@ -717,3 +717,132 @@
   transform: scale(0.97);
   box-shadow: 0 2rpx 8rpx rgba(0, 212, 255, 0.3);
 }
+
+/* ===== 亮色主题样式 ===== */
+.theme-light.feed-container {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 50%, #F1F5F9 100%);
+}
+
+.theme-light.feed-container::before {
+  background-image:
+    radial-gradient(circle at 30% 20%, rgba(0, 212, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(0, 212, 255, 0.03) 0%, transparent 50%);
+}
+
+.theme-light.feed-container::after {
+  background-image:
+    linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+  opacity: 0.4;
+}
+
+.theme-light .loading-text {
+  color: rgba(15, 23, 42, 0.7);
+}
+
+.theme-light .error-text {
+  color: rgba(15, 23, 42, 0.8);
+}
+
+.theme-light .category-tab {
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.theme-light .category-tab.active {
+  color: #00D4FF;
+}
+
+.theme-light .content-card {
+  background: rgba(255, 255, 255, 0.8);
+  border: 2rpx solid rgba(0, 212, 255, 0.15);
+}
+
+.theme-light .content-text {
+  color: rgba(15, 23, 42, 0.95);
+}
+
+.theme-light .judge-section-title {
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.theme-light .result-card {
+  background: rgba(255, 255, 255, 0.8);
+  border: 2rpx solid rgba(0, 212, 255, 0.15);
+}
+
+.theme-light .result-label {
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.theme-light .result-value {
+  color: #0F172A;
+}
+
+.theme-light .stats-bar {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.theme-light .stat-label {
+  color: rgba(15, 23, 42, 0.6);
+}
+
+.theme-light .explanation-card {
+  background: rgba(255, 255, 255, 0.8);
+  border: 2rpx solid rgba(0, 212, 255, 0.15);
+}
+
+.theme-light .explanation-title {
+  color: #0F172A;
+}
+
+.theme-light .explanation-text {
+  color: rgba(15, 23, 42, 0.9);
+}
+
+.theme-light .comment-section-title {
+  color: #0F172A;
+}
+
+.theme-light .comment-item {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1rpx solid rgba(0, 212, 255, 0.1);
+}
+
+.theme-light .comment-author {
+  color: #0F172A;
+}
+
+.theme-light .comment-time {
+  color: rgba(15, 23, 42, 0.5);
+}
+
+.theme-light .comment-text {
+  color: rgba(15, 23, 42, 0.8);
+}
+
+.theme-light .comment-input-wrapper {
+  background: rgba(255, 255, 255, 0.8);
+  border: 2rpx solid rgba(0, 212, 255, 0.15);
+}
+
+.theme-light .comment-input {
+  color: #0F172A;
+  background: transparent;
+}
+
+.theme-light .comment-input::placeholder {
+  color: rgba(15, 23, 42, 0.4);
+}
+
+.theme-light .send-btn {
+  color: #00D4FF;
+}
+
+.theme-light .btn-secondary {
+  background: rgba(0, 0, 0, 0.05);
+  color: #0F172A;
+}
+
+.theme-light .btn-primary {
+  color: #000000;
+}

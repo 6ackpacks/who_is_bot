@@ -2,6 +2,7 @@
 const app = getApp();
 const auth = require('../../utils/auth.js');
 const api = require('../../utils/api.js');
+const theme = require('../../utils/theme.js');
 
 Page({
   data: {
@@ -19,16 +20,25 @@ Page({
       accuracy: 89.4,
       streak: 12
     },
-    isLoggedIn: false
+    isLoggedIn: false,
+    currentTheme: 'dark' // 当前主题
   },
 
   onLoad() {
+    this.initTheme();
     this.checkLoginAndLoadData();
   },
 
   onShow() {
-    // 每次显示页面时检查登录状态
+    // 每次显示页面时检查登录状态和主题
+    this.initTheme();
     this.checkLoginAndLoadData();
+  },
+
+  // 初始化主题
+  initTheme() {
+    const currentTheme = theme.getTheme();
+    this.setData({ currentTheme });
   },
 
   // 检查登录状态并加载数据
@@ -143,6 +153,25 @@ Page({
         }
       }
     });
+  },
+
+  // 切换主题
+  handleThemeToggle() {
+    const newTheme = theme.toggleTheme();
+    this.setData({ currentTheme: newTheme });
+
+    // 更新全局主题
+    app.globalData.theme = newTheme;
+
+    // 显示提示
+    wx.showToast({
+      title: newTheme === 'dark' ? '已切换到暗色模式' : '已切换到亮色模式',
+      icon: 'success',
+      duration: 1500
+    });
+
+    // 触发页面重新渲染
+    // 注意：其他页面需要在 onShow 时重新加载主题
   },
 
   // 页面分享配置

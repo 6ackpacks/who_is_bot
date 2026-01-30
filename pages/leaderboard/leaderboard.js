@@ -1,20 +1,29 @@
 // pages/leaderboard/leaderboard.js
 const api = require('../../utils/api.js');
+const theme = require('../../utils/theme.js');
 
 Page({
   data: {
     users: [],
     loading: true,
-    error: ''
+    error: '',
+    currentTheme: 'dark'
   },
 
   onLoad() {
+    this.initTheme();
     this.loadLeaderboard();
   },
 
   onShow() {
-    // 每次显示页面时刷新数据
+    // 每次显示页面时刷新数据和主题
+    this.initTheme();
     this.loadLeaderboard();
+  },
+
+  initTheme() {
+    const currentTheme = theme.getTheme();
+    this.setData({ currentTheme });
   },
 
   // 加载排行榜数据

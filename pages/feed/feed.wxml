@@ -1,5 +1,5 @@
 <!--pages/feed/feed.wxml - 新版卡片式设计-->
-<view class="feed-container">
+<view class="feed-container theme-{{currentTheme}}">
 
   <!-- 加载状态 -->
   <view wx:if="{{loading}}" class="loading-container">

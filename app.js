@@ -1,5 +1,6 @@
 // app.js
 const auth = require('./utils/auth.js');
+const theme = require('./utils/theme.js');
 
 App({
   onLaunch() {
@@ -10,8 +11,18 @@ App({
     });
     console.log('云开发环境初始化完成');
 
+    // 初始化主题
+    this.initTheme();
+
     // 检查登录状态
     this.checkLoginStatus();
+  },
+
+  // 初始化主题
+  initTheme() {
+    const currentTheme = theme.getTheme();
+    this.globalData.theme = currentTheme;
+    console.log('当前主题:', currentTheme);
   },
 
   // 检查登录状态
@@ -45,6 +56,7 @@ App({
       accuracy: 78,
       totalJudged: 124,
       streak: 12
-    }
+    },
+    theme: 'dark' // 默认暗色主题
   }
 });

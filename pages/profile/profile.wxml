@@ -1,5 +1,5 @@
 <!--pages/profile/profile.wxml-->
-<view class="profile-container">
+<view class="profile-container theme-{{currentTheme}}">
   <scroll-view scroll-y class="profile-scroll">
 
     <!-- 个人信息头部 -->
@@ -116,6 +116,25 @@
         <text class="achievement-status status-locked">
           <text class="icon icon-lock icon-sm"></text>
         </text>
+      </view>
+
+      <!-- 主题切换按钮 -->
+      <view class="theme-toggle-section">
+        <view class="section-subtitle">外观设置</view>
+        <view class="theme-toggle-card" bindtap="handleThemeToggle">
+          <view class="theme-toggle-content">
+            <view class="theme-icon">
+              <text class="icon {{currentTheme === 'dark' ? 'icon-moon' : 'icon-sun'}} icon-white icon-lg"></text>
+            </view>
+            <view class="theme-info">
+              <text class="theme-title">{{currentTheme === 'dark' ? '暗色模式' : '亮色模式'}}</text>
+              <text class="theme-desc">点击切换到{{currentTheme === 'dark' ? '亮色' : '暗色'}}主题</text>
+            </view>
+          </view>
+          <view class="theme-arrow">
+            <text class="icon icon-right"></text>
+          </view>
+        </view>
       </view>
 
       <!-- 分享按钮 -->

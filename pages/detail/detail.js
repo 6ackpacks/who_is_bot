@@ -1,15 +1,18 @@
 // pages/detail/detail.js
 const api = require('../../utils/api.js');
+const theme = require('../../utils/theme.js');
 
 Page({
   data: {
     contentId: null,
     content: null,
     loading: true,
-    error: ''
+    error: '',
+    currentTheme: 'dark'
   },
 
   onLoad(options) {
+    this.initTheme();
     const contentId = options.id;
     if (contentId) {
       this.setData({ contentId });
@@ -20,6 +23,15 @@ Page({
         error: '内容ID不存在'
       });
     }
+  },
+
+  onShow() {
+    this.initTheme();
+  },
+
+  initTheme() {
+    const currentTheme = theme.getTheme();
+    this.setData({ currentTheme });
   },
 
   // 加载内容详情
