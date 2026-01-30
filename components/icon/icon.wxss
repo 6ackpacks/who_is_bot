@@ -1,5 +1,4 @@
 /* components/icon/icon.wxss - WeUI Icon Integration */
-@import "/node_modules/weui-miniprogram/miniprogram_dist/weui-wxss/dist/style/weui.wxss";
 
 .antd-icon {
   display: inline-block;
