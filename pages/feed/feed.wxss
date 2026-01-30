@@ -1,15 +1,15 @@
-/* pages/feed/feed-enhanced.wxss - 增强版设计 */
+/* pages/feed/feed-enhanced.wxss - 优化版设计 */
 
-/* ===== 容器 ===== */
+/* ===== 容器 - 更暗的背景 ===== */
 .feed-container {
   width: 100vw;
   min-height: 100vh;
-  background: linear-gradient(180deg, #050B1F 0%, #0D1B2A 50%, #1B263B 100%);
+  background: linear-gradient(180deg, #000000 0%, #0A0F1E 50%, #0F1419 100%);
   position: relative;
   overflow: hidden;
 }
 
-/* 背景装饰 - 赛博光晕 */
+/* 背景装饰 - 简化的光晕效果 */
 .feed-container::before {
   content: '';
   position: absolute;
@@ -18,14 +18,12 @@
   right: 0;
   bottom: 0;
   background-image:
-    radial-gradient(circle at 20% 30%, rgba(0, 180, 216, 0.15) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 70%);
+    radial-gradient(circle at 30% 20%, rgba(0, 150, 200, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(100, 80, 200, 0.06) 0%, transparent 50%);
   pointer-events: none;
-  animation: pulseGlow 8s ease-in-out infinite;
 }
 
-/* 网格背景 + 扫描线 */
+/* 简化的网格背景 */
 .feed-container::after {
   content: '';
   position: absolute;
@@ -34,21 +32,11 @@
   right: 0;
   bottom: 0;
   background-image:
-    linear-gradient(rgba(0, 180, 216, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 180, 216, 0.05) 1px, transparent 1px),
-    linear-gradient(180deg, rgba(0, 180, 216, 0.03) 1px, transparent 2px);
-  background-size: 40rpx 40rpx, 40rpx 40rpx, 100% 4rpx;
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 50rpx 50rpx;
   pointer-events: none;
-  animation: scanline 8s linear infinite;
-}
-
-@keyframes scanline {
-  0% {
-    background-position: 0 0, 0 0, 0 0;
-  }
-  100% {
-    background-position: 0 0, 0 0, 0 100vh;
-  }
+  opacity: 0.5;
 }
 
 .feed-scroll {
@@ -58,7 +46,7 @@
   z-index: 1;
 }
 
-/* ===== 增强的加载状态 ===== */
+/* ===== 加载状态 ===== */
 .loading-container {
   width: 100%;
   height: 100vh;
@@ -67,27 +55,34 @@
   align-items: center;
   justify-content: center;
   background: transparent;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .loading-spinner {
-  width: 100rpx;
-  height: 100rpx;
-  border: 8rpx solid rgba(59, 130, 246, 0.2);
-  border-top-color: #3B82F6;
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid rgba(255, 255, 255, 0.1);
+  border-top-color: #00D4FF;
   border-radius: 50%;
-  animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-  margin-bottom: 40rpx;
-  box-shadow: 0 0 30rpx rgba(59, 130, 246, 0.3);
+  animation: spin 1s linear infinite;
+  margin-bottom: 30rpx;
+  box-shadow: 0 0 20rpx rgba(0, 212, 255, 0.3);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.6);
   font-family: "PingFang SC", -apple-system, sans-serif;
   animation: pulse 2s ease-in-out infinite;
 }
 
-/* ===== 增强的错误状态 ===== */
+/* ===== 错误状态 ===== */
 .error-container {
   width: 100%;
   height: 100vh;
@@ -96,6 +91,7 @@
   align-items: center;
   justify-content: center;
   padding: 0 60rpx;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .error-text {
@@ -105,19 +101,21 @@
   margin-bottom: 40rpx;
   line-height: 1.8;
   font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .retry-btn {
   padding: 24rpx 60rpx;
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #00D4FF 0%, #0096CC 100%);
+  color: #000000;
   border-radius: 50rpx;
   font-size: 28rpx;
   font-weight: 600;
   border: none;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8rpx 24rpx rgba(0, 212, 255, 0.3);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .retry-btn::after {
@@ -125,13 +123,13 @@
 }
 
 .retry-btn:active {
-  transform: translateY(2rpx);
-  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
+  transform: scale(0.96);
+  box-shadow: 0 4rpx 12rpx rgba(0, 212, 255, 0.3);
 }
 
 /* ===== 判定视图 ===== */
 .judgment-view {
-  padding: 60rpx 32rpx 140rpx;
+  padding: 40rpx 32rpx 140rpx;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -139,22 +137,21 @@
   align-items: center;
   overflow: hidden;
   box-sizing: border-box;
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .page-title {
-  font-size: 56rpx;
-  font-weight: 900;
+  font-size: 44rpx;
+  font-weight: 700;
   color: #FFFFFF;
   text-align: center;
   margin-bottom: 40rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
   flex-shrink: 0;
-  text-shadow: 0 0 40rpx rgba(59, 130, 246, 0.6);
-  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ===== 内容区域 ===== */
+/* ===== 内容区域 - 移除引号重叠 ===== */
 .content-wrapper {
   width: 100%;
   position: relative;
@@ -164,53 +161,47 @@
   justify-content: center;
   max-height: 55vh;
   overflow: hidden;
-  animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
 }
 
+/* 移除引号或调整位置避免遮挡 */
 .quote-icon {
-  font-size: 120rpx;
-  color: rgba(59, 130, 246, 0.2);
+  font-size: 60rpx;
+  color: rgba(255, 255, 255, 0.1);
   font-family: Georgia, serif;
   font-weight: bold;
   line-height: 1;
-  margin-bottom: -20rpx;
+  margin-bottom: 16rpx;
   padding-left: 20rpx;
   flex-shrink: 0;
-  animation: fadeIn 0.8s ease-out 0.4s backwards;
+  animation: fadeIn 0.4s ease-out 0.2s backwards;
 }
 
-/* ===== 增强的内容卡片 ===== */
+/* ===== 内容卡片 - 增加间距和对比度 ===== */
 .content-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(20rpx);
   border-radius: 24rpx;
-  padding: 40rpx 35rpx;
-  border: 2rpx solid rgba(59, 130, 246, 0.2);
+  padding: 40rpx;
   box-shadow:
-    0 8rpx 32rpx rgba(0, 0, 0, 0.3),
-    inset 0 1rpx 0 rgba(255, 255, 255, 0.1);
+    0 4rpx 24rpx rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
   position: relative;
   overflow-y: auto;
   max-height: 45vh;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
 }
 
-.content-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2rpx;
-  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.5), transparent);
+.content-card:active {
+  transform: scale(0.99);
 }
 
-/* 图片/视频卡片 */
+/* 图片卡片 */
 .content-card.image-card {
   padding: 0;
   background: transparent;
   backdrop-filter: none;
-  border: none;
   box-shadow: none;
   overflow: visible;
   max-height: none;
@@ -221,31 +212,21 @@
   border-radius: 24rpx;
   overflow: hidden;
   box-shadow:
-    0 20rpx 60rpx rgba(0, 0, 0, 0.4),
-    0 0 0 2rpx rgba(59, 130, 246, 0.3);
+    0 8rpx 32rpx rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
   width: 100%;
   max-height: 50vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.content-image-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(180deg, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
-  pointer-events: none;
+  background: #000000;
 }
 
 .content-image {
   width: 100%;
   height: 50vh;
   display: block;
+  animation: fadeIn 0.5s ease-out;
 }
 
 .content-video {
@@ -256,164 +237,142 @@
   border-radius: 24rpx;
 }
 
+/* 文字内容 - 提高可读性 */
 .content-text {
   font-size: 32rpx;
   line-height: 1.8;
   color: rgba(255, 255, 255, 0.95);
   font-family: "PingFang SC", -apple-system, sans-serif;
   display: block;
-  position: relative;
-  padding-left: 20rpx;
+  animation: fadeIn 0.5s ease-out 0.3s backwards;
 }
 
-.content-text::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4rpx;
-  background: linear-gradient(180deg, #3B82F6, #8B5CF6);
-  border-radius: 2rpx;
-}
-
-/* ===== 来源信息 ===== */
+/* ===== 来源信息 - 增加间距 ===== */
 .source-info {
   font-size: 24rpx;
   color: rgba(255, 255, 255, 0.5);
   text-align: center;
   margin-bottom: 40rpx;
+  margin-top: 24rpx;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  animation: fadeIn 1s ease-out 0.6s backwards;
+  animation: fadeIn 0.4s ease-out 0.3s backwards;
 }
 
-/* ===== 增强的判定按钮 ===== */
+/* ===== 判定按钮 ===== */
 .action-buttons {
   display: flex;
-  gap: 24rpx;
+  gap: 20rpx;
   width: 100%;
   padding: 0 10rpx;
   flex-shrink: 0;
-  margin-top: 20rpx;
-  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+  margin-top: 30rpx;
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
 }
 
 .btn-judge {
   flex: 1;
-  height: 96rpx;
-  border-radius: 48rpx;
-  font-size: 32rpx;
-  font-weight: 700;
+  height: 88rpx;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 600;
   border: none;
   font-family: "PingFang SC", -apple-system, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.3);
-}
-
-.btn-judge::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 0;
-  height: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
-  transform: translate(-50%, -50%);
-  transition: width 0.6s, height 0.6s;
-}
-
-.btn-judge:active::before {
-  width: 300%;
-  height: 300%;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.4);
 }
 
 .btn-judge::after {
   border: none;
 }
 
+.btn-judge:active {
+  transform: scale(0.96);
+}
+
 .btn-ai {
-  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  background: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
   color: #FFFFFF;
 }
 
 .btn-ai:active {
-  transform: scale(0.96);
-  box-shadow: 0 4rpx 12rpx rgba(239, 68, 68, 0.4);
+  box-shadow: 0 2rpx 8rpx rgba(255, 68, 68, 0.4);
 }
 
 .btn-human {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #00D4FF 0%, #0096CC 100%);
+  color: #000000;
 }
 
 .btn-human:active {
-  transform: scale(0.96);
-  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2rpx 8rpx rgba(0, 212, 255, 0.4);
 }
 
-/* ===== 结果视图 ===== */
+/* ===== 结果视图 - 优化间距 ===== */
 .result-view {
-  padding: 40rpx 40rpx 120rpx;
+  padding: 40rpx 32rpx 120rpx;
   min-height: 100vh;
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.4s ease-out;
 }
 
 .result-header {
-  margin-bottom: 30rpx;
-  animation: slideInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 40rpx;
+  animation: slideInDown 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .result-title {
-  font-size: 36rpx;
-  font-weight: 700;
+  font-size: 32rpx;
+  font-weight: 600;
   color: #FFFFFF;
   display: block;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+  line-height: 1.6;
 }
 
-/* ===== 增强的统计条 ===== */
+/* 结果视图的内容卡片 - 清晰分离 */
+.content-card-wrapper {
+  position: relative;
+  margin-bottom: 40rpx;
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+}
+
+.content-card-wrapper .quote-icon {
+  font-size: 60rpx;
+  color: rgba(255, 255, 255, 0.1);
+  font-family: Georgia, serif;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 16rpx;
+  padding-left: 20rpx;
+  display: block;
+}
+
+/* ===== 统计条 ===== */
 .stats-bar {
   display: flex;
-  height: 72rpx;
-  border-radius: 36rpx;
+  height: 60rpx;
+  border-radius: 30rpx;
   overflow: hidden;
-  margin-bottom: 20rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.3);
-  animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+  margin-bottom: 40rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.4);
+  animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
 }
 
 .stat-item {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-}
-
-.stat-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  animation: shimmer 2s infinite;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stat-ai {
-  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  background: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
 }
 
 .stat-human {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, #00D4FF 0%, #0096CC 100%);
 }
 
 .stat-text {
@@ -421,8 +380,286 @@
   font-weight: 700;
   color: #FFFFFF;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  position: relative;
-  z-index: 1;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
+}
+
+/* ===== 解析说明 - 优化布局避免遮挡 ===== */
+.explanation-box {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20rpx);
+  border-radius: 20rpx;
+  padding: 32rpx;
+  margin-bottom: 40rpx;
+  box-shadow:
+    0 4rpx 16rpx rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.explanation-box:active {
+  transform: scale(0.99);
+}
+
+.explanation-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.5);
+  display: block;
+  margin-bottom: 16rpx;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1rpx;
+}
+
+.explanation-text {
+  font-size: 28rpx;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+/* ===== 评论区域 - 优化布局 ===== */
+.comments-section {
+  margin-bottom: 40rpx;
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+}
+
+.comments-header {
+  margin-bottom: 24rpx;
+}
+
+.comments-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+/* 评论输入框 - 提高对比度 */
+.comment-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20rpx);
+  border-radius: 48rpx;
+  padding: 8rpx 8rpx 8rpx 24rpx;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comment-input-wrapper:focus-within {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4rpx 16rpx rgba(0, 212, 255, 0.2);
+  border-color: rgba(0, 212, 255, 0.3);
+}
+
+.comment-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  min-height: 64rpx;
+  line-height: 64rpx;
+}
+
+.comment-submit-btn {
+  padding: 16rpx 32rpx;
+  background: linear-gradient(135deg, #00D4FF 0%, #0096CC 100%);
+  color: #000000;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  line-height: 1;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2rpx 8rpx rgba(0, 212, 255, 0.3);
+}
+
+.comment-submit-btn::after {
+  border: none;
+}
+
+.comment-submit-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 1rpx 4rpx rgba(0, 212, 255, 0.3);
+}
+
+/* 评论列表 - 增加间距 */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.empty-comments {
+  padding: 60rpx 0;
+  text-align: center;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+/* 评论项 - 清晰的卡片样式 */
+.comment-item {
+  display: flex;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20rpx);
+  border-radius: 16rpx;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideInLeft 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.comment-item:active {
+  background: rgba(255, 255, 255, 0.1);
+  transform: scale(0.99);
+}
+
+.comment-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.comment-item:active .comment-avatar {
+  transform: scale(0.95);
+}
+
+.comment-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.comment-header {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.comment-nickname {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.comment-level {
+  font-size: 22rpx;
+  color: #000000;
+  background: linear-gradient(135deg, #00D4FF 0%, #0096CC 100%);
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-weight: 600;
+}
+
+.comment-time {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: auto;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+.comment-content {
+  font-size: 28rpx;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 16rpx;
+  word-wrap: break-word;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+}
+
+/* 评论操作按钮 */
+.comment-actions {
+  display: flex;
+  gap: 32rpx;
+  align-items: center;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 8rpx 0;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.action-text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  transition: color 0.2s ease;
+}
+
+.action-btn:active {
+  transform: scale(0.95);
+}
+
+.action-btn:active .action-text {
+  color: #00D4FF;
+}
+
+/* 回复列表 */
+.replies-list {
+  margin-top: 16rpx;
+  padding-left: 24rpx;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.reply-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+  font-size: 26rpx;
+  line-height: 1.6;
+  font-family: "PingFang SC", -apple-system, sans-serif;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.reply-author {
+  color: #00D4FF;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.reply-content {
+  color: rgba(255, 255, 255, 0.8);
+  flex: 1;
+  word-wrap: break-word;
+}
+
+.reply-actions {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.reply-likes {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* ===== 底部按钮 ===== */
@@ -430,21 +667,22 @@
   display: flex;
   gap: 20rpx;
   padding-top: 20rpx;
-  animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.4s backwards;
+  animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
 }
 
 .btn-secondary {
   flex: 1;
   height: 96rpx;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10rpx);
-  border: 2rpx solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20rpx);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 48rpx;
   font-size: 32rpx;
   font-weight: 600;
   color: #FFFFFF;
   font-family: "PingFang SC", -apple-system, sans-serif;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary::after {
@@ -452,22 +690,23 @@
 }
 
 .btn-secondary:active {
-  transform: scale(0.96);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(0.97);
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.2);
 }
 
 .btn-primary {
   flex: 1;
   height: 96rpx;
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, #00D4FF 0%, #0096CC 100%);
   border-radius: 48rpx;
   font-size: 32rpx;
   font-weight: 600;
-  color: #FFFFFF;
+  color: #000000;
   border: none;
   font-family: "PingFang SC", -apple-system, sans-serif;
-  box-shadow: 0 8rpx 24rpx rgba(59, 130, 246, 0.4);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4rpx 12rpx rgba(0, 212, 255, 0.3);
 }
 
 .btn-primary::after {
@@ -475,6 +714,6 @@
 }
 
 .btn-primary:active {
-  transform: scale(0.96);
-  box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
+  transform: scale(0.97);
+  box-shadow: 0 2rpx 8rpx rgba(0, 212, 255, 0.3);
 }
