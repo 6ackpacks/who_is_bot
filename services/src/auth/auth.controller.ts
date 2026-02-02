@@ -1,6 +1,8 @@
-import { Controller, Post, Body, Get, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { MockLoginDto } from './dto/mock-login.dto';
+import { JwtAuthGuard } from './jwt-auth.guard';
+import { CurrentUser, CurrentUserData } from './current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -21,22 +23,17 @@ export class AuthController {
   }
 
   /**
-   * 获取用户信息
-   * GET /auth/user?uid=xxx
+   * 获取当前登录用户信息（需要认证）
+   * GET /auth/me
+   * Header: Authorization: Bearer <token>
    */
-  @Get('user')
-  async getUserInfo(@Query('uid') uid: string) {
-    if (!uid) {
-      return {
-        success: false,
-        message: '缺少uid参数',
-      };
-    }
-
-    const user = await this.authService.getUserByUid(uid);
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getCurrentUser(@CurrentUser() user: CurrentUserData) {
+    const userInfo = await this.authService.getUserByUid(user.uid);
     return {
       success: true,
-      data: user,
+      data: userInfo,
     };
   }
 }

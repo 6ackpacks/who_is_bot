@@ -2,16 +2,47 @@
 const { MOCK_FEED, MOCK_USER_RANKINGS } = require('./mockData.js');
 const auth = require('./auth.js');
 
-// API 配置
+/**
+ * 环境配置
+ *
+ * 开发环境设置：
+ * - USE_LOCAL_API: true (使用本地开发服务器)
+ * - LOCAL_API_URL: 'http://YOUR_LOCAL_IP:3000' (替换为你的本地IP)
+ *
+ * 生产环境设置：
+ * - USE_LOCAL_API: false (使用微信云托管)
+ * - CLOUD_ENV: 你的云环境ID
+ * - CLOUD_SERVICE: 你的云服务名称
+ */
+const ENV_CONFIG = {
+  // 是否使用本地开发服务器（开发时设为 true，生产时设为 false）
+  USE_LOCAL_API: false,
+
+  // 本地开发服务器地址（仅在 USE_LOCAL_API = true 时使用）
+  // 格式：http://YOUR_LOCAL_IP:PORT 或 http://localhost:PORT
+  LOCAL_API_URL: 'http://localhost:3000',
+
+  // 微信云托管配置（生产环境使用）
+  CLOUD_ENV: 'prod-3ge8ht6pded7ed77',
+  CLOUD_SERVICE: 'who-is-the-bot-api2',
+
+  // 是否使用 Mock 数据（调试用）
+  USE_MOCK: false,
+
+  // 请求超时时间（毫秒）
+  TIMEOUT: 30000
+};
+
+// API 配置（向后兼容）
 const API_CONFIG = {
-  baseURL: 'https://your-api-domain.com',
-  timeout: 30000, // 增加到30秒超时
-  useMock: false, // 使用真实数据库
-  useLocal: false, // 切换到云托管模式
-  localURL: 'http://172.16.41.182', // 本地服务器地址
+  baseURL: ENV_CONFIG.USE_LOCAL_API ? ENV_CONFIG.LOCAL_API_URL : '',
+  timeout: ENV_CONFIG.TIMEOUT,
+  useMock: ENV_CONFIG.USE_MOCK,
+  useLocal: ENV_CONFIG.USE_LOCAL_API,
+  localURL: ENV_CONFIG.LOCAL_API_URL,
   cloudConfig: {
-    env: 'prod-3ge8ht6pded7ed77',
-    service: 'who-is-the-bot-api2'
+    env: ENV_CONFIG.CLOUD_ENV,
+    service: ENV_CONFIG.CLOUD_SERVICE
   }
 };
 
@@ -65,7 +96,7 @@ function request(options) {
         }
 
         // 发起请求
-        const requestTask = wx.request({
+        wx.request({
           url: `${API_CONFIG.baseURL}${url}`,
           method,
           data,
@@ -73,7 +104,7 @@ function request(options) {
             'content-type': 'application/json',
             ...requestHeader
           },
-          timeout,
+          timeout, // 使用内置的 timeout 参数，避免双重超时处理
           success: (res) => {
             if (showLoading) wx.hideLoading();
 
@@ -113,7 +144,7 @@ function request(options) {
             console.error('请求失败:', err);
 
             // 超时处理
-            if (err.errMsg.includes('timeout')) {
+            if (err.errMsg && err.errMsg.includes('timeout')) {
               wx.showToast({
                 title: '请求超时，请重试',
                 icon: 'none',
@@ -130,11 +161,6 @@ function request(options) {
             }
           }
         });
-
-        // 设置超时
-        setTimeout(() => {
-          requestTask.abort();
-        }, timeout);
       },
       fail: () => {
         if (showLoading) wx.hideLoading();
@@ -186,6 +212,7 @@ function cloudRequest(options) {
         header: {
           'content-type': 'application/json'
         },
+        timeout: API_CONFIG.timeout,
         success: (res) => {
           if (showLoading) wx.hideLoading();
           // 接受所有 2xx 状态码作为成功
@@ -193,12 +220,20 @@ function cloudRequest(options) {
             resolve(res.data);
           } else {
             console.error('本地请求失败:', res);
+            wx.showToast({
+              title: `请求失败: ${res.statusCode}`,
+              icon: 'none'
+            });
             reject(new Error(`请求失败: ${res.statusCode}`));
           }
         },
         fail: (err) => {
           if (showLoading) wx.hideLoading();
           console.error('本地请求失败:', err);
+          wx.showToast({
+            title: '网络请求失败',
+            icon: 'none'
+          });
           reject(err);
         }
       });

@@ -24,13 +24,21 @@ Page({
     replyingTo: null,
     userId: null,
     guestId: null,
-    currentTheme: 'dark' // 当前主题
+    currentTheme: 'dark', // 当前主题
+    // 性能优化相关
+    videoContextCache: {}, // 视频上下文缓存，避免重复创建
+    urlConversionRequestId: 0 // URL转换请求ID，用于追踪和取消过期请求
   },
 
   onLoad() {
     this.initTheme();
     this.loadFeedData();
     this.loadUserInfo();
+  },
+
+  onUnload() {
+    // 清理视频上下文缓存，防止内存泄漏
+    this.cleanupVideoContexts();
   },
 
   onShow() {
@@ -121,9 +129,13 @@ Page({
       });
   },
 
-  // 转换云存储URL为HTTPS URL
+  // 转换云存储URL为HTTPS URL（带竞态条件保护）
   convertCloudUrls(items) {
     return new Promise((resolve, reject) => {
+      // 生成新的请求ID，用于追踪当前请求
+      const currentRequestId = ++this.data.urlConversionRequestId;
+      this.setData({ urlConversionRequestId: currentRequestId });
+
       // 收集所有需要转换的云存储URL
       const cloudFileIds = [];
       items.forEach(item => {
@@ -142,11 +154,18 @@ Page({
 
       console.log('需要转换的云存储URL数量:', cloudFileIds.length);
       console.log('云存储URL列表:', cloudFileIds);
+      console.log('当前请求ID:', currentRequestId);
 
       // 批量获取临时链接
       wx.cloud.getTempFileURL({
         fileList: cloudFileIds,
         success: res => {
+          // 检查请求是否仍然有效（防止竞态条件）
+          if (currentRequestId !== this.data.urlConversionRequestId) {
+            console.log('URL转换请求已过期，忽略结果。当前ID:', currentRequestId, '最新ID:', this.data.urlConversionRequestId);
+            return; // 忽略过期的请求结果
+          }
+
           console.log('云存储URL转换成功，结果:', res);
 
           // 创建URL映射表
@@ -174,7 +193,21 @@ Page({
           resolve(items);
         },
         fail: err => {
+          // 检查请求是否仍然有效
+          if (currentRequestId !== this.data.urlConversionRequestId) {
+            console.log('URL转换请求已过期，忽略错误。当前ID:', currentRequestId, '最新ID:', this.data.urlConversionRequestId);
+            return;
+          }
+
           console.error('获取临时链接失败，错误详情:', err);
+
+          // 显示用户友好的错误提示
+          wx.showToast({
+            title: '部分资源加载失败',
+            icon: 'none',
+            duration: 2000
+          });
+
           // 即使失败也返回原始数据，让用户看到其他内容
           resolve(items);
         }
@@ -249,7 +282,7 @@ Page({
       userChoice: choice
     });
 
-    // 提交判定结果到后端
+    // 提交判定结果到后端（改进错误处理）
     api.submitJudgment({
       contentId: this.data.currentItem.id,
       userChoice: choice,
@@ -281,24 +314,23 @@ Page({
         });
       } else {
         // 如果没有统计数据，生成随机占比
-        const randomAiPercentage = Math.floor(Math.random() * 60) + 20; // 20-80%
-        this.setData({
-          'currentItem.aiPercentage': randomAiPercentage,
-          'currentItem.humanPercentage': 100 - randomAiPercentage,
-          'currentItem.correctPercentage': Math.floor(Math.random() * 40) + 40, // 40-80%
-          'currentItem.totalVotes': Math.floor(Math.random() * 500) + 100 // 100-600
-        });
+        this.updateRandomStats();
       }
     }).catch(err => {
       console.error('提交判定失败', err);
+
+      // 显示用户友好的错误提示
+      const errorMsg = this.getErrorMessage(err);
+      if (errorMsg !== '网络异常') {
+        wx.showToast({
+          title: errorMsg,
+          icon: 'none',
+          duration: 2000
+        });
+      }
+
       // 即使提交失败也显示随机统计数据
-      const randomAiPercentage = Math.floor(Math.random() * 60) + 20;
-      this.setData({
-        'currentItem.aiPercentage': randomAiPercentage,
-        'currentItem.humanPercentage': 100 - randomAiPercentage,
-        'currentItem.correctPercentage': Math.floor(Math.random() * 40) + 40,
-        'currentItem.totalVotes': Math.floor(Math.random() * 500) + 100
-      });
+      this.updateRandomStats();
     });
 
     // 短暂延迟后显示结果，增强反馈感
@@ -410,16 +442,32 @@ Page({
     this.setData({ videoPlaying: false });
   },
 
-  // 切换视频播放/暂停
+  // 切换视频播放/暂停（带缓存优化）
   toggleVideoPlay(e) {
     const index = e.currentTarget.dataset.index;
-    const videoContext = wx.createVideoContext(`video-${index}`, this);
+    const videoId = `video-${index}`;
+
+    // 从缓存中获取或创建视频上下文
+    let videoContext = this.data.videoContextCache[videoId];
+    if (!videoContext) {
+      videoContext = wx.createVideoContext(videoId, this);
+      // 缓存视频上下文，避免重复创建
+      this.data.videoContextCache[videoId] = videoContext;
+      console.log('创建并缓存视频上下文:', videoId);
+    }
 
     if (this.data.videoPlaying) {
       videoContext.pause();
     } else {
       videoContext.play();
     }
+  },
+
+  // 清理视频上下文缓存
+  cleanupVideoContexts() {
+    console.log('清理视频上下文缓存');
+    // 清空缓存对象
+    this.data.videoContextCache = {};
   },
 
   // 返回主页
@@ -447,7 +495,7 @@ Page({
 
   // ==================== 评论功能 ====================
 
-  // 加载评论列表
+  // 加载评论列表（改进错误处理）
   loadComments() {
     if (!this.data.currentItem || !this.data.currentItem.id) {
       return;
@@ -475,6 +523,14 @@ Page({
       })
       .catch(err => {
         console.error('获取评论失败', err);
+
+        // 显示用户友好的错误提示
+        const errorMsg = this.getErrorMessage(err);
+        wx.showToast({
+          title: errorMsg,
+          icon: 'none',
+          duration: 2000
+        });
       });
   },
 
@@ -605,13 +661,50 @@ Page({
             })
             .catch(err => {
               console.error('删除失败', err);
+
+              // 显示用户友好的错误提示
+              const errorMsg = this.getErrorMessage(err);
               wx.showToast({
-                title: err.message || '删除失败',
-                icon: 'none'
+                title: errorMsg,
+                icon: 'none',
+                duration: 2000
               });
             });
         }
       }
     });
+  },
+
+  // ==================== 工具函数 ====================
+
+  // 更新随机统计数据（提取公共逻辑）
+  updateRandomStats() {
+    const randomAiPercentage = Math.floor(Math.random() * 60) + 20; // 20-80%
+    this.setData({
+      'currentItem.aiPercentage': randomAiPercentage,
+      'currentItem.humanPercentage': 100 - randomAiPercentage,
+      'currentItem.correctPercentage': Math.floor(Math.random() * 40) + 40, // 40-80%
+      'currentItem.totalVotes': Math.floor(Math.random() * 500) + 100 // 100-600
+    });
+  },
+
+  // 获取用户友好的错误信息
+  getErrorMessage(err) {
+    if (!err) {
+      return '操作失败';
+    }
+
+    // 处理超时错误
+    if (err.message && err.message.includes('超时')) {
+      return '请求超时，请检查网络';
+    }
+
+    // 处理网络错误
+    if (err.errMsg && (err.errMsg.includes('fail') || err.errMsg.includes('timeout'))) {
+      return '网络异常，请稍后重试';
+    }
+
+    // 返回具体错误信息或默认信息
+    return err.message || err.errMsg || '操作失败';
   }
 });

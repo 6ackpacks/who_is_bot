@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, Index } from 'typeorm';
 import { Content } from '../content/content.entity';
 
 @Entity('users')
+@Index('IDX_USER_LEADERBOARD', ['accuracy', 'totalJudged'])
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;

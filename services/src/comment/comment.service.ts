@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Comment } from './comment.entity';
@@ -119,7 +119,12 @@ export class CommentService {
     };
   }
 
-  async deleteComment(commentId: string, userId?: string, guestId?: string) {
+  /**
+   * 删除评论（带资源所有权验证）
+   * @param commentId 评论ID
+   * @param userId 当前登录用户ID（从JWT token获取）
+   */
+  async deleteComment(commentId: string, userId: string) {
     const comment = await this.commentRepository.findOne({
       where: { id: commentId },
     });
@@ -128,17 +133,9 @@ export class CommentService {
       throw new NotFoundException('评论不存在');
     }
 
-    // 验证权限：只有评论作者可以删除
-    if (userId && comment.userId !== userId) {
-      throw new BadRequestException('无权删除此评论');
-    }
-
-    if (guestId && comment.guestId !== guestId) {
-      throw new BadRequestException('无权删除此评论');
-    }
-
-    if (!userId && !guestId) {
-      throw new BadRequestException('必须提供用户ID或游客ID');
+    // 验证资源所有权：只有评论作者可以删除
+    if (comment.userId !== userId) {
+      throw new ForbiddenException('无权删除此评论');
     }
 
     await this.commentRepository.remove(comment);

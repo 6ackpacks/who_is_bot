@@ -21,19 +21,53 @@ import { ProxyController } from './proxy.controller';
     NestScheduleModule.forRoot(),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get('DB_HOST', 'localhost'),
-        port: configService.get('DB_PORT', 3306),
-        username: configService.get('DB_USER', 'root'),
-        password: configService.get('DB_PASS', 'root'),
-        database: configService.get('DB_NAME', 'who_is_bot'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false,
-        autoLoadEntities: true,
-        retryAttempts: 3,
-        retryDelay: 3000,
-      }),
+      useFactory: (configService: ConfigService) => {
+        // 验证必需的环境变量
+        const requiredEnvVars = ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_PASS', 'DB_NAME'];
+        const missingVars = requiredEnvVars.filter(varName => !configService.get(varName));
+
+        if (missingVars.length > 0) {
+          throw new Error(
+            `Missing required environment variables: ${missingVars.join(', ')}. ` +
+            'Please check your .env file.'
+          );
+        }
+
+        return {
+          type: 'mysql',
+          host: configService.get<string>('DB_HOST'),
+          port: configService.get<number>('DB_PORT'),
+          username: configService.get<string>('DB_USER'),
+          password: configService.get<string>('DB_PASS'),
+          database: configService.get<string>('DB_NAME'),
+          entities: [__dirname + '/**/*.entity{.ts,.js}'],
+          synchronize: false,
+          autoLoadEntities: true,
+
+          // 连接池配置
+          extra: {
+            connectionLimit: configService.get<number>('DB_CONNECTION_LIMIT', 10),
+            waitForConnections: true,
+            queueLimit: 0,
+            // SSL 配置（生产环境推荐启用）
+            ssl: configService.get<boolean>('DB_SSL_ENABLED', false)
+              ? {
+                  rejectUnauthorized: configService.get<boolean>('DB_SSL_REJECT_UNAUTHORIZED', true)
+                }
+              : undefined,
+          },
+
+          // 连接重试配置
+          retryAttempts: configService.get<number>('DB_RETRY_ATTEMPTS', 3),
+          retryDelay: configService.get<number>('DB_RETRY_DELAY', 3000),
+
+          // 日志配置
+          logging: configService.get<boolean>('DB_LOGGING', false),
+
+          // 连接超时配置
+          connectTimeout: configService.get<number>('DB_CONNECT_TIMEOUT', 10000),
+        };
+      },
     }),
     ContentModule,
     UserModule,

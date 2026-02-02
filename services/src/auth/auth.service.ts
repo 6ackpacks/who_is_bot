@@ -1,16 +1,31 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/user.entity';
 import { MockLoginDto } from './dto/mock-login.dto';
 import { v4 as uuidv4 } from 'uuid';
+import { JwtPayload } from './jwt.strategy';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
+
+  /**
+   * Generate JWT access token
+   */
+  private generateAccessToken(user: User): string {
+    const payload: JwtPayload = {
+      sub: user.id,
+      uid: user.uid,
+      nickname: user.nickname,
+    };
+    return this.jwtService.sign(payload);
+  }
 
   /**
    * 模拟登录（开发测试用）
@@ -51,6 +66,9 @@ export class AuthService {
       await this.userRepository.save(user);
     }
 
+    // Generate JWT token
+    const accessToken = this.generateAccessToken(user);
+
     return {
       id: user.id,
       nickname: user.nickname,
@@ -61,6 +79,7 @@ export class AuthService {
       totalJudged: user.totalJudged,
       streak: user.streak,
       maxStreak: user.maxStreak,
+      accessToken,
     };
   }
 
@@ -92,5 +111,12 @@ export class AuthService {
       weeklyJudged: user.weeklyJudged,
       weeklyCorrect: user.weeklyCorrect,
     };
+  }
+
+  /**
+   * Validate user by ID (used by JWT strategy)
+   */
+  async validateUserById(userId: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id: userId } });
   }
 }

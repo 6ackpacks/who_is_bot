@@ -1,0 +1,143 @@
+Starting Comprehensive Stress Test Suite
+Target Server: http://localhost:80
+Total Test Users: 20
+Database Connection Pool: 10
+✓ Server is accessible
+
+================================================================================
+TEST 1: DATABASE CONNECTION POOL TEST
+================================================================================
+Sending 20 concurrent requests...
+Current connection pool size: 10
+✓ Connection pool test completed
+
+================================================================================
+TEST 2: MIXED OPERATIONS STRESS TEST
+================================================================================
+Duration: 30 seconds
+Simulating real user behavior...
+Logging in users...
+✓ Mixed operations test completed
+
+================================================================================
+TEST 3: LONG-TERM STABILITY TEST
+================================================================================
+Duration: 60 seconds
+Target: 20 requests/second
+Logging in all users...
+Progress: 1.7%Progress: 3.4%Progress: 5.0%Progress: 6.7%Progress: 8.4%Progress: 10.1%Progress: 11.8%Progress: 13.5%Progress: 15.1%Progress: 16.8%Progress: 18.5%Progress: 20.2%Progress: 21.9%Progress: 23.5%Progress: 25.2%Progress: 26.9%Progress: 28.6%Progress: 30.3%Progress: 32.0%Progress: 33.6%Progress: 35.3%Progress: 37.0%Progress: 38.7%Progress: 40.4%Progress: 42.1%Progress: 43.7%Progress: 45.4%Progress: 47.1%Progress: 48.8%Progress: 50.5%Progress: 52.2%Progress: 53.9%Progress: 55.5%Progress: 57.2%Progress: 58.9%Progress: 60.6%Progress: 62.3%Progress: 64.0%Progress: 65.6%Progress: 67.3%Progress: 69.0%Progress: 70.7%Progress: 72.4%Progress: 74.1%Progress: 75.8%Progress: 77.4%Progress: 79.1%Progress: 80.8%Progress: 82.5%Progress: 84.2%Progress: 85.8%Progress: 87.5%Progress: 89.2%Progress: 90.9%Progress: 92.6%Progress: 94.3%Progress: 96.0%Progress: 97.6%Progress: 99.3%Progress: 101.0%
+✓ Long-term stability test completed
+
+================================================================================
+TEST 4: ERROR RECOVERY TEST
+================================================================================
+Testing system recovery from errors...
+✓ Error recovery test completed
+
+================================================================================
+STRESS TEST REPORT
+================================================================================
+
+--- OVERALL STATISTICS ---
+Test Duration: 91.03 seconds
+Total Requests: 2165
+Successful Requests: 2163
+Failed Requests: 2
+Error Rate: 0.09%
+Throughput: 23.78 requests/second
+Connection Errors: 0
+Timeout Errors: 0
+
+--- REQUEST TYPE BREAKDOWN ---
+
+LOGIN:
+  Total: 1087
+  Success: 1086 (99.91%)
+  Failed: 1
+  Response Times (ms):
+    Min: 2.00
+    Max: 258.00
+    Avg: 88.56
+    Median: 83.00
+    P95: 127.00
+    P99: 187.00
+
+CONTENTLIST:
+  Total: 1077
+  Success: 1077 (100.00%)
+  Failed: 0
+  Response Times (ms):
+    Min: 13.00
+    Max: 91.00
+    Avg: 21.29
+    Median: 20.00
+    P95: 33.00
+    P99: 48.00
+
+JUDGMENT:
+  Total: 1
+  Success: 0 (0.00%)
+  Failed: 1
+  Response Times (ms):
+    Min: 2.00
+    Max: 2.00
+    Avg: 2.00
+    Median: 2.00
+    P95: 2.00
+    P99: 2.00
+
+COMMENT:
+  Total: 0
+  Success: 0 (0%)
+  Failed: 0
+
+--- MEMORY USAGE ---
+Initial Heap Used: 5.81 MB
+Final Heap Used: 5.90 MB
+Memory Increase: 0.09 MB (1.60%)
+Peak RSS: 40.78 MB
+
+--- ERROR ANALYSIS ---
+Total Errors: 2
+
+login: 1 errors
+  1. {
+  "type": "login",
+  "statusCode": 400,
+  "message": {
+    "success": false,
+    "statusCode": 400,
+    "error": "Bad Request",
+    "message": [
+      "昵称至少需要 2 个字符",
+      "昵称不能为空",
+      "头像必须是有效的 URL"
+    ],
+    "timestamp": "2026-02-02T14:31:21.031Z",
+    "path": "/auth/mock-login"
+  }
+}
+
+judgment: 1 errors
+  1. {
+  "type": "judgment",
+  "statusCode": 401,
+  "message": {
+    "success": false,
+    "statusCode": 401,
+    "error": "Unauthorized",
+    "message": [
+      "未授权访问，请先登录"
+    ],
+    "timestamp": "2026-02-02T14:31:21.033Z",
+    "path": "/judgment/submit"
+  }
+}
+
+--- RECOMMENDATIONS ---
+✅ Error rate is acceptable (< 1%)
+✅ Response times are good
+
+================================================================================
+
+✅ All tests completed successfully
