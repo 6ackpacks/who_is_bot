@@ -42,12 +42,18 @@ Page({
                   console.log('微信登录成功:', res);
 
                   if (res.success && res.data) {
+                    console.log('后端返回的完整数据:', res.data);
+                    console.log('用户头像:', res.data.avatar);
+
                     // 保存用户信息和 token
                     auth.saveLoginInfo({
                       token: res.data.accessToken,
                       userId: res.data.id,
                       userInfo: res.data
                     });
+
+                    // 验证保存的数据
+                    console.log('保存后的用户信息:', auth.getUserInfo());
 
                     this.setData({ loading: false });
 

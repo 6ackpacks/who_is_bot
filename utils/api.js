@@ -16,11 +16,11 @@ const auth = require('./auth.js');
  */
 const ENV_CONFIG = {
   // 是否使用本地开发服务器（开发时设为 true，生产时设为 false）
-  USE_LOCAL_API: false,
+  USE_LOCAL_API: false,  // 改为 false 使用云托管
 
   // 本地开发服务器地址（仅在 USE_LOCAL_API = true 时使用）
   // 格式：http://YOUR_LOCAL_IP:PORT 或 http://localhost:PORT
-  LOCAL_API_URL: 'http://localhost:3000',
+  LOCAL_API_URL: 'http://172.16.41.100:80',
 
   // 微信云托管配置（生产环境使用）
   CLOUD_ENV: 'prod-3ge8ht6pded7ed77',
@@ -179,7 +179,8 @@ function cloudRequest(options) {
     method = 'GET',
     data = {},
     showLoading = false,
-    loadingText = '加载中...'
+    loadingText = '加载中...',
+    needAuth = false
   } = options;
 
   // 如果使用本地服务器，直接使用 wx.request
@@ -205,13 +206,24 @@ function cloudRequest(options) {
         requestData = undefined;
       }
 
+      // 构建请求头
+      const headers = {
+        'content-type': 'application/json'
+      };
+
+      // 如果需要认证，添加 Authorization header
+      if (needAuth) {
+        const token = auth.getToken();
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+      }
+
       wx.request({
         url,
         method,
         data: requestData,
-        header: {
-          'content-type': 'application/json'
-        },
+        header: headers,
         timeout: API_CONFIG.timeout,
         success: (res) => {
           if (showLoading) wx.hideLoading();
@@ -420,8 +432,9 @@ function getUserJudgments(userId) {
   }
 
   return cloudRequest({
-    path: `/judgment/user/${userId}`,
-    method: 'GET'
+    path: '/judgment/history',
+    method: 'GET',
+    needAuth: true
   });
 }
 
@@ -546,14 +559,12 @@ function wxLogin(code, userInfo) {
     method: 'POST',
     data: {
       code,
-      userInfo: {
-        nickName: userInfo?.nickName,
-        avatarUrl: userInfo?.avatarUrl,
-        gender: userInfo?.gender,
-        country: userInfo?.country,
-        province: userInfo?.province,
-        city: userInfo?.city
-      }
+      nickName: userInfo?.nickName,
+      avatarUrl: userInfo?.avatarUrl,
+      gender: userInfo?.gender,
+      country: userInfo?.country,
+      province: userInfo?.province,
+      city: userInfo?.city
     },
     showLoading: true,
     loadingText: '登录中...'

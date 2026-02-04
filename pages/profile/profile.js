@@ -127,17 +127,24 @@ Page({
   // 加载用户数据
   loadUserData() {
     const userInfo = auth.getUserInfo();
+    console.log('个人页面 - 读取的用户信息:', userInfo);
+
     if (userInfo) {
+      const displayData = {
+        nickname: userInfo.nickname || 'Cyber_Detective',
+        avatar: userInfo.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=MyUser',
+        level: userInfo.level || 1,
+        levelName: userInfo.levelName || 'AI小白',
+        nextLevel: this.getNextLevel(userInfo.level || 1),
+        progress: userInfo.progress || 0,
+        remaining: userInfo.remaining || 100
+      };
+
+      console.log('个人页面 - 将要显示的数据:', displayData);
+      console.log('个人页面 - 头像 URL:', displayData.avatar);
+
       this.setData({
-        userInfo: {
-          nickname: userInfo.nickname || 'Cyber_Detective',
-          avatar: userInfo.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=MyUser',
-          level: userInfo.level || 1,
-          levelName: userInfo.levelName || 'AI小白',
-          nextLevel: this.getNextLevel(userInfo.level || 1),
-          progress: userInfo.progress || 0,
-          remaining: userInfo.remaining || 100
-        }
+        userInfo: displayData
       });
     }
 
