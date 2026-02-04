@@ -1,138 +1,128 @@
-<!--pages/profile/profile.wxml - NetEase Cloud Music Inspired Layout-->
+<!--pages/profile/profile.wxml - Redesigned Profile Page-->
 <view class="profile-container theme-{{currentTheme}}">
   <scroll-view scroll-y class="profile-scroll">
 
     <!-- 顶部更多按钮 -->
     <view class="top-bar">
       <view class="more-btn" bindtap="showMoreMenu">
-        <text class="icon icon-more"></text>
+        <antd-icon type="ellipsis" size="md" custom-class="icon-burgundy"></antd-icon>
       </view>
     </view>
 
-    <!-- 沉浸式头部背景 -->
-    <view class="immersive-header">
-      <!-- 背景装饰 -->
-      <view class="header-bg-gradient"></view>
-
-      <!-- 头像居中 -->
-      <view class="avatar-section">
+    <!-- Avatar Section -->
+    <view class="avatar-section">
+      <view class="avatar-wrapper">
         <view class="avatar-ring">
           <image src="{{userInfo.avatar}}" class="avatar-image" mode="aspectFill"></image>
         </view>
-      </view>
-
-      <!-- 昵称 -->
-      <view class="nickname">{{userInfo.nickname}}</view>
-
-      <!-- 等级和称号徽章 -->
-      <view class="badges-row">
-        <view class="badge badge-level">
-          <text class="badge-text">Lv.{{userInfo.level}}</text>
-        </view>
-        <view class="badge badge-title">
-          <text class="badge-text">{{userInfo.levelName}}</text>
+        <!-- Level Badge Overlay -->
+        <view class="level-badge">
+          <text class="level-text">Lv.{{userInfo.level}}</text>
         </view>
       </view>
 
-      <!-- 数据面板 - 横向毛玻璃卡片 -->
-      <view class="stats-panel">
-        <view class="stat-card">
-          <view class="stat-value">{{stats.totalJudged}}</view>
-          <view class="stat-label">总判定</view>
+      <!-- Username -->
+      <view class="username">{{userInfo.nickname}}</view>
+
+      <!-- Progress Bar -->
+      <view class="progress-container">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: 66%"></view>
         </view>
-        <view class="stat-divider"></view>
-        <view class="stat-card">
-          <view class="stat-value stat-highlight">{{stats.accuracy}}%</view>
-          <view class="stat-label">准确率</view>
+        <text class="exp-text">距下一级还需 {{userInfo.remaining}} EXP</text>
+      </view>
+    </view>
+
+    <!-- Stats Grid -->
+    <view class="stats-grid">
+      <view class="stat-card">
+        <view class="stat-number stat-total">{{stats.totalJudged}}</view>
+        <view class="stat-label">总判定</view>
+      </view>
+      <view class="stat-card">
+        <view class="stat-number stat-accuracy">{{stats.accuracy}}%</view>
+        <view class="stat-label">准确率</view>
+      </view>
+      <view class="stat-card">
+        <view class="stat-number stat-streak">{{stats.streak}}</view>
+        <view class="stat-label">连胜</view>
+      </view>
+    </view>
+
+    <!-- Action Buttons Grid -->
+    <view class="action-buttons-container">
+      <view class="action-buttons-grid">
+        <view class="action-btn" bindtap="scrollToAchievements">
+          <view class="action-icon-circle">
+            <antd-icon type="trophy" size="md" custom-class="icon-burgundy"></antd-icon>
+          </view>
+          <text class="action-label">成就</text>
         </view>
-        <view class="stat-divider"></view>
-        <view class="stat-card">
-          <view class="stat-value stat-streak">{{stats.streak}}</view>
-          <view class="stat-label">连胜</view>
+        <view class="action-btn" bindtap="goToLeaderboard">
+          <view class="action-icon-circle">
+            <antd-icon type="bar-chart" size="md" custom-class="icon-burgundy"></antd-icon>
+          </view>
+          <text class="action-label">数据</text>
+        </view>
+        <view class="action-btn" bindtap="handleShare">
+          <view class="action-icon-circle">
+            <antd-icon type="idcard" size="md" custom-class="icon-burgundy"></antd-icon>
+          </view>
+          <text class="action-label">名片</text>
+        </view>
+        <view class="action-btn" bindtap="showMoreMenu">
+          <view class="action-icon-circle">
+            <antd-icon type="setting" size="md" custom-class="icon-burgundy"></antd-icon>
+          </view>
+          <text class="action-label">设置</text>
         </view>
       </view>
     </view>
 
-    <!-- Icon Buttons 行 -->
-    <view class="icon-buttons-row">
-      <view class="icon-btn" bindtap="scrollToAchievements">
-        <view class="icon-btn-circle">
-          <antd-icon type="trophy" size="lg" custom-class="icon-cyan"></antd-icon>
-        </view>
-        <text class="icon-btn-label">我的成就</text>
-      </view>
-      <view class="icon-btn" bindtap="goToLeaderboard">
-        <view class="icon-btn-circle">
-          <antd-icon type="bar-chart" size="lg" custom-class="icon-cyan"></antd-icon>
-        </view>
-        <text class="icon-btn-label">排行榜</text>
-      </view>
-      <view class="icon-btn" bindtap="handleShare">
-        <view class="icon-btn-circle">
-          <antd-icon type="idcard" size="lg" custom-class="icon-cyan"></antd-icon>
-        </view>
-        <text class="icon-btn-label">侦探名片</text>
-      </view>
-      <view class="icon-btn" bindtap="showMoreMenu">
-        <view class="icon-btn-circle">
-          <antd-icon type="appstore" size="lg" custom-class="icon-cyan"></antd-icon>
-        </view>
-        <text class="icon-btn-label">更多</text>
-      </view>
-    </view>
+    <!-- Recent Activity Section -->
+    <view class="recent-activity-section">
+      <view class="section-header">近期判定</view>
 
-    <!-- Tab 切换器 -->
-    <view class="tab-switcher">
-      <view class="tab-item {{activeTab === 'achievements' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="achievements">
-        <text class="tab-text">荣誉勋章</text>
-        <view class="tab-indicator"></view>
-      </view>
-      <view class="tab-item {{activeTab === 'creator' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="creator">
-        <text class="tab-text">创作者中心</text>
-        <view class="tab-indicator"></view>
-      </view>
-    </view>
+      <view class="activity-list">
+        <!-- Success Activity Card -->
+        <view class="activity-card">
+          <image src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=100" class="activity-thumbnail" mode="aspectFill"></image>
+          <view class="activity-content">
+            <view class="activity-title">迷雾中的少女</view>
+            <view class="activity-timestamp">2分钟前 • 图片</view>
+          </view>
+          <view class="activity-status">
+            <antd-icon type="check-circle" size="md" custom-class="icon-success"></antd-icon>
+            <text class="status-text">成功</text>
+          </view>
+        </view>
 
-    <!-- Tab 内容区域 -->
-    <view class="tab-content">
+        <!-- Failed Activity Card -->
+        <view class="activity-card activity-failed">
+          <image src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?q=80&w=100" class="activity-thumbnail" mode="aspectFill"></image>
+          <view class="activity-content">
+            <view class="activity-title">赛博朋克街道</view>
+            <view class="activity-timestamp">15分钟前 • 视频</view>
+          </view>
+          <view class="activity-status">
+            <antd-icon type="close-circle" size="md" custom-class="icon-error"></antd-icon>
+            <text class="status-text">失败</text>
+          </view>
+        </view>
 
-      <!-- 荣誉勋章 Tab -->
-      <view wx:if="{{activeTab === 'achievements'}}" class="content-section">
-        <view class="list-container">
-          <view wx:for="{{achievements}}" wx:key="id" class="list-item achievement-item {{item.unlocked ? '' : 'achievement-locked'}}">
-            <view class="list-icon achievement-icon {{item.unlocked ? 'icon-unlocked' : 'icon-locked'}}">
-              <antd-icon type="{{item.iconType}}" size="lg" custom-class="icon-white"></antd-icon>
-            </view>
-            <view class="list-content">
-              <view class="list-title">{{item.name}}</view>
-              <view class="list-subtitle">{{item.description}}</view>
-            </view>
-            <view class="list-status {{item.unlocked ? 'status-unlocked' : 'status-locked'}}">
-              {{item.unlocked ? '已获得' : '未解锁'}}
-            </view>
+        <!-- Another Success Card -->
+        <view class="activity-card">
+          <image src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100" class="activity-thumbnail" mode="aspectFill"></image>
+          <view class="activity-content">
+            <view class="activity-title">城市夜景</view>
+            <view class="activity-timestamp">1小时前 • 图片</view>
+          </view>
+          <view class="activity-status">
+            <antd-icon type="check-circle" size="md" custom-class="icon-success"></antd-icon>
+            <text class="status-text">成功</text>
           </view>
         </view>
       </view>
-
-      <!-- 创作者中心 Tab -->
-      <view wx:if="{{activeTab === 'creator'}}" class="content-section">
-        <view class="creator-panel">
-          <view class="creator-lock-icon">
-            <antd-icon type="setting" size="xxl" custom-style="color: rgba(255, 255, 255, 0.3);"></antd-icon>
-          </view>
-          <view class="creator-title">上传通道未开启</view>
-          <view class="creator-desc">想让大家看看你的高仿人机？</view>
-          <view class="creator-desc">达到 <text class="highlight-text">硅谷天才</text> 等级后解锁上传权限</view>
-          <view class="creator-progress">
-            <view class="progress-bar-mini">
-              <view class="progress-fill-mini" style="width: {{userInfo.progress}}%"></view>
-            </view>
-            <text class="progress-text">当前进度 {{userInfo.progress}}%</text>
-          </view>
-          <button class="creator-btn" disabled>申请内测资格</button>
-        </view>
-      </view>
-
     </view>
 
     <!-- 退出登录按钮 -->
@@ -153,13 +143,13 @@
       <view class="more-header">
         <text class="more-title">更多功能</text>
         <view class="more-close" bindtap="hideMoreMenu">
-          <text class="icon icon-close"></text>
+          <antd-icon type="close" size="sm" custom-class="icon-burgundy"></antd-icon>
         </view>
       </view>
       <view class="more-items">
         <view class="more-item" bindtap="handleThemeToggle">
           <view class="more-item-icon">
-            <antd-icon type="{{currentTheme === 'dark' ? 'moon' : 'sun'}}" size="lg" custom-class="icon-cyan"></antd-icon>
+            <antd-icon type="{{currentTheme === 'dark' ? 'moon' : 'sun'}}" size="lg" custom-class="icon-burgundy"></antd-icon>
           </view>
           <view class="more-item-content">
             <text class="more-item-title">{{currentTheme === 'dark' ? '暗色模式' : '亮色模式'}}</text>
@@ -168,7 +158,7 @@
         </view>
         <view class="more-item" bindtap="goToSettings">
           <view class="more-item-icon">
-            <antd-icon type="setting" size="lg" custom-class="icon-cyan"></antd-icon>
+            <antd-icon type="setting" size="lg" custom-class="icon-burgundy"></antd-icon>
           </view>
           <view class="more-item-content">
             <text class="more-item-title">设置</text>
@@ -177,7 +167,7 @@
         </view>
         <view class="more-item" bindtap="goToAbout">
           <view class="more-item-icon">
-            <antd-icon type="info-circle" size="lg" custom-class="icon-cyan"></antd-icon>
+            <antd-icon type="info-circle" size="lg" custom-class="icon-burgundy"></antd-icon>
           </view>
           <view class="more-item-content">
             <text class="more-item-title">关于</text>

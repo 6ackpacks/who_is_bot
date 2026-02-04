@@ -13,6 +13,15 @@ export class User {
   @Column({ type: 'varchar', length: 50, unique: true })
   uid: string;
 
+  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
+  openid: string;
+
+  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
+  unionid: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  sessionKey: string;
+
   @Column({ type: 'int', default: 1 })
   level: number;
 

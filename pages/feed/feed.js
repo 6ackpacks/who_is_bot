@@ -18,6 +18,7 @@ Page({
     error: null, // 错误信息
     judgeButtonDisabled: false, // 防止重复点击
     videoPlaying: true, // 视频播放状态
+    cardSwipeClass: '', // 卡片滑动动画类
     // 评论相关
     comments: [],
     commentInput: '',
@@ -27,11 +28,18 @@ Page({
     currentTheme: 'dark', // 当前主题
     // 性能优化相关
     videoContextCache: {}, // 视频上下文缓存，避免重复创建
-    urlConversionRequestId: 0 // URL转换请求ID，用于追踪和取消过期请求
+    urlConversionRequestId: 0, // URL转换请求ID，用于追踪和取消过期请求
+    // 新增：评论/结果页面相关
+    analysisExpanded: false, // 解析卡片展开状态
+    likedComments: [], // 已点赞的评论ID列表，防止重复点赞
+    // 已判断题目功能
+    judgedItems: [], // 已判断的题目ID数组
+    userChoices: {} // 用户选择记录对象 {contentId: 'ai' | 'human'}
   },
 
   onLoad() {
     this.initTheme();
+    this.loadJudgedItems(); // 加载已判断记录
     this.loadFeedData();
     this.loadUserInfo();
   },
@@ -69,6 +77,78 @@ Page({
     });
 
     console.log('用户信息已加载:', { userId, guestId });
+  },
+
+  // ==================== 已判断题目功能 ====================
+
+  // 从本地存储加载已判断记录
+  loadJudgedItems() {
+    try {
+      const judgedItems = wx.getStorageSync('judgedItems') || [];
+      const userChoices = wx.getStorageSync('userChoices') || {};
+      this.setData({
+        judgedItems: judgedItems,
+        userChoices: userChoices
+      });
+      console.log('已判断记录加载成功:', { judgedItems, userChoices });
+    } catch (err) {
+      console.error('加载已判断记录失败:', err);
+    }
+  },
+
+  // 检查题目是否已判断
+  isItemJudged(contentId) {
+    return this.data.judgedItems.includes(contentId);
+  },
+
+  // 获取用户之前的选择
+  getUserChoice(contentId) {
+    return this.data.userChoices[contentId] || null;
+  },
+
+  // 保存判断记录到本地存储
+  saveJudgment(contentId, choice) {
+    try {
+      const { judgedItems, userChoices } = this.data;
+
+      // 添加到已判断列表（避免重复）
+      if (!judgedItems.includes(contentId)) {
+        judgedItems.push(contentId);
+      }
+
+      // 记录用户选择
+      userChoices[contentId] = choice;
+
+      // 保存到本地存储
+      wx.setStorageSync('judgedItems', judgedItems);
+      wx.setStorageSync('userChoices', userChoices);
+
+      // 更新状态
+      this.setData({
+        judgedItems: judgedItems,
+        userChoices: userChoices
+      });
+
+      console.log('判断记录已保存:', { contentId, choice });
+    } catch (err) {
+      console.error('保存判断记录失败:', err);
+    }
+  },
+
+  // 查看解析（已判断题目）
+  viewAnalysis() {
+    // 震动反馈
+    wx.vibrateShort({
+      type: 'light'
+    });
+
+    // 直接进入解析界面
+    this.setData({
+      viewState: 'revealed'
+    });
+
+    // 加载评论
+    this.loadComments();
   },
 
   // 从后端加载数据
@@ -269,6 +349,31 @@ Page({
     }
 
     const choice = e.currentTarget.dataset.choice;
+    const contentId = this.data.currentItem.id;
+
+    // 检查是否已经判断过
+    if (this.isItemJudged(contentId)) {
+      // 震动反馈
+      wx.vibrateShort({
+        type: 'light'
+      });
+
+      // 显示提示
+      wx.showToast({
+        title: '您已经判断过这道题啦 👀',
+        icon: 'none',
+        mask: true,
+        duration: 1500
+      });
+
+      // 1.5秒后进入解析界面
+      setTimeout(() => {
+        this.viewAnalysis();
+      }, 1500);
+
+      return;
+    }
+
     const isCorrect = choice === 'ai' ? this.data.currentItem.isAi : !this.data.currentItem.isAi;
 
     // 震动反馈
@@ -276,11 +381,17 @@ Page({
       type: 'medium'
     });
 
+    // 卡片滑动动画
+    this.triggerCardSwipeAnimation(choice);
+
     // 禁用按钮并添加视觉反馈
     this.setData({
       judgeButtonDisabled: true,
       userChoice: choice
     });
+
+    // 保存判断记录
+    this.saveJudgment(contentId, choice);
 
     // 提交判定结果到后端（改进错误处理）
     api.submitJudgment({
@@ -371,15 +482,25 @@ Page({
   // 下一题
   handleNext() {
     const nextIndex = (this.data.currentIndex + 1) % this.data.displayItems.length;
+
+    // 添加卡片重置动画
     this.setData({
-      currentIndex: nextIndex,
-      currentItem: this.data.displayItems[nextIndex],
-      viewState: 'judging',
-      showDetails: false,
-      userChoice: null,
-      isCorrect: false,
-      judgeButtonDisabled: false
+      cardSwipeClass: 'card-reset'
     });
+
+    setTimeout(() => {
+      this.setData({
+        currentIndex: nextIndex,
+        currentItem: this.data.displayItems[nextIndex],
+        viewState: 'judging',
+        showDetails: false,
+        userChoice: null,
+        isCorrect: false,
+        judgeButtonDisabled: false,
+        cardSwipeClass: '',
+        likedComments: [] // 重置已点赞列表
+      });
+    }, 100);
   },
 
   // 返回到结果页
@@ -483,7 +604,8 @@ Page({
       judgeButtonDisabled: false,
       comments: [],
       commentInput: '',
-      replyingTo: null
+      replyingTo: null,
+      likedComments: [] // 重置已点赞列表
     });
   },
 
@@ -601,18 +723,46 @@ Page({
       });
   },
 
-  // 点赞评论
+  // 点赞评论 - 防止重复点赞
   onLikeComment(e) {
     const commentId = e.currentTarget.dataset.id;
+    const { likedComments } = this.data;
+
+    // 检查是否已经点赞过
+    if (likedComments.includes(commentId)) {
+      wx.showToast({
+        title: '已经点赞过了',
+        icon: 'none',
+        duration: 1500
+      });
+      return;
+    }
 
     api.likeComment(commentId)
       .then(res => {
         console.log('点赞成功', res);
+
+        // 添加到已点赞列表
+        this.setData({
+          likedComments: [...likedComments, commentId]
+        });
+
         // 刷新评论列表
         this.loadComments();
+
+        wx.showToast({
+          title: '点赞成功',
+          icon: 'success',
+          duration: 1000
+        });
       })
       .catch(err => {
         console.error('点赞失败', err);
+        wx.showToast({
+          title: '点赞失败',
+          icon: 'none',
+          duration: 1500
+        });
       });
   },
 
@@ -677,6 +827,15 @@ Page({
 
   // ==================== 工具函数 ====================
 
+  // 切换解析卡片展开/收起
+  toggleAnalysis() {
+    this.setData({
+      analysisExpanded: !this.data.analysisExpanded
+    });
+  },
+
+  // Sort mode removed as per requirements
+
   // 更新随机统计数据（提取公共逻辑）
   updateRandomStats() {
     const randomAiPercentage = Math.floor(Math.random() * 60) + 20; // 20-80%
@@ -706,5 +865,30 @@ Page({
 
     // 返回具体错误信息或默认信息
     return err.message || err.errMsg || '操作失败';
+  },
+
+  // 触发卡片滑动动画
+  triggerCardSwipeAnimation(choice) {
+    const query = this.createSelectorQuery();
+    query.select('.content-card').boundingClientRect();
+    query.exec((res) => {
+      if (res[0]) {
+        const card = res[0];
+        const rotation = choice === 'ai' ? -10 : 10;
+        const translateX = choice === 'ai' ? -50 : 50;
+
+        // 使用 WXSS 动画类
+        this.setData({
+          cardSwipeClass: choice === 'ai' ? 'card-swipe-left' : 'card-swipe-right'
+        });
+
+        // 400ms 后重置
+        setTimeout(() => {
+          this.setData({
+            cardSwipeClass: ''
+          });
+        }, 400);
+      }
+    });
   }
 });

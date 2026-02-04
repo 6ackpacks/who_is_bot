@@ -4,8 +4,10 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '../user/user.entity';
 import { MockLoginDto } from './dto/mock-login.dto';
+import { WxLoginDto } from './dto/wx-login.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { JwtPayload } from './jwt.strategy';
+import { WeChatService } from '../wechat/wechat.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +15,7 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private wechatService: WeChatService,
   ) {}
 
   /**
@@ -25,6 +28,76 @@ export class AuthService {
       nickname: user.nickname,
     };
     return this.jwtService.sign(payload);
+  }
+
+  /**
+   * 微信登录
+   * 使用微信登录码获取用户信息并创建/更新用户
+   */
+  async wxLogin(dto: WxLoginDto) {
+    // 1. 调用微信 API 获取 openid 和 session_key
+    const wxData = await this.wechatService.code2Session(dto.code);
+
+    // 2. 查找是否已存在该 openid 的用户
+    let user = await this.userRepository.findOne({
+      where: { openid: wxData.openid },
+    });
+
+    if (user) {
+      // 用户已存在，更新用户信息
+      user.nickname = dto.nickName;
+      user.avatar = dto.avatarUrl || user.avatar;
+      user.sessionKey = this.wechatService.encryptSessionKey(wxData.session_key);
+
+      // 如果有 unionid，也更新
+      if (wxData.unionid) {
+        user.unionid = wxData.unionid;
+      }
+
+      user.updatedAt = new Date();
+      await this.userRepository.save(user);
+    } else {
+      // 创建新用户
+      user = this.userRepository.create({
+        id: uuidv4(),
+        nickname: dto.nickName,
+        uid: wxData.openid, // 使用 openid 作为 uid
+        openid: wxData.openid,
+        unionid: wxData.unionid,
+        sessionKey: this.wechatService.encryptSessionKey(wxData.session_key),
+        avatar: dto.avatarUrl || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132',
+        level: 1,
+        accuracy: 0,
+        totalJudged: 0,
+        correctCount: 0,
+        streak: 0,
+        maxStreak: 0,
+        totalBotsBusted: 0,
+        weeklyAccuracy: 0,
+        weeklyJudged: 0,
+        weeklyCorrect: 0,
+      });
+
+      await this.userRepository.save(user);
+    }
+
+    // 3. 生成 JWT token
+    const accessToken = this.generateAccessToken(user);
+
+    // 4. 返回用户信息和 token
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      uid: user.uid,
+      openid: user.openid,
+      avatar: user.avatar,
+      level: user.level,
+      accuracy: user.accuracy,
+      totalJudged: user.totalJudged,
+      streak: user.streak,
+      maxStreak: user.maxStreak,
+      accessToken,
+    };
   }
 
   /**

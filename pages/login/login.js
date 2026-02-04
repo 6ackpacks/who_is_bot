@@ -18,54 +18,91 @@ Page({
     this.redirectUrl = options.redirect || '/pages/feed/feed';
   },
 
-  // 模拟登录
+  // 微信登录
   handleWxLogin() {
     if (this.data.loading) return;
 
     this.setData({ loading: true });
 
-    // 使用模拟登录
-    const mockUser = {
-      nickname: '测试用户' + Math.floor(Math.random() * 1000),
-      avatar: 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'
-    };
+    // 1. 先获取用户信息（必须在用户点击事件中直接调用）
+    wx.getUserProfile({
+      desc: '用于完善用户资料',
+      success: (profileRes) => {
+        console.log('获取用户信息成功:', profileRes.userInfo);
 
-    api.mockLogin(mockUser)
-      .then(res => {
-        console.log('模拟登录成功:', res);
+        // 2. 获取用户信息成功后，再调用 wx.login 获取登录码
+        wx.login({
+          success: (loginRes) => {
+            if (loginRes.code) {
+              console.log('获取登录码成功:', loginRes.code);
 
-        if (res.success && res.data) {
-          // 保存用户信息
-          auth.saveLoginInfo({
-            token: 'mock_token_' + Date.now(),
-            userId: res.data.id,
-            userInfo: res.data
-          });
+              // 3. 调用后端微信登录接口
+              api.wxLogin(loginRes.code, profileRes.userInfo)
+                .then(res => {
+                  console.log('微信登录成功:', res);
 
-          this.setData({ loading: false });
+                  if (res.success && res.data) {
+                    // 保存用户信息和 token
+                    auth.saveLoginInfo({
+                      token: res.data.accessToken,
+                      userId: res.data.id,
+                      userInfo: res.data
+                    });
 
-          wx.showToast({
-            title: '登录成功',
-            icon: 'success',
-            duration: 1500
-          });
+                    this.setData({ loading: false });
 
-          // 延迟跳转，让用户看到成功提示
-          setTimeout(() => {
-            this.redirectToHome();
-          }, 1500);
-        } else {
-          throw new Error('登录失败');
-        }
-      })
-      .catch(err => {
-        console.error('登录失败:', err);
+                    wx.showToast({
+                      title: '登录成功',
+                      icon: 'success',
+                      duration: 1500
+                    });
+
+                    // 延迟跳转，让用户看到成功提示
+                    setTimeout(() => {
+                      this.redirectToHome();
+                    }, 1500);
+                  } else {
+                    throw new Error('登录失败');
+                  }
+                })
+                .catch(err => {
+                  console.error('微信登录失败:', err);
+                  this.setData({ loading: false });
+                  wx.showToast({
+                    title: err.message || '登录失败，请重试',
+                    icon: 'none',
+                    duration: 2000
+                  });
+                });
+            } else {
+              console.error('获取登录码失败:', loginRes.errMsg);
+              this.setData({ loading: false });
+              wx.showToast({
+                title: '登录失败，请重试',
+                icon: 'none'
+              });
+            }
+          },
+          fail: (err) => {
+            console.error('wx.login 调用失败:', err);
+            this.setData({ loading: false });
+            wx.showToast({
+              title: '登录失败，请重试',
+              icon: 'none'
+            });
+          }
+        });
+      },
+      fail: (err) => {
+        console.error('获取用户信息失败:', err);
         this.setData({ loading: false });
         wx.showToast({
-          title: '登录失败，请重试',
-          icon: 'none'
+          title: '需要授权才能登录',
+          icon: 'none',
+          duration: 2000
         });
-      });
+      }
+    });
   },
 
   // 跳转到首页

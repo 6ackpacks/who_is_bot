@@ -1,25 +1,9 @@
-<!--pages/leaderboard/leaderboard.wxml - Immersive Redesign-->
-<view class="leaderboard-container theme-{{currentTheme}}">
+<!--pages/leaderboard/leaderboard.wxml - Podium Redesign-->
+<view class="leaderboard-container">
 
-  <!-- 网格背景层 -->
-  <view class="grid-background"></view>
-
-  <!-- 沉浸式大卡片页眉 -->
-  <view class="immersive-header" style="transform: translateY({{scrollY * 0.3}}rpx);">
-    <view class="header-gradient"></view>
-
-    <view class="header-content">
-      <view class="header-title">
-        <text class="title-text">全网最强</text>
-        <text class="title-highlight">赛博侦探榜</text>
-      </view>
-      <text class="header-subtitle">每周实时更新排行 · 寻找人类最强鹰眼</text>
-
-      <!-- 当前用户排名标签 -->
-      <view class="user-rank-badge">
-        <text class="rank-badge-text">当前排名：Lv.{{currentUserLevel}} | No.{{currentUserRank}}</text>
-      </view>
-    </view>
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <text class="page-title">侦探榜</text>
   </view>
 
   <!-- 加载状态 -->
@@ -34,47 +18,73 @@
     <button class="retry-btn" bindtap="handleRetry">重新加载</button>
   </view>
 
-  <!-- 排行榜列表 - 无Tab，直接展示 -->
-  <scroll-view wx:else scroll-y class="leaderboard-list" bindscroll="handleScroll">
-    <view wx:for="{{users}}" wx:key="id" class="user-item rank-{{index + 1}}">
+  <!-- 排行榜内容 -->
+  <scroll-view wx:else scroll-y class="leaderboard-content">
 
-      <!-- 排名数字 -->
-      <view class="rank-section">
-        <text wx:if="{{index === 0}}" class="rank-medal gold">1</text>
-        <text wx:elif="{{index === 1}}" class="rank-medal silver">2</text>
-        <text wx:elif="{{index === 2}}" class="rank-medal bronze">3</text>
-        <text wx:else class="rank-number">{{index + 1}}</text>
-      </view>
+    <!-- 领奖台 - 前三名 -->
+    <view class="podium-container">
 
-      <!-- 头像 -->
-      <image src="{{item.avatar}}" class="user-avatar"></image>
-
-      <!-- 用户信息 -->
-      <view class="user-info">
-        <text class="user-name">{{item.username}}</text>
-        <view class="user-meta">
-          <view class="level-badge badge-{{item.levelClass}}">
-            <text class="badge-text">{{item.level}}</text>
-          </view>
+      <!-- 第二名 (左侧) -->
+      <view wx:if="{{users[1]}}" class="podium-item podium-second">
+        <view class="podium-avatar-wrapper">
+          <image src="{{users[1].avatar}}" class="podium-avatar avatar-second"></image>
+        </view>
+        <view class="podium-base base-second">
+          <text class="podium-rank rank-second">2</text>
         </view>
       </view>
 
-      <!-- 统计数据 - 等宽数字字体 -->
-      <view class="user-stats">
-        <view class="stat-item">
-          <text class="stat-label">周准确率</text>
-          <text class="stat-value monospace">{{item.weeklyAccuracy}}%</text>
+      <!-- 第一名 (中间) -->
+      <view wx:if="{{users[0]}}" class="podium-item podium-first">
+        <view class="crown-icon">👑</view>
+        <view class="podium-avatar-wrapper">
+          <image src="{{users[0].avatar}}" class="podium-avatar avatar-first"></image>
         </view>
-        <view class="stat-item">
-          <text class="stat-label">总题目</text>
-          <text class="stat-value monospace">{{item.totalJudged}}</text>
+        <view class="podium-base base-first">
+          <text class="podium-rank rank-first">1</text>
+        </view>
+      </view>
+
+      <!-- 第三名 (右侧) -->
+      <view wx:if="{{users[2]}}" class="podium-item podium-third">
+        <view class="podium-avatar-wrapper">
+          <image src="{{users[2].avatar}}" class="podium-avatar avatar-third"></image>
+        </view>
+        <view class="podium-base base-third">
+          <text class="podium-rank rank-third">3</text>
         </view>
       </view>
 
     </view>
 
+    <!-- 排名卡片 - 第四名及以后 -->
+    <view class="ranking-cards">
+      <view wx:for="{{users}}" wx:key="id" wx:if="{{index >= 3}}" class="ranking-card">
+
+        <!-- 排名数字 -->
+        <text class="card-rank">{{index + 1}}</text>
+
+        <!-- 头像 -->
+        <image src="{{item.avatar}}" class="card-avatar"></image>
+
+        <!-- 用户信息 -->
+        <view class="card-info">
+          <text class="card-name">{{item.username}}</text>
+          <text class="card-accuracy">准确率 {{item.weeklyAccuracy}}%</text>
+        </view>
+
+        <!-- 统计数据 -->
+        <view class="card-stats">
+          <text class="card-score">{{item.totalJudged}}</text>
+          <text class="card-label">题数</text>
+        </view>
+
+      </view>
+    </view>
+
     <!-- 底部占位 -->
     <view class="bottom-spacer"></view>
+
   </scroll-view>
 
 </view>

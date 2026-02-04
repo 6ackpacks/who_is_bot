@@ -14,11 +14,8 @@
     <button class="retry-btn" bindtap="loadFeedData">重新加载</button>
   </view>
 
-  <!-- 主内容区域 - 滚动视图 -->
-  <scroll-view wx:else scroll-y="{{viewState !== 'judging'}}" class="feed-scroll">
-
-    <!-- 判定前状态 -->
-    <view wx:if="{{viewState === 'judging'}}" class="judgment-view">
+  <!-- 主内容区域 -->
+  <view wx:if="{{viewState === 'judging'}}" class="judgment-view">
 
       <!-- 标题 -->
       <view class="page-title">谁是人机?</view>
@@ -28,7 +25,7 @@
         <view class="quote-icon">"</view>
 
         <!-- 视频内容 -->
-        <view wx:if="{{currentItem.type === 'video'}}" class="content-card image-card">
+        <view wx:if="{{currentItem.type === 'video'}}" class="content-card image-card {{cardSwipeClass}}">
           <view class="content-image-wrapper">
             <video
               id="content-video"
@@ -46,65 +43,71 @@
         </view>
 
         <!-- 图片内容 -->
-        <view wx:elif="{{currentItem.type === 'image'}}" class="content-card image-card">
+        <view wx:elif="{{currentItem.type === 'image'}}" class="content-card image-card {{cardSwipeClass}}">
           <view class="content-image-wrapper">
             <image class="content-image" src="{{currentItem.url}}" mode="aspectFit"></image>
           </view>
         </view>
 
         <!-- 文字内容 -->
-        <view wx:else class="content-card">
+        <view wx:else class="content-card {{cardSwipeClass}}">
           <text class="content-text">{{currentItem.text || currentItem.title}}</text>
         </view>
       </view>
 
       <!-- 判定按钮 -->
-      <view class="action-buttons">
-        <button class="btn-judge btn-ai" bindtap="handleJudge" data-choice="ai">
-          该是人机!
+      <view class="action-buttons {{isItemJudged(currentItem.id) ? 'judged' : ''}}">
+        <button
+          class="btn-judge btn-ai {{isItemJudged(currentItem.id) ? 'judged' : ''}} {{getUserChoice(currentItem.id) === 'ai' ? 'user-choice' : ''}}"
+          bindtap="handleJudge"
+          data-choice="ai"
+        >
+          <text class="btn-text">铁是人机</text>
         </button>
-        <button class="btn-judge btn-human" bindtap="handleJudge" data-choice="human">
-          包真人的!
+        <button
+          class="btn-judge btn-human {{isItemJudged(currentItem.id) ? 'judged' : ''}} {{getUserChoice(currentItem.id) === 'human' ? 'user-choice' : ''}}"
+          bindtap="handleJudge"
+          data-choice="human"
+        >
+          <text class="btn-text">包是真人</text>
         </button>
       </view>
 
-    </view>
-
-    <!-- 判定后状态 -->
-    <view wx:elif="{{viewState === 'revealed'}}" class="result-view">
-
-      <!-- 结果提示 -->
-      <view class="result-header">
-        <text class="result-title">{{isCorrect ? '你真是别具慧眼！选择与结果一致！' : '很遗憾，这次判断失误了'}}</text>
+      <!-- 查看解析按钮（仅已判断时显示） -->
+      <view wx:if="{{isItemJudged(currentItem.id)}}" class="view-analysis-container">
+        <button class="btn-view-analysis" bindtap="viewAnalysis">
+          查看解析
+        </button>
       </view>
 
-      <!-- 统计条 -->
-      <view class="stats-bar">
-        <view class="stat-item stat-ai" style="width: {{currentItem.aiPercentage || 28}}%">
-          <text class="stat-text">{{currentItem.aiPercentage || 28}}%</text>
+  </view>
+
+  <!-- 判定后状态 - 评论/结果页面 -->
+  <view wx:elif="{{viewState === 'revealed'}}" class="result-view">
+
+      <!-- 导航头部 - SINGLE BACK BUTTON -->
+      <view class="nav-header">
+        <view class="nav-back" bindtap="goHome">
+          <text class="icon-back">←</text>
         </view>
-        <view class="stat-item stat-human" style="width: {{100 - (currentItem.aiPercentage || 28)}}%">
-          <text class="stat-text">{{100 - (currentItem.aiPercentage || 28)}}%</text>
-        </view>
+        <view class="nav-title">判定 #{{currentItem.id}}</view>
+        <view class="nav-spacer"></view>
       </view>
 
-      <!-- 来源信息 -->
-      <view class="source-info">
-        该内容是 {{currentItem.isAi ? '' : ''}} <text wx:if="{{currentItem.isAi}}" class="icon icon-robot icon-sm"></text><text wx:else class="icon icon-user icon-sm"></text> {{currentItem.isAi ? 'AI' : '真人'}} {{currentItem.provider}} 数据提供。
-      </view>
+      <!-- 判定视觉容器 -->
+      <view class="content-card">
+        <view class="judgment-visual">
+          <!-- 旋转扫描边框 -->
+          <view class="scan-overlay"></view>
 
-      <!-- 内容卡片 -->
-      <view class="content-card-wrapper">
-        <view class="quote-icon">"</view>
-
-        <!-- 视频内容 -->
-        <view wx:if="{{currentItem.type === 'video'}}" class="content-card image-card">
-          <view class="content-image-wrapper">
+          <!-- 内容容器 - 9边形裁剪 -->
+          <view class="content-image-container">
+            <!-- 视频内容 -->
             <video
-              id="result-video"
-              class="content-video"
+              wx:if="{{currentItem.type === 'video'}}"
+              class="content-media"
               src="{{currentItem.url}}"
-              object-fit="contain"
+              object-fit="cover"
               show-center-play-btn="{{true}}"
               show-play-btn="{{false}}"
               controls="{{true}}"
@@ -112,46 +115,87 @@
               bindpause="onVideoPause"
               binderror="onVideoError"
             ></video>
+
+            <!-- 图片内容 -->
+            <image
+              wx:elif="{{currentItem.type === 'image'}}"
+              class="content-media"
+              src="{{currentItem.url}}"
+              mode="aspectFill"
+            ></image>
+
+            <!-- 文字内容 -->
+            <view wx:else class="content-text-display">
+              <text>{{currentItem.text || currentItem.title}}</text>
+            </view>
+          </view>
+
+          <!-- 来源标签 -->
+          <view class="tag-pill">
+            <text class="tag-dot">●</text> 来源: {{currentItem.provider || currentItem.modelTag || 'Unknown'}}
           </view>
         </view>
 
-        <!-- 图片内容 -->
-        <view wx:elif="{{currentItem.type === 'image'}}" class="content-card image-card">
-          <view class="content-image-wrapper">
-            <image class="content-image" src="{{currentItem.url}}" mode="aspectFit"></image>
+        <!-- 结果头部 - REMOVED "判定失误" BUTTON, ONLY STATUS BADGE -->
+        <view class="result-header">
+          <view class="status-badge">{{isCorrect ? '判定正确' : '判定失误'}}</view>
+          <view class="result-main-title">{{currentItem.isAi ? 'AI 生成内容' : '真人创作内容'}}</view>
+          <view class="result-subtitle">{{isCorrect ? '你的直觉很准确！' : '这次有点难度，继续加油！'}}</view>
+        </view>
+
+        <!-- 统计显示 -->
+        <view class="stats-container">
+          <view class="stat-row">
+            <text>全网判断为 AI</text>
+            <text class="stat-percentage">{{currentItem.aiPercentage || 82}}%</text>
+          </view>
+          <view class="progress-track">
+            <view class="progress-fill" style="width: {{currentItem.aiPercentage || 82}}%"></view>
+          </view>
+          <view class="stat-meta">
+            <text>共 {{currentItem.totalVotes || 12403}} 人参与</text>
+            <text>{{100 - (currentItem.aiPercentage || 82)}}% 认为是真人</text>
           </view>
         </view>
+      </view>
 
-        <!-- 文字内容 -->
-        <view wx:else class="content-card">
-          <text class="content-text">{{currentItem.text || currentItem.title}}</text>
+      <!-- 解析卡片 -->
+      <view wx:if="{{currentItem.explanation}}" class="analysis-card" bindtap="toggleAnalysis">
+        <view class="analysis-header">
+          <text class="analysis-title">⚡ 官方解析</text>
+          <text class="chevron {{analysisExpanded ? 'expanded' : ''}}">›</text>
+        </view>
+        <view class="analysis-content {{analysisExpanded ? 'show' : ''}}">
+          {{currentItem.explanation || '注意观察细节特征，AI生成的内容往往在光影、纹理等方面存在不自然的痕迹...'}}
         </view>
       </view>
 
-      <!-- 解析说明 -->
-      <view wx:if="{{currentItem.explanation}}" class="explanation-box">
-        <text class="explanation-label">该内容是 {{currentItem.modelTag}} 生成</text>
-        <text class="explanation-text">{{currentItem.explanation}}</text>
-      </view>
-
-      <!-- 评论区域 -->
+      <!-- 评论区域 - REMOVED SORT TOGGLE -->
       <view class="comments-section">
-        <view class="comments-header">
-          <text class="comments-title"><text class="icon icon-comment icon-sm"></text> 大家的评论 ({{comments.length}})</text>
+        <view class="section-title-row">
+          <view class="section-title">讨论 ({{comments.length}})</view>
+
+          <!-- Move FAB button here - inline with title -->
+          <view class="btn-next-inline" bindtap="handleNext">
+            <text class="btn-next-text">继续挑战</text>
+            <text class="btn-next-arrow">→</text>
+          </view>
         </view>
 
-        <!-- 评论输入框 -->
-        <view class="comment-input-wrapper">
+        <!-- 评论输入框 - 内联位置 -->
+        <view class="comment-input-container">
           <input
-            class="comment-input"
-            placeholder="{{replyingTo ? '回复 ' + replyingTo.user.nickname : '说点什么...'}}"
+            class="comment-input-field"
+            placeholder="{{replyingTo ? '回复 ' + replyingTo.user.nickname : '发表你的观点...'}}"
             value="{{commentInput}}"
             bindinput="onCommentInput"
             maxlength="500"
             confirm-type="send"
             bindconfirm="submitComment"
           />
-          <button class="comment-submit-btn" bindtap="submitComment">发送</button>
+          <view class="comment-send-btn" bindtap="submitComment">
+            <text class="send-icon">➤</text>
+          </view>
         </view>
 
         <!-- 评论列表 -->
@@ -162,53 +206,35 @@
 
           <block wx:for="{{comments}}" wx:key="id">
             <view class="comment-item">
-              <!-- 用户头像 -->
+              <!-- 用户头像 - 圆角方形 -->
               <image
-                class="comment-avatar"
+                class="avatar"
                 src="{{item.user ? item.user.avatar : 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"
                 mode="aspectFill"
               />
 
-              <view class="comment-main">
+              <view class="comment-body">
                 <!-- 用户信息和时间 -->
-                <view class="comment-header">
-                  <text class="comment-nickname">{{item.user ? item.user.nickname : '游客'}}</text>
-                  <text wx:if="{{item.user}}" class="comment-level">Lv.{{item.user.level}}</text>
+                <view class="comment-meta">
+                  <view class="username-row">
+                    <text class="username">{{item.user ? item.user.nickname : '游客'}}</text>
+                    <text wx:if="{{item.isPinned}}" class="pin-badge">精选</text>
+                  </view>
                   <text class="comment-time">{{item.createdAt}}</text>
                 </view>
 
                 <!-- 评论内容 -->
-                <text class="comment-content">{{item.content}}</text>
+                <view class="comment-text">{{item.content}}</view>
 
                 <!-- 操作按钮 -->
                 <view class="comment-actions">
                   <view class="action-btn" bindtap="onLikeComment" data-id="{{item.id}}">
-                    <text class="icon icon-like icon-sm"></text>
-                    <text class="action-text">{{item.likes > 0 ? item.likes : '赞'}}</text>
+                    <text class="like-icon">👍</text>
+                    <text class="action-count">{{item.likes > 0 ? item.likes : '赞'}}</text>
                   </view>
                   <view class="action-btn" bindtap="onReplyComment" data-comment="{{item}}">
-                    <text class="icon icon-comment icon-sm"></text>
-                    <text class="action-text">回复</text>
+                    <text>回复</text>
                   </view>
-                  <view wx:if="{{item.userId === userId}}" class="action-btn" bindtap="onDeleteComment" data-id="{{item.id}}">
-                    <text class="icon icon-delete icon-sm"></text>
-                    <text class="action-text">删除</text>
-                  </view>
-                </view>
-
-                <!-- 回复列表 -->
-                <view wx:if="{{item.replies && item.replies.length > 0}}" class="replies-list">
-                  <block wx:for="{{item.replies}}" wx:key="id" wx:for-item="reply">
-                    <view class="reply-item">
-                      <text class="reply-author">{{reply.user ? reply.user.nickname : '游客'}}</text>
-                      <text class="reply-content">: {{reply.content}}</text>
-                      <view class="reply-actions">
-                        <text class="reply-likes" wx:if="{{reply.likes > 0}}">
-                          <text class="icon icon-like icon-xs"></text> {{reply.likes}}
-                        </text>
-                      </view>
-                    </view>
-                  </block>
                 </view>
               </view>
             </view>
@@ -216,14 +242,6 @@
         </view>
       </view>
 
-      <!-- 底部按钮 -->
-      <view class="bottom-actions">
-        <button class="btn-secondary" bindtap="goHome">返回主页</button>
-        <button class="btn-primary" bindtap="handleNext">继续挑战</button>
-      </view>
-
-    </view>
-
-  </scroll-view>
+  </view>
 
 </view>

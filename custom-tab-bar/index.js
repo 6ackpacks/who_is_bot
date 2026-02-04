@@ -1,20 +1,26 @@
 Component({
   data: {
     selected: 0,
-    color: "#8B92A8",
-    selectedColor: "#00F2FF",
+    color: "#9CA3AF",
+    selectedColor: "#591C2E",
     list: [
       {
         pagePath: "/pages/feed/feed",
-        text: "判定"
+        text: "判定",
+        iconPath: "/images/tab-home.png",
+        selectedIconPath: "/images/tab-home-active.png"
       },
       {
         pagePath: "/pages/leaderboard/leaderboard",
-        text: "榜单"
+        text: "榜单",
+        iconPath: "/images/tab-leaderboard.png",
+        selectedIconPath: "/images/tab-leaderboard-active.png"
       },
       {
         pagePath: "/pages/profile/profile",
-        text: "我的"
+        text: "我的",
+        iconPath: "/images/tab-profile.png",
+        selectedIconPath: "/images/tab-profile-active.png"
       }
     ]
   },

@@ -1,145 +1,27 @@
-/* pages/leaderboard/leaderboard.wxss - Immersive Redesign */
+/* pages/leaderboard/leaderboard.wxss - Podium Redesign */
 
 /* ===== 容器 ===== */
 .leaderboard-container {
   width: 100%;
   min-height: 100vh;
-  background: #0F111A;
+  background: #F9F6F0;
   position: relative;
   overflow: hidden;
   padding-bottom: 120rpx;
 }
 
-/* ===== 10px 网格背景层 ===== */
-.grid-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image:
-    linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
-  background-size: 20rpx 20rpx;
-  pointer-events: none;
-  z-index: 0;
+/* ===== 页面标题 ===== */
+.page-header {
+  padding: 48rpx 48rpx 64rpx;
+  text-align: left;
 }
 
-/* ===== 沉浸式大卡片页眉 ===== */
-.immersive-header {
-  position: relative;
-  margin: 40rpx 30rpx 30rpx;
-  border-radius: 32rpx;
-  overflow: hidden;
-  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.5);
-  z-index: 10;
-  transition: transform 0.1s ease-out;
-}
-
-/* 深色渐变背景 */
-.header-gradient {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg,
-    #0A0E1A 0%,
-    #0F1419 30%,
-    #1A1F2E 60%,
-    #0F1419 100%);
-  opacity: 1;
-}
-
-/* 霓虹光晕装饰 */
-.header-gradient::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 300rpx;
-  height: 300rpx;
-  background: radial-gradient(circle, rgba(0, 242, 255, 0.15) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: float 6s ease-in-out infinite;
-}
-
-.header-gradient::after {
-  content: '';
-  position: absolute;
-  bottom: -30%;
-  left: -10%;
-  width: 250rpx;
-  height: 250rpx;
-  background: radial-gradient(circle, rgba(0, 242, 255, 0.1) 0%, transparent 70%);
-  border-radius: 50%;
-  animation: float 8s ease-in-out infinite reverse;
-}
-
-/* 页眉内容 */
-.header-content {
-  position: relative;
-  padding: 60rpx 40rpx 80rpx;
-  z-index: 1;
-}
-
-.header-title {
-  margin-bottom: 16rpx;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 12rpx;
-}
-
-.title-text {
-  font-size: 56rpx;
-  font-weight: 900;
-  color: #FFFFFF;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  letter-spacing: -1rpx;
-  text-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.5);
-}
-
-/* 蓝色霓虹发光标题 */
-.title-highlight {
-  font-size: 56rpx;
-  font-weight: 900;
-  color: #00F2FF;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  letter-spacing: -1rpx;
-  text-shadow:
-    0 0 20rpx rgba(0, 242, 255, 0.8),
-    0 0 40rpx rgba(0, 242, 255, 0.5),
-    0 0 60rpx rgba(0, 242, 255, 0.3);
-  animation: neonPulse 3s ease-in-out infinite;
-}
-
-.header-subtitle {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  margin-bottom: 16rpx;
-  display: block;
-}
-
-/* 当前用户排名标签 - 底部居中，避免遮挡 */
-.user-rank-badge {
-  display: inline-block;
-  background: rgba(0, 242, 255, 0.1);
-  backdrop-filter: blur(20rpx);
-  border: 1rpx solid rgba(0, 242, 255, 0.3);
-  border-radius: 20rpx;
-  padding: 12rpx 24rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 242, 255, 0.2);
-  margin-top: 8rpx;
-}
-
-.rank-badge-text {
-  font-size: 22rpx;
+.page-title {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 72rpx;
   font-weight: 600;
-  color: #00F2FF;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  text-shadow: 0 0 10rpx rgba(0, 242, 255, 0.5);
+  color: #591C2E;
+  line-height: 1.2;
 }
 
 /* ===== 加载状态 ===== */
@@ -157,18 +39,16 @@
 .loading-spinner {
   width: 100rpx;
   height: 100rpx;
-  border: 8rpx solid rgba(0, 242, 255, 0.2);
-  border-top-color: #00F2FF;
+  border: 8rpx solid #E5E0D8;
+  border-top-color: #591C2E;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 40rpx;
-  box-shadow: 0 0 30rpx rgba(0, 242, 255, 0.4);
 }
 
 .loading-text {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.7);
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  color: #2A2222;
 }
 
 /* ===== 错误状态 ===== */
@@ -186,261 +66,255 @@
 
 .error-text {
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.8);
+  color: #2A2222;
   text-align: center;
   margin-bottom: 40rpx;
-  font-family: "PingFang SC", -apple-system, sans-serif;
 }
 
 .retry-btn {
   padding: 24rpx 60rpx;
-  background: linear-gradient(135deg, #00F2FF 0%, #0096CC 100%);
-  color: #000000;
-  border-radius: 50rpx;
+  background: #591C2E;
+  color: #F9F6F0;
+  border-radius: 24rpx;
   font-size: 28rpx;
   font-weight: 600;
   border: none;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  box-shadow: 0 8rpx 24rpx rgba(0, 242, 255, 0.4);
 }
 
 .retry-btn::after {
   border: none;
 }
 
-/* ===== 排行榜列表 ===== */
-.leaderboard-list {
-  height: calc(100vh - 360rpx);
-  padding: 0 30rpx;
+/* ===== 排行榜内容 ===== */
+.leaderboard-content {
+  height: calc(100vh - 240rpx);
+  padding: 0 48rpx;
   box-sizing: border-box;
-  position: relative;
-  z-index: 5;
 }
 
-/* ===== 用户项 ===== */
-.user-item {
-  display: grid;
-  grid-template-columns: 80rpx 80rpx 1fr 280rpx;
-  align-items: center;
-  gap: 20rpx;
-  padding: 28rpx 24rpx;
-  background: transparent;
-  border-bottom: 1rpx solid rgba(255, 255, 255, 0.05);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-}
-
-.user-item:active {
-  background: rgba(255, 255, 255, 0.03);
-  transform: translateX(4rpx);
-}
-
-/* 前三名特殊样式 - 金色/银色/铜色渐变阴影 */
-.user-item.rank-1 {
-  background: linear-gradient(90deg,
-    rgba(255, 215, 0, 0.08) 0%,
-    rgba(255, 215, 0, 0.03) 50%,
-    transparent 100%);
-  border-bottom: 1rpx solid rgba(255, 215, 0, 0.2);
-  box-shadow: 0 4rpx 20rpx rgba(255, 215, 0, 0.15);
-}
-
-.user-item.rank-2 {
-  background: linear-gradient(90deg,
-    rgba(192, 192, 192, 0.08) 0%,
-    rgba(192, 192, 192, 0.03) 50%,
-    transparent 100%);
-  border-bottom: 1rpx solid rgba(192, 192, 192, 0.2);
-  box-shadow: 0 4rpx 20rpx rgba(192, 192, 192, 0.15);
-}
-
-.user-item.rank-3 {
-  background: linear-gradient(90deg,
-    rgba(205, 127, 50, 0.08) 0%,
-    rgba(205, 127, 50, 0.03) 50%,
-    transparent 100%);
-  border-bottom: 1rpx solid rgba(205, 127, 50, 0.2);
-  box-shadow: 0 4rpx 20rpx rgba(205, 127, 50, 0.15);
-}
-
-/* ===== 排名区域 ===== */
-.rank-section {
+/* ===== 领奖台容器 ===== */
+.podium-container {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  gap: 32rpx;
+  height: 520rpx;
+  margin-bottom: 48rpx;
 }
 
-/* 前三名奖牌样式 */
-.rank-medal {
-  width: 60rpx;
-  height: 60rpx;
+/* ===== 领奖台项目 ===== */
+.podium-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* 第一名 */
+.podium-first {
+  z-index: 3;
+}
+
+/* 第二名 */
+.podium-second {
+  z-index: 2;
+}
+
+/* 第三名 */
+.podium-third {
+  z-index: 1;
+}
+
+/* ===== 皇冠图标 ===== */
+.crown-icon {
+  position: absolute;
+  top: -64rpx;
+  font-size: 48rpx;
+  z-index: 10;
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ===== 头像容器 ===== */
+.podium-avatar-wrapper {
+  margin-bottom: 16rpx;
+}
+
+/* 头像样式 */
+.podium-avatar {
   border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 第一名头像 */
+.avatar-first {
+  width: 160rpx;
+  height: 160rpx;
+  border: 6rpx solid #D4AF37;
+  box-shadow: 0 8rpx 24rpx rgba(212, 175, 55, 0.4);
+}
+
+/* 第二名头像 */
+.avatar-second {
+  width: 128rpx;
+  height: 128rpx;
+  border: 4rpx solid #E5E0D8;
+  box-shadow: 0 4rpx 16rpx rgba(229, 224, 216, 0.4);
+}
+
+/* 第三名头像 */
+.avatar-third {
+  width: 128rpx;
+  height: 128rpx;
+  border: 4rpx solid #C88A66;
+  box-shadow: 0 4rpx 16rpx rgba(200, 138, 102, 0.4);
+}
+
+/* ===== 领奖台底座 ===== */
+.podium-base {
+  width: 100%;
+  border-radius: 16rpx 16rpx 0 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 32rpx;
-  font-weight: 900;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.5);
+  position: relative;
 }
 
-.rank-medal.gold {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-  color: #000000;
-  box-shadow: 0 0 20rpx rgba(255, 215, 0, 0.6);
+/* 第一名底座 */
+.base-first {
+  height: 256rpx;
+  background: linear-gradient(180deg, #D4AF37 0%, #B59223 100%);
+  box-shadow: 0 16rpx 48rpx rgba(212, 175, 55, 0.3);
 }
 
-.rank-medal.silver {
-  background: linear-gradient(135deg, #E8E8E8 0%, #C0C0C0 100%);
-  color: #000000;
-  box-shadow: 0 0 20rpx rgba(192, 192, 192, 0.6);
+/* 第二名底座 */
+.base-second {
+  height: 192rpx;
+  background: #E5E0D8;
+  box-shadow: 0 8rpx 24rpx rgba(229, 224, 216, 0.3);
 }
 
-.rank-medal.bronze {
-  background: linear-gradient(135deg, #CD7F32 0%, #B8860B 100%);
-  color: #000000;
-  box-shadow: 0 0 20rpx rgba(205, 127, 50, 0.6);
+/* 第三名底座 */
+.base-third {
+  height: 160rpx;
+  background: #C88A66;
+  box-shadow: 0 8rpx 24rpx rgba(200, 138, 102, 0.3);
 }
 
-/* 普通排名数字 */
-.rank-number {
-  font-size: 36rpx;
+/* ===== 排名数字 ===== */
+.podium-rank {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.5);
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  text-align: center;
 }
 
-/* ===== 头像 ===== */
-.user-avatar {
+/* 第一名排名 */
+.rank-first {
+  font-size: 144rpx;
+  color: #FFFFFF;
+  text-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.3);
+}
+
+/* 第二名排名 */
+.rank-second {
+  font-size: 72rpx;
+  color: #999999;
+  position: absolute;
+  top: -24rpx;
+}
+
+/* 第三名排名 */
+.rank-third {
+  font-size: 72rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ===== 排名卡片容器 ===== */
+.ranking-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+/* ===== 排名卡片 ===== */
+.ranking-card {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  padding: 32rpx;
+  background: #FFFFFF;
+  border: 2rpx solid #F0F0F0;
+  border-radius: 32rpx;
+  box-shadow: 0 2rpx 8rpx rgba(89, 28, 46, 0.06);
+  transition: all 0.3s ease;
+}
+
+.ranking-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1rpx 4rpx rgba(89, 28, 46, 0.08);
+}
+
+/* ===== 卡片排名数字 ===== */
+.card-rank {
+  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-size: 56rpx;
+  font-weight: 600;
+  color: #CCCCCC;
+  width: 80rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ===== 卡片头像 ===== */
+.card-avatar {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  border: 2rpx solid rgba(0, 242, 255, 0.3);
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.3);
+  object-fit: cover;
+  flex-shrink: 0;
 }
 
-.user-item.rank-1 .user-avatar {
-  border-color: rgba(255, 215, 0, 0.5);
-}
-
-.user-item.rank-2 .user-avatar {
-  border-color: rgba(192, 192, 192, 0.5);
-}
-
-.user-item.rank-3 .user-avatar {
-  border-color: rgba(205, 127, 50, 0.5);
-}
-
-/* ===== 用户信息 ===== */
-.user-info {
+/* ===== 卡片信息 ===== */
+.card-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 8rpx;
   min-width: 0;
 }
 
-.user-name {
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #FFFFFF;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+.card-name {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #2A2222;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.user-meta {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
+.card-accuracy {
+  font-size: 24rpx;
+  color: #999999;
 }
 
-.level-badge {
-  padding: 4rpx 12rpx;
-  border-radius: 8rpx;
-  font-size: 20rpx;
-  font-weight: 600;
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.badge-level-4 {
-  background: linear-gradient(135deg, #000000 0%, #1F2937 100%);
-  color: #00F2FF;
-  border: 1rpx solid #00F2FF;
-  box-shadow: 0 0 10rpx rgba(0, 242, 255, 0.3);
-}
-
-.badge-level-3 {
-  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
-  color: #FFFFFF;
-  border: 1rpx solid #EF4444;
-}
-
-.badge-level-2 {
-  background: linear-gradient(135deg, #00F2FF 0%, #0096CC 100%);
-  color: #000000;
-  border: 1rpx solid #00F2FF;
-}
-
-.badge-level-1 {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
-  border: 1rpx solid rgba(255, 255, 255, 0.2);
-}
-
-.badge-text {
-  font-size: 20rpx;
-}
-
-/* ===== 统计数据 - 等宽数字字体 ===== */
-.user-stats {
-  display: flex;
-  justify-content: flex-end;
-  gap: 40rpx;
-}
-
-.stat-item {
+/* ===== 卡片统计 ===== */
+.card-stats {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 4rpx;
+  flex-shrink: 0;
 }
 
-.stat-label {
-  font-size: 20rpx;
-  color: rgba(255, 255, 255, 0.4);
-  font-family: "PingFang SC", -apple-system, sans-serif;
-}
-
-.stat-value {
-  font-size: 32rpx;
+.card-score {
+  font-size: 24rpx;
   font-weight: 700;
-  color: #FFFFFF;
-  font-family: "Courier New", Courier, monospace;
-  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+  color: #591C2E;
 }
 
-/* 等宽数字字体 */
-.monospace {
-  font-family: "Courier New", Courier, monospace;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 1rpx;
-}
-
-/* 前三名数据高亮 */
-.user-item.rank-1 .stat-value {
-  color: #FFD700;
-  text-shadow: 0 0 10rpx rgba(255, 215, 0, 0.5);
-}
-
-.user-item.rank-2 .stat-value {
-  color: #E8E8E8;
-  text-shadow: 0 0 10rpx rgba(192, 192, 192, 0.5);
-}
-
-.user-item.rank-3 .stat-value {
-  color: #CD7F32;
-  text-shadow: 0 0 10rpx rgba(205, 127, 50, 0.5);
+.card-label {
+  font-size: 20rpx;
+  color: #999999;
 }
 
 /* ===== 底部占位 ===== */
@@ -449,30 +323,6 @@
 }
 
 /* ===== 动画 ===== */
-@keyframes neonPulse {
-  0%, 100% {
-    text-shadow:
-      0 0 20rpx rgba(0, 242, 255, 0.8),
-      0 0 40rpx rgba(0, 242, 255, 0.5),
-      0 0 60rpx rgba(0, 242, 255, 0.3);
-  }
-  50% {
-    text-shadow:
-      0 0 30rpx rgba(0, 242, 255, 1),
-      0 0 60rpx rgba(0, 242, 255, 0.7),
-      0 0 90rpx rgba(0, 242, 255, 0.5);
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(20rpx, 20rpx);
-  }
-}
-
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -482,60 +332,11 @@
   }
 }
 
-/* ===== 亮色主题 ===== */
-.theme-light.leaderboard-container {
-  background: #F8FAFC;
-}
-
-.theme-light .grid-background {
-  background-image:
-    linear-gradient(rgba(0, 242, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 242, 255, 0.05) 1px, transparent 1px);
-}
-
-.theme-light .header-gradient {
-  background: linear-gradient(135deg,
-    #FFFFFF 0%,
-    #F1F5F9 30%,
-    #E2E8F0 60%,
-    #F1F5F9 100%);
-}
-
-.theme-light .title-text {
-  color: #0F172A;
-}
-
-.theme-light .title-highlight {
-  color: #0096CC;
-  text-shadow: none;
-}
-
-.theme-light .header-subtitle {
-  color: rgba(15, 23, 42, 0.6);
-}
-
-.theme-light .user-rank-badge {
-  background: rgba(0, 242, 255, 0.15);
-  border-color: rgba(0, 242, 255, 0.4);
-}
-
-.theme-light .rank-badge-text {
-  color: #0096CC;
-  text-shadow: none;
-}
-
-.theme-light .user-item {
-  border-bottom: 1rpx solid rgba(0, 0, 0, 0.08);
-}
-
-.theme-light .user-name {
-  color: #0F172A;
-}
-
-.theme-light .stat-value {
-  color: #0F172A;
-}
-
-.theme-light .rank-number {
-  color: rgba(15, 23, 42, 0.5);
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12rpx);
+  }
 }
