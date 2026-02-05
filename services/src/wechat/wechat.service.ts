@@ -57,6 +57,9 @@ export class WeChatService {
           grant_type: 'authorization_code',
         },
         timeout: 10000, // 10 秒超时
+        httpsAgent: new (require('https').Agent)({
+          rejectUnauthorized: false, // 禁用 SSL 验证（仅用于微信 API）
+        }),
       });
 
       const data = response.data;
