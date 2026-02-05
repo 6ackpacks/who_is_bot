@@ -16,7 +16,7 @@ const auth = require('./auth.js');
  */
 const ENV_CONFIG = {
   // 是否使用本地开发服务器（开发时设为 true，生产时设为 false）
-  USE_LOCAL_API: false,  // 改为 false 使用云托管
+  USE_LOCAL_API: false,  // 使用云托管
 
   // 本地开发服务器地址（仅在 USE_LOCAL_API = true 时使用）
   // 格式：http://YOUR_LOCAL_IP:PORT 或 http://localhost:PORT
