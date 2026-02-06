@@ -261,20 +261,41 @@ function cloudRequest(options) {
       });
     }
 
+    // 构建请求头
+    const headers = {
+      'X-WX-SERVICE': API_CONFIG.cloudConfig.service,
+      'content-type': 'application/json'
+    };
+
+    // 如果需要认证，添加 Authorization header
+    if (needAuth) {
+      const token = auth.getToken();
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+    }
+
     wx.cloud.callContainer({
       config: {
         env: API_CONFIG.cloudConfig.env
       },
       path,
-      header: {
-        'X-WX-SERVICE': API_CONFIG.cloudConfig.service,
-        'content-type': 'application/json'
-      },
+      header: headers,
       method,
       data,
       success: (res) => {
         if (showLoading) wx.hideLoading();
-        resolve(res.data);
+
+        // 检查响应中的 success 字段
+        if (res.data && res.data.success === false) {
+          // 后端返回错误，拒绝 Promise
+          const errorMsg = res.data.message || res.data.error || '请求失败';
+          console.error('云托管请求失败:', res.data);
+          reject(new Error(Array.isArray(errorMsg) ? errorMsg[0] : errorMsg));
+        } else {
+          // 成功响应
+          resolve(res.data);
+        }
       },
       fail: (err) => {
         if (showLoading) wx.hideLoading();
@@ -368,10 +389,11 @@ function submitJudgment(data) {
       userChoice: data.userChoice,
       isCorrect: data.isCorrect,
       userId: userId || null,
-      guestId: guestId || null,
-      timestamp: Date.now()
+      guestId: guestId || null
+      // 移除 timestamp 字段，后端不接受
     },
-    showLoading: false
+    showLoading: false,
+    needAuth: true  // 添加认证要求
   });
 }
 
@@ -610,7 +632,8 @@ function createComment(data) {
       guestId: data.guestId,
       content: data.content,
       parentId: data.parentId
-    }
+    },
+    needAuth: true  // 添加认证要求
   });
 }
 

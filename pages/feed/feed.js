@@ -30,7 +30,7 @@ Page({
     videoContextCache: {}, // 视频上下文缓存，避免重复创建
     urlConversionRequestId: 0, // URL转换请求ID，用于追踪和取消过期请求
     // 新增：评论/结果页面相关
-    analysisExpanded: false, // 解析卡片展开状态
+    analysisExpanded: true, // 解析卡片展开状态（默认展开）
     likedComments: [], // 已点赞的评论ID列表，防止重复点赞
     // 已判断题目功能
     judgedItems: [], // 已判断的题目ID数组

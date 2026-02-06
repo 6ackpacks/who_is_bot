@@ -107,15 +107,13 @@
   box-shadow: 0 4rpx 12rpx rgba(89, 28, 46, 0.2);
 }
 
-/* ===== 判定视图 - 修复重叠问题，使用 Flexbox 布局 ===== */
+/* ===== 判定视图 - 单屏布局优化 ===== */
 .judgment-view {
-  padding: 40rpx 32rpx 40rpx;
+  padding: 40rpx 32rpx 227rpx; /* 底部预留 Banner 安全区域，按钮上移 2/3 高度 */
   height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  overflow: hidden;
+  overflow: hidden; /* 禁止滚动 */
   box-sizing: border-box;
   animation: fadeIn 0.4s ease-out;
   position: relative;
@@ -163,22 +161,22 @@
   text-align: center;
   margin-bottom: 20rpx;
   font-family: var(--font-display);
-  flex-shrink: 0;
+  flex-shrink: 0; /* 不压缩标题 */
   animation: slideInDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   letter-spacing: -1rpx;
   position: relative;
   z-index: 1;
+  height: auto; /* 固定高度约 80rpx */
 }
 
-/* ===== 内容区域 - 使用 flex: 1 避免重叠 ===== */
+/* ===== 内容区域 - 弹性空间，自动压缩 ===== */
 .content-wrapper {
   width: 100%;
   position: relative;
-  flex: 1;
+  flex: 1; /* 占据剩余空间 */
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  max-height: 55vh;
+  min-height: 0; /* 允许内容压缩 */
   overflow: hidden;
   animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s backwards;
   z-index: 1;
@@ -206,7 +204,8 @@
   border: 3rpx solid var(--ui-gray);
   position: relative;
   overflow-y: auto;
-  max-height: 45vh;
+  flex: 1; /* 占据剩余空间 */
+  min-height: 0; /* 允许压缩 */
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   animation: cardEnter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
   transform-origin: bottom center;
@@ -217,6 +216,17 @@
   overflow-y: visible;
   max-height: none;
   height: auto;
+}
+
+/* 判定页面的内容卡片 - 禁止内部滚动 */
+.judgment-view .content-card {
+  overflow-y: hidden;
+}
+
+/* 判定页面的文字内容 - 允许滚动 */
+.judgment-view .content-text {
+  overflow-y: auto;
+  max-height: 100%;
 }
 
 @keyframes cardEnter {
@@ -234,16 +244,19 @@
   transform: scale(0.98);
 }
 
-/* 图片卡片 */
-.content-card.image-card {
+/* 图片卡片 - 判定页面专用 */
+.judgment-view .content-card.image-card {
   padding: 0;
   background: transparent;
   backdrop-filter: none;
   box-shadow: none;
   overflow: visible;
-  max-height: none;
   border: none;
   position: relative;
+  flex: 1; /* 占据剩余空间 */
+  min-height: 0; /* 允许压缩 */
+  display: flex;
+  flex-direction: column;
 }
 
 /* 背景卡片效果 */
@@ -269,7 +282,8 @@
   box-shadow: 0 20rpx 60rpx rgba(89, 28, 46, 0.2);
   border: 4rpx solid var(--surface-white);
   width: 100%;
-  max-height: 50vh;
+  flex: 1; /* 占据剩余空间 */
+  min-height: 0; /* 允许压缩 */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -277,17 +291,20 @@
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.content-image {
+/* 判定页面的图片和视频 - 自适应压缩 */
+.judgment-view .content-image {
   width: 100%;
-  height: 50vh;
+  height: 100%; /* 填充父容器 */
   display: block;
+  object-fit: contain; /* 保持比例，不裁剪 */
   animation: fadeIn 0.5s ease-out;
 }
 
-.content-video {
+.judgment-view .content-video {
   width: 100%;
-  height: 50vh;
+  height: 100%; /* 填充父容器 */
   display: block;
+  object-fit: contain; /* 保持比例，不裁剪 */
   background: var(--text-dark);
   border-radius: var(--radius-soft);
 }
@@ -313,18 +330,19 @@
   animation: fadeIn 0.4s ease-out 0.3s backwards;
 }
 
-/* ===== 判定按钮 - 修复重叠，使用 flex-shrink: 0，圆形设计 ===== */
+/* ===== 判定按钮 - 固定高度，不压缩 ===== */
 .action-buttons {
   display: flex;
   gap: 40rpx;
   width: 100%;
   padding: 0 10rpx;
-  flex-shrink: 0;
+  flex-shrink: 0; /* 不压缩按钮 */
   margin-top: 30rpx;
   justify-content: center;
   animation: slideInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
   position: relative;
   z-index: 1;
+  height: 160rpx; /* 固定高度 */
 }
 
 /* 已判断状态的按钮容器 */
@@ -422,13 +440,14 @@
     0 10rpx 20rpx rgba(232, 217, 95, 0.3);
 }
 
-/* 查看解析按钮容器 */
+/* 查看解析按钮容器 - 固定高度，不压缩 */
 .view-analysis-container {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 40rpx;
-  flex-shrink: 0;
+  margin-top: 20rpx;
+  flex-shrink: 0; /* 不压缩 */
+  height: 96rpx; /* 固定高度 */
   animation: slideInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s backwards;
 }
 
@@ -478,56 +497,78 @@
   flex-direction: column;
 }
 
-/* 导航头部 - SIMPLIFIED TITLE */
-.nav-header {
-  padding: 40rpx 48rpx;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  background: rgba(249, 246, 240, 0.95);
-  backdrop-filter: blur(20rpx);
-  z-index: 100;
-  box-shadow: 0 2rpx 8rpx rgba(89, 28, 46, 0.05);
-  animation: slideInDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.nav-back {
-  width: 80rpx;
-  height: 80rpx;
-  background: var(--surface-white);
-  border-radius: 50%;
+/* 返回按钮 - 左上角固定定位 */
+.back-button {
+  position: fixed;
+  top: 40rpx;
+  left: 32rpx;
+  height: 72rpx;
+  padding: 0 24rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 36rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
-  box-shadow: 0 8rpx 24rpx rgba(89, 28, 46, 0.08);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 8rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: all 0.3s ease;
 }
 
-.nav-back:active {
+.back-button:active {
   transform: scale(0.95);
-  box-shadow: 0 4rpx 12rpx rgba(89, 28, 46, 0.08);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
-.icon-back {
-  font-size: 40rpx;
-  color: var(--text-dark);
+.back-icon {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
   line-height: 1;
 }
 
-.nav-title {
-  font-size: 32rpx;
+.back-text {
+  font-size: 28rpx;
+  color: #333;
   font-weight: 600;
-  color: var(--text-dark);
-  font-family: var(--font-body);
-  flex: 1;
-  text-align: center;
+  line-height: 1;
 }
 
-.nav-spacer {
-  width: 80rpx;
+/* 继续挑战按钮 - 右上角固定定位 */
+.next-button {
+  position: fixed;
+  top: 40rpx;
+  right: 32rpx;
+  height: 72rpx;
+  padding: 0 24rpx;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.next-button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.next-text {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.next-icon {
+  font-size: 32rpx;
+  color: #333;
+  font-weight: bold;
+  line-height: 1;
 }
 
 /* 内容卡片 - REDUCED BOTTOM MARGIN */

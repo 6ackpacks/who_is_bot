@@ -1,15 +1,13 @@
-import { IsString, IsNotEmpty, IsOptional, MaxLength, MinLength, IsUUID, Matches } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, MaxLength, MinLength } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class CreateCommentDto {
   @IsString()
   @IsNotEmpty()
-  @IsUUID('4', { message: 'contentId 必须是有效的 UUID' })
   contentId: string;
 
   @IsString()
   @IsOptional()
-  @IsUUID('4', { message: 'userId 必须是有效的 UUID' })
   userId?: string;
 
   @IsString()
@@ -31,6 +29,5 @@ export class CreateCommentDto {
 
   @IsString()
   @IsOptional()
-  @IsUUID('4', { message: 'parentId 必须是有效的 UUID' })
   parentId?: string;
 }

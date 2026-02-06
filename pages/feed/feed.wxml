@@ -85,13 +85,16 @@
   <!-- 判定后状态 - 评论/结果页面 -->
   <view wx:elif="{{viewState === 'revealed'}}" class="result-view">
 
-      <!-- 导航头部 - SINGLE BACK BUTTON -->
-      <view class="nav-header">
-        <view class="nav-back" bindtap="goHome">
-          <text class="icon-back">←</text>
-        </view>
-        <view class="nav-title">判定 #{{currentItem.id}}</view>
-        <view class="nav-spacer"></view>
+      <!-- 返回按钮 - 左上角 -->
+      <view class="back-button" bindtap="goHome">
+        <text class="back-icon">←</text>
+        <text class="back-text">返回</text>
+      </view>
+
+      <!-- 继续挑战按钮 - 右上角 -->
+      <view class="next-button" bindtap="handleNext">
+        <text class="next-text">继续挑战</text>
+        <text class="next-icon">→</text>
       </view>
 
       <!-- 判定视觉容器 -->
@@ -174,12 +177,6 @@
       <view class="comments-section">
         <view class="section-title-row">
           <view class="section-title">讨论 ({{comments.length}})</view>
-
-          <!-- Move FAB button here - inline with title -->
-          <view class="btn-next-inline" bindtap="handleNext">
-            <text class="btn-next-text">继续挑战</text>
-            <text class="btn-next-arrow">→</text>
-          </view>
         </view>
 
         <!-- 评论输入框 - 内联位置 -->
