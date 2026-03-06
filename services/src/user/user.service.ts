@@ -6,6 +6,20 @@ import { CreateUserDto } from './dto/create-user.dto';
 
 /**
  * 排行榜缓存接口
+ *
+ * 注意：当前使用单实例内存缓存
+ *
+ * 生产环境多实例部署建议：
+ * 1. 使用Redis等分布式缓存替代内存缓存
+ * 2. 使用Redis的ZADD/ZRANGE实现排行榜（天然支持排序）
+ * 3. 设置合理的TTL（如5分钟）
+ * 4. 在统计更新时使用Redis的ZINCRBY原子更新分数
+ *
+ * Redis实现示例：
+ * - 存储：ZADD leaderboard:accuracy {accuracy} {userId}
+ * - 查询：ZREVRANGE leaderboard:accuracy 0 49 WITHSCORES
+ * - 更新：ZINCRBY leaderboard:accuracy {delta} {userId}
+ * - 过期：EXPIRE leaderboard:accuracy 300
  */
 interface LeaderboardCache {
   data: User[];
@@ -67,6 +81,9 @@ export class UserService {
    * 3. 数据库查询使用复合索引 (accuracy, totalJudged)
    * 4. 用户统计更新时自动清除缓存
    *
+   * 注意：当前使用单实例内存缓存，多实例部署时缓存会不一致
+   * 生产环境建议使用Redis分布式缓存（见下方Redis实现示例）
+   *
    * @param limit 返回的用户数量，默认50
    * @returns 排行榜用户列表
    */
@@ -124,6 +141,95 @@ export class UserService {
       throw error;
     }
   }
+
+  /* ============================================================================
+   * Redis分布式缓存实现示例（用于多实例部署）
+   * ============================================================================
+   *
+   * 1. 安装依赖：npm install ioredis
+   *
+   * 2. 在构造函数中注入Redis客户端：
+   *    constructor(
+   *      @InjectRepository(User) private userRepository: Repository<User>,
+   *      @Inject('REDIS_CLIENT') private redis: Redis,
+   *    ) {}
+   *
+   * 3. 使用Redis实现排行榜缓存：
+   *
+   * async getLeaderboard(limit: number = 50): Promise<User[]> {
+   *   const cacheKey = 'leaderboard:accuracy';
+   *
+   *   try {
+   *     // 尝试从Redis获取缓存
+   *     const cached = await this.redis.get(cacheKey);
+   *     if (cached) {
+   *       this.logger.debug('Leaderboard cache hit (Redis)');
+   *       const users = JSON.parse(cached);
+   *       return users.slice(0, limit);
+   *     }
+   *
+   *     // 缓存未命中，查询数据库
+   *     this.logger.debug('Leaderboard cache miss, querying database');
+   *     const users = await this.userRepository
+   *       .createQueryBuilder('user')
+   *       .select([...]) // 同上
+   *       .where('user.totalJudged >= :minJudged', { minJudged: 5 })
+   *       .orderBy('user.accuracy', 'DESC')
+   *       .addOrderBy('user.totalJudged', 'DESC')
+   *       .limit(100)
+   *       .getMany();
+   *
+   *     // 存入Redis，设置5分钟过期
+   *     await this.redis.setex(cacheKey, 300, JSON.stringify(users));
+   *
+   *     return users.slice(0, limit);
+   *   } catch (error) {
+   *     this.logger.error(`Failed to fetch leaderboard: ${error.message}`);
+   *     throw error;
+   *   }
+   * }
+   *
+   * 4. 清除缓存时删除Redis键：
+   *
+   * private async clearLeaderboardCache(): Promise<void> {
+   *   try {
+   *     await this.redis.del('leaderboard:accuracy');
+   *     this.logger.debug('Cleared leaderboard cache (Redis)');
+   *   } catch (error) {
+   *     this.logger.error(`Failed to clear cache: ${error.message}`);
+   *   }
+   * }
+   *
+   * 5. 使用Redis Sorted Set实现更高效的排行榜（推荐）：
+   *
+   * // 更新用户分数时
+   * async updateUserScore(userId: string, accuracy: number): Promise<void> {
+   *   await this.redis.zadd('leaderboard:sorted', accuracy, userId);
+   *   await this.redis.expire('leaderboard:sorted', 300);
+   * }
+   *
+   * // 获取排行榜
+   * async getLeaderboard(limit: number = 50): Promise<User[]> {
+   *   // 获取前N名用户ID（按分数降序）
+   *   const userIds = await this.redis.zrevrange('leaderboard:sorted', 0, limit - 1);
+   *
+   *   if (userIds.length === 0) {
+   *     // 缓存为空，重建缓存
+   *     return this.rebuildLeaderboardCache(limit);
+   *   }
+   *
+   *   // 批量查询用户详情
+   *   const users = await this.userRepository.find({
+   *     where: { id: In(userIds) },
+   *   });
+   *
+   *   // 按Redis返回的顺序排序
+   *   const userMap = new Map(users.map(u => [u.id, u]));
+   *   return userIds.map(id => userMap.get(id)).filter(u => u);
+   * }
+   *
+   * ============================================================================
+   */
 
   /**
    * 清除排行榜缓存

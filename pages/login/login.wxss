@@ -2,7 +2,7 @@
 
 .login-container {
   min-height: 100vh;
-  background: #FFFFFF;
+  background: var(--bg-primary, #F9F8F6);
   position: relative;
   overflow: hidden;
   display: flex;
@@ -34,7 +34,7 @@
   display: inline-block;
   font-size: 28rpx;
   font-weight: 500;
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   padding: 12rpx 24rpx;
   background: rgba(240, 240, 240, 0.6);
   border-radius: 8rpx;
@@ -141,7 +141,7 @@
 .slogan {
   font-size: 30rpx;
   font-weight: 500;
-  color: #1a1a1a;
+  color: #D97757;
   letter-spacing: 3rpx;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
   text-align: center;
@@ -196,9 +196,9 @@
 .login-btn {
   width: 500rpx;
   height: 100rpx;
-  background: #FFFFFF;
-  border: 3rpx solid #000000;
-  border-radius: 0;
+  background: var(--bg-primary, #F9F8F6);
+  border: 4rpx solid var(--text-main, #1D1C16);
+  border-radius: 50rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -212,17 +212,18 @@
 }
 
 .login-btn:active {
-  background: #000000;
+  background: var(--bg-secondary, #F0EEE6);
+  transform: scale(0.96);
 }
 
 .login-btn:active .btn-text {
-  color: #FFFFFF;
+  color: var(--text-main, #1D1C16);
 }
 
 .btn-text {
   font-size: 30rpx;
   font-weight: 600;
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   letter-spacing: 2rpx;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   transition: color 0.3s;
@@ -256,7 +257,7 @@
 
 .tips-link {
   font-size: 22rpx;
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   text-decoration: underline;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
@@ -278,6 +279,6 @@
 }
 
 .skip-btn:active {
-  color: #000000;
-  border-bottom-color: #000000;
+  color: var(--text-main, #1D1C16);
+  border-bottom-color: var(--text-main, #1D1C16);
 }

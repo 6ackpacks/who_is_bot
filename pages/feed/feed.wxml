@@ -32,7 +32,10 @@
               class="content-video"
               src="{{currentItem.url}}"
               object-fit="contain"
-              show-center-play-btn="{{true}}"
+              autoplay="{{true}}"
+              loop="{{true}}"
+              muted="{{true}}"
+              show-center-play-btn="{{false}}"
               show-play-btn="{{false}}"
               controls="{{true}}"
               bindplay="onVideoPlay"
@@ -62,6 +65,7 @@
           bindtap="handleJudge"
           data-choice="ai"
         >
+          <text class="btn-icon">AI</text>
           <text class="btn-text">铁是人机</text>
         </button>
         <button
@@ -69,6 +73,7 @@
           bindtap="handleJudge"
           data-choice="human"
         >
+          <text class="btn-icon">人</text>
           <text class="btn-text">包是真人</text>
         </button>
       </view>
@@ -91,17 +96,27 @@
         <text class="back-text">返回</text>
       </view>
 
-      <!-- 继续挑战按钮 - 右上角 -->
+      <!-- 继续按钮 - 右上角 -->
       <view class="next-button" bindtap="handleNext">
-        <text class="next-text">继续挑战</text>
+        <text class="next-text">继续</text>
         <text class="next-icon">→</text>
+      </view>
+
+      <!-- 判定结果 - 极简标题展示 -->
+      <view class="judgment-result-hero {{isCorrect ? 'correct' : 'incorrect'}}">
+        <view class="result-headline">
+          <text class="status-icon">{{isCorrect ? '✓' : '✗'}}</text>
+          <text class="status-text">{{isCorrect ? '判定成功' : '判定失误'}}</text>
+        </view>
+        <view class="result-subtext">
+          {{isCorrect ? '答对了' : '很遗憾'}}，这是<text class="highlight-type">“{{currentItem.isAi ? 'AI 生成' : '真人创作'}}”</text>
+        </view>
       </view>
 
       <!-- 判定视觉容器 -->
       <view class="content-card">
         <view class="judgment-visual">
-          <!-- 旋转扫描边框 -->
-          <view class="scan-overlay"></view>
+
 
           <!-- 内容容器 - 9边形裁剪 -->
           <view class="content-image-container">
@@ -111,7 +126,10 @@
               class="content-media"
               src="{{currentItem.url}}"
               object-fit="cover"
-              show-center-play-btn="{{true}}"
+              autoplay="{{true}}"
+              loop="{{true}}"
+              muted="{{true}}"
+              show-center-play-btn="{{false}}"
               show-play-btn="{{false}}"
               controls="{{true}}"
               bindplay="onVideoPlay"
@@ -139,25 +157,23 @@
           </view>
         </view>
 
-        <!-- 结果头部 - REMOVED "判定失误" BUTTON, ONLY STATUS BADGE -->
-        <view class="result-header">
-          <view class="status-badge">{{isCorrect ? '判定正确' : '判定失误'}}</view>
-          <view class="result-main-title">{{currentItem.isAi ? 'AI 生成内容' : '真人创作内容'}}</view>
-          <view class="result-subtitle">{{isCorrect ? '你的直觉很准确！' : '这次有点难度，继续加油！'}}</view>
-        </view>
 
-        <!-- 统计显示 -->
+
+        <!-- 统计显示 - 简化版 -->
         <view class="stats-container">
-          <view class="stat-row">
-            <text>全网判断为 AI</text>
-            <text class="stat-percentage">{{currentItem.aiPercentage || 82}}%</text>
+          <view class="stat-main">
+            <view class="stat-label">全网判断</view>
+            <view class="stat-value">
+              <text class="percentage-large">{{currentItem.aiPercentage || 82}}</text>
+              <text class="percentage-unit">%</text>
+              <text class="percentage-label">认为是AI</text>
+            </view>
           </view>
           <view class="progress-track">
             <view class="progress-fill" style="width: {{currentItem.aiPercentage || 82}}%"></view>
           </view>
-          <view class="stat-meta">
-            <text>共 {{currentItem.totalVotes || 12403}} 人参与</text>
-            <text>{{100 - (currentItem.aiPercentage || 82)}}% 认为是真人</text>
+          <view class="stat-footer">
+            <text class="participant-count">{{currentItem.totalVotes || 12403}} 人参与</text>
           </view>
         </view>
       </view>

@@ -277,33 +277,30 @@ export class JudgmentService {
     return 1;
   }
 
+  /**
+   * 获取用户判定历史
+   * 优化：使用JOIN查询避免N+1问题
+   */
   async getUserJudgments(userId: string) {
-    const judgments = await this.judgmentRepository.find({
-      where: { userId },
-      order: { createdAt: 'DESC' },
-      take: 20,
-    });
+    // 使用JOIN一次性获取判定和内容信息，避免N+1查询问题
+    const judgmentsWithContent = await this.judgmentRepository
+      .createQueryBuilder('judgment')
+      .leftJoinAndSelect('judgment.content', 'content')
+      .where('judgment.userId = :userId', { userId })
+      .orderBy('judgment.createdAt', 'DESC')
+      .take(20)
+      .getMany();
 
-    // 获取每个判定对应的内容信息
-    const judgmentsWithContent = await Promise.all(
-      judgments.map(async (judgment) => {
-        const content = await this.contentRepository.findOne({
-          where: { id: judgment.contentId },
-        });
-
-        return {
-          id: judgment.id,
-          contentId: judgment.contentId,
-          contentTitle: content ? content.title : '内容已删除',
-          contentType: content ? content.type : 'text',
-          userChoice: judgment.userChoice,
-          isCorrect: judgment.isCorrect,
-          createdAt: judgment.createdAt,
-        };
-      })
-    );
-
-    return judgmentsWithContent;
+    // 格式化返回数据
+    return judgmentsWithContent.map((judgment) => ({
+      id: judgment.id,
+      contentId: judgment.contentId,
+      contentTitle: judgment.content ? judgment.content.title : '内容已删除',
+      contentType: judgment.content ? judgment.content.type : 'text',
+      userChoice: judgment.userChoice,
+      isCorrect: judgment.isCorrect,
+      createdAt: judgment.createdAt,
+    }));
   }
 
   /**

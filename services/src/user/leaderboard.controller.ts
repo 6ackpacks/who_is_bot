@@ -13,12 +13,14 @@ export class LeaderboardController {
     // 格式化数据以匹配前端需求
     const formattedUsers = users.map(user => ({
       id: user.id,
-      nickname: user.nickname,
+      username: user.nickname, // 前端期望 username 字段
+      nickname: user.nickname, // 保留 nickname 以兼容
       avatar: user.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Anonymous',
       level: this.getLevelName(user.level),
       totalJudged: user.totalJudged,
       maxStreak: user.maxStreak,
-      weeklyAccuracy: Math.round(user.weeklyAccuracy * 10) / 10, // 保留一位小数
+      accuracy: Math.round(user.accuracy * 10) / 10, // 总体准确率，保留一位小数
+      weeklyAccuracy: Math.round(user.weeklyAccuracy * 10) / 10, // 周准确率，保留一位小数
     }));
 
     return {
