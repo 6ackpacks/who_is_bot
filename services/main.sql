@@ -5,9 +5,15 @@
 -- 说明: 删除旧库，创建新库，建立所有表
 -- ============================================
 
+-- ⚠️ 警告：此脚本包含危险操作！
+-- ⚠️ DROP DATABASE 会删除所有数据，无法恢复！
+-- ⚠️ 仅用于初始化开发环境，禁止在生产环境执行！
+-- ⚠️ 生产环境请使用 migrations/ 目录下的增量迁移脚本
+
 -- 第一步：删除旧数据库（如果存在）
-DROP DATABASE IF EXISTS `who_is_the_bot`;
-DROP DATABASE IF EXISTS `who_is_bot`;
+-- ⚠️ 危险操作：以下命令已注释，如需执行请手动取消注释
+-- DROP DATABASE IF EXISTS `who_is_the_bot`;
+-- DROP DATABASE IF EXISTS `who_is_bot`;
 
 -- 第二步：创建新数据库
 CREATE DATABASE `who_is_bot`

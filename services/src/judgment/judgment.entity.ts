@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Content } from '../content/content.entity';
 
 @Entity('judgments')
 export class Judgment {
@@ -22,4 +23,9 @@ export class Judgment {
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
+
+  // 关联到Content实体，用于JOIN查询优化
+  @ManyToOne(() => Content, { nullable: true })
+  @JoinColumn({ name: 'content_id' })
+  content: Content;
 }

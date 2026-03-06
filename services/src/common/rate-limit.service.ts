@@ -5,6 +5,27 @@ interface RateLimitRecord {
   resetTime: number;
 }
 
+/**
+ * 频率限制服务
+ *
+ * 注意：当前使用单实例内存存储
+ *
+ * 并发问题说明：
+ * - checkLimit() 方法中的 record.count++ 存在轻微竞态条件
+ * - 由于Node.js单线程特性，在单实例部署时影响较小
+ * - 多实例部署时，每个实例维护独立的限制计数器
+ *
+ * 生产环境多实例部署建议：
+ * 1. 使用Redis实现分布式频率限制
+ * 2. 使用Redis的INCR命令（原子操作）
+ * 3. 使用EXPIRE设置键的过期时间
+ *
+ * Redis实现示例：
+ * - 键格式：rate_limit:{identifier}
+ * - 操作：INCR rate_limit:{identifier}
+ * - 过期：EXPIRE rate_limit:{identifier} 60
+ * - 检查：GET rate_limit:{identifier} 并与限制值比较
+ */
 @Injectable()
 export class RateLimitService {
   private readonly limits = new Map<string, RateLimitRecord>();

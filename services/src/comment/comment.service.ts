@@ -146,6 +146,10 @@ export class CommentService {
     };
   }
 
+  /**
+   * 点赞评论
+   * 使用原子操作避免并发竞态条件
+   */
   async likeComment(commentId: string) {
     const comment = await this.commentRepository.findOne({
       where: { id: commentId },
@@ -155,12 +159,22 @@ export class CommentService {
       throw new NotFoundException('评论不存在');
     }
 
-    comment.likes += 1;
-    await this.commentRepository.save(comment);
+    // 使用原子递增操作，避免读-改-写的竞态条件
+    await this.commentRepository.increment(
+      { id: commentId },
+      'likes',
+      1
+    );
+
+    // 获取更新后的点赞数
+    const updatedComment = await this.commentRepository.findOne({
+      where: { id: commentId },
+      select: ['likes'],
+    });
 
     return {
       success: true,
-      likes: comment.likes,
+      likes: updatedComment.likes,
     };
   }
 
