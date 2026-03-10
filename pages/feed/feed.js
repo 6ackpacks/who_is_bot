@@ -34,7 +34,9 @@ Page({
     likedComments: [], // 已点赞的评论ID列表，防止重复点赞
     // 已判断题目功能
     judgedItems: [], // 已判断的题目ID数组
-    userChoices: {} // 用户选择记录对象 {contentId: 'ai' | 'human'}
+    userChoices: {}, // 用户选择记录对象 {contentId: 'ai' | 'human'}
+    // 数字动画
+    displayPercentage: 0 // 用于显示动画的百分比数字
   },
 
   onLoad() {
@@ -452,6 +454,9 @@ Page({
         showAnimation: true
       });
 
+      // 启动数字动画
+      this.animatePercentage(this.data.currentItem.aiPercentage || 82);
+
       // 加载评论
       this.loadComments();
 
@@ -463,6 +468,33 @@ Page({
         });
       }, 300);
     }, 200);
+  },
+
+  // 数字滚动动画
+  animatePercentage(targetValue) {
+    const duration = 1200; // 动画持续时间（毫秒）
+    const startTime = Date.now();
+    const startValue = 0;
+
+    const animate = () => {
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      // 使用 easeOutQuart 缓动函数
+      const easeProgress = 1 - Math.pow(1 - progress, 4);
+      const currentValue = Math.floor(startValue + (targetValue - startValue) * easeProgress);
+
+      this.setData({
+        displayPercentage: currentValue
+      });
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
   },
 
   // 切换详情抽屉
@@ -890,5 +922,26 @@ Page({
         }, 400);
       }
     });
+  },
+
+  // 头像加载错误处理
+  handleAvatarError(e) {
+    const index = e.currentTarget.dataset.index;
+    console.log('========== Feed页面评论头像加载失败 ==========');
+    console.log('错误索引:', index);
+    console.log('当前评论数据:', this.data.comments[index]);
+
+    if (index !== undefined && this.data.comments[index]) {
+      const comment = this.data.comments[index];
+      const nickname = comment.user?.nickname || 'User';
+      const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(nickname)}`;
+
+      console.log('切换到默认头像:', defaultAvatar);
+      console.log('========================================');
+
+      this.setData({
+        [`comments[${index}].user.avatar`]: defaultAvatar
+      });
+    }
   }
 });

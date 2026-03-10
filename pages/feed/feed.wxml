@@ -109,12 +109,14 @@
           <text class="status-text">{{isCorrect ? '判定成功' : '判定失误'}}</text>
         </view>
         <view class="result-subtext">
-          {{isCorrect ? '答对了' : '很遗憾'}}，这是<text class="highlight-type">“{{currentItem.isAi ? 'AI 生成' : '真人创作'}}”</text>
+          {{isCorrect ? '答对了' : '很遗憾'}}，这是<text class="highlight-type">"{{currentItem.isAi ? 'AI 生成' : '真人创作'}}"</text>
         </view>
       </view>
 
-      <!-- 判定视觉容器 -->
-      <view class="content-card">
+      <!-- 主内容白色卡片容器 -->
+      <view class="result-content-card">
+        <!-- 判定视觉容器 -->
+        <view class="content-card">
         <view class="judgment-visual">
 
 
@@ -159,12 +161,15 @@
 
 
 
-        <!-- 统计显示 - 简化版 -->
+        <!-- 统计显示 - 优化版 -->
         <view class="stats-container">
           <view class="stat-main">
-            <view class="stat-label">全网判断</view>
+            <view class="stat-label">
+              <text>全网共识度</text>
+              <text class="stat-badge">{{currentItem.totalVotes || 12403}} 人参与</text>
+            </view>
             <view class="stat-value">
-              <text class="percentage-large">{{currentItem.aiPercentage || 82}}</text>
+              <text class="percentage-large">{{displayPercentage || currentItem.aiPercentage || 82}}</text>
               <text class="percentage-unit">%</text>
               <text class="percentage-label">认为是AI</text>
             </view>
@@ -172,25 +177,25 @@
           <view class="progress-track">
             <view class="progress-fill" style="width: {{currentItem.aiPercentage || 82}}%"></view>
           </view>
-          <view class="stat-footer">
-            <text class="participant-count">{{currentItem.totalVotes || 12403}} 人参与</text>
+          <view class="progress-labels">
+            <text class="progress-label-item">真人 {{100 - (currentItem.aiPercentage || 82)}}%</text>
+            <text class="progress-label-item">AI {{currentItem.aiPercentage || 82}}%</text>
           </view>
         </view>
-      </view>
 
-      <!-- 解析卡片 -->
-      <view wx:if="{{currentItem.explanation}}" class="analysis-card" bindtap="toggleAnalysis">
-        <view class="analysis-header">
-          <text class="analysis-title">⚡ 官方解析</text>
-          <text class="chevron {{analysisExpanded ? 'expanded' : ''}}">›</text>
+        <!-- 解析卡片 -->
+        <view wx:if="{{currentItem.explanation}}" class="analysis-card" bindtap="toggleAnalysis">
+          <view class="analysis-header">
+            <text class="analysis-title">⚡ 官方解析</text>
+            <text class="chevron {{analysisExpanded ? 'expanded' : ''}}">›</text>
+          </view>
+          <view class="analysis-content {{analysisExpanded ? 'show' : ''}}">
+            {{currentItem.explanation || '注意观察细节特征，AI生成的内容往往在光影、纹理等方面存在不自然的痕迹...'}}
+          </view>
         </view>
-        <view class="analysis-content {{analysisExpanded ? 'show' : ''}}">
-          {{currentItem.explanation || '注意观察细节特征，AI生成的内容往往在光影、纹理等方面存在不自然的痕迹...'}}
-        </view>
-      </view>
 
-      <!-- 评论区域 - REMOVED SORT TOGGLE -->
-      <view class="comments-section">
+        <!-- 评论区域 - REMOVED SORT TOGGLE -->
+        <view class="comments-section">
         <view class="section-title-row">
           <view class="section-title">讨论 ({{comments.length}})</view>
         </view>
@@ -222,8 +227,10 @@
               <!-- 用户头像 - 圆角方形 -->
               <image
                 class="avatar"
-                src="{{item.user ? item.user.avatar : 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"
+                src="{{item.user ? item.user.avatar : 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}}"
                 mode="aspectFill"
+                binderror="handleAvatarError"
+                data-index="{{index}}"
               />
 
               <view class="comment-body">
@@ -253,7 +260,9 @@
             </view>
           </block>
         </view>
+        </view>
       </view>
+      <!-- 关闭主内容白色卡片容器 -->
 
   </view>
 

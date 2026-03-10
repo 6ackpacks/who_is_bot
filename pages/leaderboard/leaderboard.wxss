@@ -1,10 +1,10 @@
-/* pages/leaderboard/leaderboard.wxss - Podium Redesign */
+/* pages/leaderboard/leaderboard.wxss - Claude-Inspired Podium Design */
 
 /* ===== 容器 ===== */
 .leaderboard-container {
   width: 100%;
   min-height: 100vh;
-  background: #F9F6F0;
+  background: var(--bg-primary, #F9F8F6);
   position: relative;
   overflow: hidden;
   padding-bottom: 120rpx;
@@ -17,11 +17,11 @@
 }
 
 .page-title {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-family: var(--font-display, 'Poppins', 'PingFang SC', -apple-system, sans-serif);
   font-size: 72rpx;
   font-weight: 600;
-  color: #591C2E;
-  line-height: 1.2;
+  color: var(--accent-clay, #D97757);
+  line-height: 1.6;
 }
 
 /* ===== 加载状态 ===== */
@@ -39,8 +39,8 @@
 .loading-spinner {
   width: 100rpx;
   height: 100rpx;
-  border: 8rpx solid #E5E0D8;
-  border-top-color: #591C2E;
+  border: 8rpx solid var(--bg-secondary, #F0EEE6);
+  border-top-color: var(--accent-clay, #D97757);
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 40rpx;
@@ -48,7 +48,8 @@
 
 .loading-text {
   font-size: 28rpx;
-  color: #2A2222;
+  color: var(--text-main, #1D1C16);
+  line-height: 1.6;
 }
 
 /* ===== 错误状态 ===== */
@@ -66,19 +67,21 @@
 
 .error-text {
   font-size: 28rpx;
-  color: #2A2222;
+  color: var(--text-main, #1D1C16);
   text-align: center;
   margin-bottom: 40rpx;
+  line-height: 1.6;
 }
 
 .retry-btn {
-  padding: 24rpx 60rpx;
-  background: #591C2E;
-  color: #F9F6F0;
-  border-radius: 24rpx;
+  padding: 28rpx 72rpx;
+  background: var(--accent-clay, #D97757);
+  color: var(--surface-white, #FFFFFF);
+  border-radius: 28rpx;
   font-size: 28rpx;
   font-weight: 600;
   border: none;
+  line-height: 1.6;
 }
 
 .retry-btn::after {
@@ -144,30 +147,31 @@
 .podium-avatar {
   border-radius: 50%;
   object-fit: cover;
+  display: block;
 }
 
 /* 第一名头像 */
 .avatar-first {
   width: 160rpx;
   height: 160rpx;
-  border: 6rpx solid #D4AF37;
-  box-shadow: 0 8rpx 24rpx rgba(212, 175, 55, 0.4);
+  border: 6rpx solid var(--accent-clay, #D97757);
+  box-shadow: 0 8rpx 12rpx -2rpx rgba(26, 26, 26, 0.3);
 }
 
 /* 第二名头像 */
 .avatar-second {
   width: 128rpx;
   height: 128rpx;
-  border: 4rpx solid #E5E0D8;
-  box-shadow: 0 4rpx 16rpx rgba(229, 224, 216, 0.4);
+  border: 4rpx solid var(--border-subtle, #E8E6DC);
+  box-shadow: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05);
 }
 
 /* 第三名头像 */
 .avatar-third {
   width: 128rpx;
   height: 128rpx;
-  border: 4rpx solid #C88A66;
-  box-shadow: 0 4rpx 16rpx rgba(200, 138, 102, 0.4);
+  border: 4rpx solid var(--text-muted, #66655F);
+  box-shadow: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05);
 }
 
 /* ===== 领奖台底座 ===== */
@@ -183,27 +187,27 @@
 /* 第一名底座 */
 .base-first {
   height: 256rpx;
-  background: linear-gradient(180deg, #D4AF37 0%, #B59223 100%);
-  box-shadow: 0 16rpx 48rpx rgba(212, 175, 55, 0.3);
+  background: linear-gradient(180deg, var(--accent-clay, #D97757) 0%, #2C2C2C 100%);
+  box-shadow: 0 8rpx 12rpx -2rpx rgba(26, 26, 26, 0.3);
 }
 
 /* 第二名底座 */
 .base-second {
   height: 192rpx;
-  background: #E5E0D8;
-  box-shadow: 0 8rpx 24rpx rgba(229, 224, 216, 0.3);
+  background: var(--bg-secondary, #F0EEE6);
+  box-shadow: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05);
 }
 
 /* 第三名底座 */
 .base-third {
   height: 160rpx;
-  background: #C88A66;
-  box-shadow: 0 8rpx 24rpx rgba(200, 138, 102, 0.3);
+  background: var(--text-muted, #66655F);
+  box-shadow: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05);
 }
 
 /* ===== 排名数字 ===== */
 .podium-rank {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-family: var(--font-display, 'Poppins', 'PingFang SC', -apple-system, sans-serif);
   font-weight: 700;
   text-align: center;
 }
@@ -211,14 +215,14 @@
 /* 第一名排名 */
 .rank-first {
   font-size: 144rpx;
-  color: #FFFFFF;
+  color: var(--surface-white, #FFFFFF);
   text-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.3);
 }
 
 /* 第二名排名 */
 .rank-second {
   font-size: 72rpx;
-  color: #999999;
+  color: var(--text-muted, #66655F);
   position: absolute;
   top: -24rpx;
 }
@@ -227,6 +231,38 @@
 .rank-third {
   font-size: 72rpx;
   color: rgba(255, 255, 255, 0.8);
+}
+
+/* ===== 领奖台用户信息 ===== */
+.podium-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4rpx;
+  margin-top: 16rpx;
+  width: 100%;
+  padding: 0 8rpx;
+}
+
+.podium-name {
+  font-family: var(--font-body, 'Lora', 'Noto Serif SC', Georgia, serif);
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--text-main, #0A0A0A);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+  line-height: 1.6;
+}
+
+.podium-stats {
+  font-family: var(--font-body, 'Lora', 'Noto Serif SC', Georgia, serif);
+  font-size: 20rpx;
+  color: var(--text-muted, #3A3A3A);
+  text-align: center;
+  line-height: 1.4;
 }
 
 /* ===== 排名卡片容器 ===== */
@@ -241,25 +277,25 @@
   display: flex;
   align-items: center;
   gap: 24rpx;
-  padding: 32rpx;
-  background: #FFFFFF;
-  border: 2rpx solid #F0F0F0;
+  padding: 40rpx;
+  background: var(--surface-white, #FFFFFF);
+  border: 2rpx solid var(--border-subtle, #E8E6DC);
   border-radius: 32rpx;
-  box-shadow: 0 2rpx 8rpx rgba(89, 28, 46, 0.06);
-  transition: all 0.3s ease;
+  box-shadow: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05), 0 4rpx 8rpx -2rpx rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease-in-out;
 }
 
 .ranking-card:active {
   transform: scale(0.98);
-  box-shadow: 0 1rpx 4rpx rgba(89, 28, 46, 0.08);
+  box-shadow: 0 4rpx 8rpx -2rpx rgba(0, 0, 0, 0.05);
 }
 
 /* ===== 卡片排名数字 ===== */
 .card-rank {
-  font-family: 'Playfair Display', 'Noto Serif SC', serif;
+  font-family: var(--font-display, 'Poppins', 'PingFang SC', -apple-system, sans-serif);
   font-size: 56rpx;
   font-weight: 600;
-  color: #CCCCCC;
+  color: var(--text-muted, #66655F);
   width: 80rpx;
   text-align: center;
   flex-shrink: 0;
@@ -286,15 +322,17 @@
 .card-name {
   font-size: 28rpx;
   font-weight: 700;
-  color: #2A2222;
+  color: var(--text-main, #1D1C16);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.6;
 }
 
 .card-accuracy {
   font-size: 24rpx;
-  color: #999999;
+  color: var(--text-muted, #66655F);
+  line-height: 1.6;
 }
 
 /* ===== 卡片统计 ===== */
@@ -309,12 +347,12 @@
 .card-score {
   font-size: 24rpx;
   font-weight: 700;
-  color: #591C2E;
+  color: var(--accent-clay, #D97757);
 }
 
 .card-label {
   font-size: 20rpx;
-  color: #999999;
+  color: var(--text-muted, #66655F);
 }
 
 /* ===== 底部占位 ===== */

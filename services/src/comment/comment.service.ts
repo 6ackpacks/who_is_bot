@@ -27,40 +27,25 @@ export class CommentService {
       throw new NotFoundException('内容不存在');
     }
 
-    // 验证用户或游客ID
-    if (!dto.userId && !dto.guestId) {
-      throw new BadRequestException('必须提供用户ID或游客ID');
+    // 验证用户ID（必须提供）
+    if (!dto.userId) {
+      throw new BadRequestException('必须提供用户ID');
     }
 
-    // 如果提供了用户ID，验证用户是否存在
-    if (dto.userId) {
-      const user = await this.userRepository.findOne({
-        where: { id: dto.userId },
-      });
+    // 验证用户是否存在
+    const user = await this.userRepository.findOne({
+      where: { id: dto.userId },
+    });
 
-      if (!user) {
-        throw new NotFoundException('用户不存在');
-      }
-    }
-
-    // 如果是回复评论，验证父评论是否存在
-    if (dto.parentId) {
-      const parentComment = await this.commentRepository.findOne({
-        where: { id: dto.parentId },
-      });
-
-      if (!parentComment) {
-        throw new NotFoundException('父评论不存在');
-      }
+    if (!user) {
+      throw new NotFoundException('用户不存在');
     }
 
     // 创建评论
     const comment = this.commentRepository.create({
       contentId: dto.contentId,
-      userId: dto.userId || null,
-      guestId: dto.guestId || null,
+      userId: dto.userId,
       text: dto.content,
-      parentId: dto.parentId || null,
     });
 
     const savedComment = await this.commentRepository.save(comment);
@@ -101,21 +86,102 @@ export class CommentService {
     // 创建用户ID到用户对象的映射
     const userMap = new Map(users.map(u => [u.id, u]));
 
-    // 组织评论结构（顶级评论和回复）
-    const topLevelComments = comments.filter(c => !c.parentId);
-    const replies = comments.filter(c => c.parentId);
-
-    // 为每个顶级评论添加回复
-    const commentsWithReplies = topLevelComments.map(comment => ({
-      ...this.formatComment(comment, userMap),
-      replies: replies
-        .filter(r => r.parentId === comment.id)
-        .map(r => this.formatComment(r, userMap)),
-    }));
+    // 格式化所有评论（扁平结构，无层级）
+    const formattedComments = comments.map(comment => this.formatComment(comment, userMap));
 
     return {
       total: comments.length,
-      comments: commentsWithReplies,
+      comments: formattedComments,
+    };
+  }
+
+  async getCommentsByUserId(userId: string) {
+    // 验证用户是否存在
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      // 用户不存在时返回空列表，而不是抛出错误
+      // 这样可以避免新用户看到404错误
+      return {
+        total: 0,
+        comments: [],
+      };
+    }
+
+    // 获取用户的所有评论
+    const comments = await this.commentRepository.find({
+      where: { userId },
+      order: { createdAt: 'DESC' },
+    });
+
+    // 获取所有相关的内容ID
+    const contentIds = comments
+      .map(c => c.contentId)
+      .filter((id, index, self) => self.indexOf(id) === index); // 去重
+
+    // 批量查询内容信息
+    const contents = contentIds.length > 0
+      ? await this.contentRepository.find({
+          where: { id: In(contentIds) },
+        })
+      : [];
+
+    // 创建内容ID到内容对象的映射
+    const contentMap = new Map(contents.map(c => [c.id, c]));
+
+    // 创建用户映射（只包含当前用户）
+    const userMap = new Map([[user.id, user]]);
+
+    // 格式化评论并附加内容信息
+    const formattedComments = comments.map(comment => {
+      const content = contentMap.get(comment.contentId);
+      return {
+        ...this.formatComment(comment, userMap),
+        content: content ? {
+          id: content.id,
+          title: content.title,
+          type: content.type,
+          url: content.url,
+          text: content.text,
+        } : null,
+      };
+    });
+
+    return {
+      total: comments.length,
+      comments: formattedComments,
+    };
+  }
+
+  async getUserCommentStats(userId: string) {
+    // 验证用户是否存在
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      // 用户不存在时返回默认值，而不是抛出错误
+      // 这样可以避免新用户或未发表评论的用户看到404错误
+      return {
+        totalComments: 0,
+        totalLikes: 0,
+      };
+    }
+
+    // 获取用户的所有评论
+    const comments = await this.commentRepository.find({
+      where: { userId },
+      select: ['likes'],
+    });
+
+    // 计算总点赞数
+    const totalLikes = comments.reduce((sum, comment) => sum + comment.likes, 0);
+
+    return {
+      totalComments: comments.length,
+      totalLikes,
     };
   }
 
@@ -202,23 +268,33 @@ export class CommentService {
   private formatComment(comment: Comment, userMap: Map<string, any>) {
     const user = comment.userId ? userMap.get(comment.userId) : null;
 
+    // 生成默认头像
+    const getDefaultAvatar = (nickname: string) => {
+      return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(nickname || 'User')}`;
+    };
+
+    // 检查avatar是否有效（排除测试URL和无效URL）
+    const isValidAvatar = (avatar: string | null) => {
+      if (!avatar) return false;
+      if (avatar.includes('example.com')) return false; // 排除测试URL
+      if (avatar.includes('placeholder.com')) return false; // 排除占位符URL
+      return true;
+    };
+
     return {
       id: comment.id,
       contentId: comment.contentId,
       content: comment.text,
       likes: comment.likes,
       createdAt: comment.createdAt,
-      updatedAt: comment.updatedAt,
       user: user
         ? {
             id: user.id,
             nickname: user.nickname,
-            avatar: user.avatar,
+            avatar: isValidAvatar(user.avatar) ? user.avatar : getDefaultAvatar(user.nickname),
             level: user.level,
           }
         : null,
-      isGuest: !comment.userId,
-      guestId: comment.guestId,
     };
   }
 }

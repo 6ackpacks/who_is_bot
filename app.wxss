@@ -2,39 +2,44 @@
 @import "styles/iconfont.wxss";
 @import "styles/animations.wxss";
 
-/* ===== Burgundy Theme System ===== */
+/* ===== Claude-Inspired Design System ===== */
 page {
   /* Color Variables */
-  --bg-cream: #F9F6F0;
-  --text-dark: #2A2222;
-  --primary-burgundy: #591C2E;
-  --accent-rose: #E68D9F;
-  --accent-rose-light: #FCEEF1;
-  --accent-gold: #D4AF37;
-  --ui-gray: #E5E0D8;
+  --bg-primary: #F9F8F6;
+  --bg-secondary: #F0EEE6;
+  --accent-clay: #D97757;
+  --text-main: #1D1C16;
+  --text-muted: #66655F;
+  --bg-dark: #111111;
   --surface-white: #FFFFFF;
+  --border-subtle: #E8E6DC;
 
   /* Typography */
-  --font-display: 'Playfair Display', 'Noto Serif SC', serif;
-  --font-body: 'DM Sans', 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Poppins', 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Lora', 'Noto Serif SC', Georgia, serif;
 
   /* Spacing & Sizing */
-  --radius-soft: 24rpx;
+  --radius-soft: 28rpx;
   --radius-pill: 999rpx;
 
   /* Shadows */
-  --shadow-sm: 0 4rpx 12rpx rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 10rpx 20rpx rgba(0, 0, 0, 0.05);
-  --shadow-lg: 0 20rpx 40rpx rgba(89, 28, 46, 0.15);
+  --shadow-sm: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05), 0 4rpx 8rpx -2rpx rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05), 0 4rpx 8rpx -2rpx rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05), 0 4rpx 8rpx -2rpx rgba(0, 0, 0, 0.03);
 
   /* Easing Functions */
   --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Apply Global Theme */
-  background-color: var(--bg-cream);
+  background-color: var(--bg-primary);
   font-family: var(--font-body);
-  color: var(--text-dark);
+  color: var(--text-main);
+}
+
+/* 全局图片样式 */
+image {
+  display: block;
 }
 
 /* 通用容器 */
@@ -45,16 +50,17 @@ page {
   flex-direction: column;
 }
 
-/* 按钮样式 - Burgundy Theme */
+/* 按钮样式 - Claude Theme */
 .btn-primary {
-  background-color: var(--primary-burgundy);
-  color: var(--bg-cream);
+  background-color: var(--accent-clay);
+  color: var(--surface-white);
   border-radius: var(--radius-pill);
-  padding: 24rpx 48rpx;
+  padding: 28rpx 56rpx;
   font-weight: bold;
   font-size: 28rpx;
   border: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease-in-out;
+  line-height: 1.6;
 }
 
 .btn-primary:active {
@@ -64,39 +70,43 @@ page {
 
 .btn-secondary {
   background-color: var(--surface-white);
-  color: var(--text-dark);
-  border: 2rpx solid var(--ui-gray);
+  color: var(--text-main);
+  border: 2rpx solid var(--border-subtle);
   border-radius: var(--radius-pill);
-  padding: 24rpx 48rpx;
+  padding: 28rpx 56rpx;
   font-weight: bold;
   font-size: 28rpx;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease-in-out;
+  line-height: 1.6;
 }
 
 .btn-secondary:active {
   transform: scale(0.96);
-  background-color: var(--ui-gray);
+  background-color: var(--bg-secondary);
 }
 
 /* 卡片样式 */
 .card {
   background-color: var(--surface-white);
   border-radius: var(--radius-soft);
-  box-shadow: 0 4rpx 16rpx rgba(89, 28, 46, 0.08);
-  border: 2rpx solid var(--ui-gray);
+  box-shadow: var(--shadow-sm);
+  border: 2rpx solid var(--border-subtle);
 }
 
 /* 文本样式 */
 .text-primary {
-  color: var(--text-dark);
+  color: var(--text-main);
+  line-height: 1.6;
 }
 
 .text-secondary {
-  color: #666;
+  color: var(--text-muted);
+  line-height: 1.6;
 }
 
 .text-muted {
-  color: #999;
+  color: var(--text-muted);
+  line-height: 1.6;
 }
 
 .text-bold {
@@ -118,66 +128,46 @@ page {
 
 /* ===== Color Utilities ===== */
 /* Text Colors */
-.text-burgundy {
-  color: var(--primary-burgundy);
+.text-clay {
+  color: var(--accent-clay);
 }
 
-.text-rose {
-  color: var(--accent-rose);
+.text-main {
+  color: var(--text-main);
 }
 
-.text-gold {
-  color: var(--accent-gold);
+.text-muted {
+  color: var(--text-muted);
 }
 
 .text-dark {
-  color: var(--text-dark);
-}
-
-.text-cream {
-  color: var(--bg-cream);
+  color: var(--bg-dark);
 }
 
 /* Legacy color classes (for backward compatibility) */
-.color-burgundy {
-  color: var(--primary-burgundy);
-}
-
-.color-rose {
-  color: var(--accent-rose);
-}
-
-.color-gold {
-  color: var(--accent-gold);
+.color-clay {
+  color: var(--accent-clay);
 }
 
 /* Background Colors */
-.bg-burgundy {
-  background-color: var(--primary-burgundy);
+.bg-clay {
+  background-color: var(--accent-clay);
 }
 
-.bg-rose {
-  background-color: var(--accent-rose);
+.bg-primary {
+  background-color: var(--bg-primary);
 }
 
-.bg-rose-light {
-  background-color: var(--accent-rose-light);
-}
-
-.bg-gold {
-  background-color: var(--accent-gold);
-}
-
-.bg-cream {
-  background-color: var(--bg-cream);
+.bg-secondary {
+  background-color: var(--bg-secondary);
 }
 
 .bg-white {
   background-color: var(--surface-white);
 }
 
-.bg-gray {
-  background-color: var(--ui-gray);
+.bg-dark {
+  background-color: var(--bg-dark);
 }
 
 /* ===== Shadow Utilities ===== */
@@ -202,20 +192,12 @@ page {
   border-radius: var(--radius-pill);
 }
 
-.border-burgundy {
-  border-color: var(--primary-burgundy);
+.border-clay {
+  border-color: var(--accent-clay);
 }
 
-.border-rose {
-  border-color: var(--accent-rose);
-}
-
-.border-gold {
-  border-color: var(--accent-gold);
-}
-
-.border-gray {
-  border-color: var(--ui-gray);
+.border-subtle {
+  border-color: var(--border-subtle);
 }
 
 /* ===== Animation Utilities ===== */
