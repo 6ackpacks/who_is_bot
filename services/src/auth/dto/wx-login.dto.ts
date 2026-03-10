@@ -23,13 +23,5 @@ export class WxLoginDto {
 
   @IsString()
   @IsOptional()
-  country?: string;
-
-  @IsString()
-  @IsOptional()
-  province?: string;
-
-  @IsString()
-  @IsOptional()
   city?: string;
 }

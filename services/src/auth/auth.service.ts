@@ -38,22 +38,41 @@ export class AuthService {
     // 1. 调用微信 API 获取 openid 和 session_key
     const wxData = await this.wechatService.code2Session(dto.code);
 
-    // 2. 查找是否已存在该 openid 的用户
+    // 2. 查找是否已存在该 uid 的用户（使用 openid 作为 uid）
     let user = await this.userRepository.findOne({
-      where: { openid: wxData.openid },
+      where: { uid: wxData.openid },
     });
+
+    // 验证头像URL是否有效
+    const isValidAvatarUrl = (url: string | undefined): boolean => {
+      if (!url) return false;
+      if (url.includes('example.com')) return false;
+      if (url.includes('placeholder.com')) return false;
+      if (!url.startsWith('https://')) return false;
+      return true;
+    };
+
+    // 生成默认头像（仅在微信头像无效时使用）
+    const getDefaultAvatar = (nickname: string): string => {
+      return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(nickname || 'User')}`;
+    };
+
+    // 使用微信头像或默认头像
+    const avatarUrl = isValidAvatarUrl(dto.avatarUrl)
+      ? dto.avatarUrl
+      : getDefaultAvatar(dto.nickName);
+
+    const now = new Date().toISOString();
 
     if (user) {
       // 用户已存在，更新用户信息
+      const hasAvatarChanged = user.avatar !== avatarUrl;
+
       user.nickname = dto.nickName;
-      user.avatar = dto.avatarUrl || user.avatar;
-      user.sessionKey = this.wechatService.encryptSessionKey(wxData.session_key);
-
-      // 如果有 unionid，也更新
-      if (wxData.unionid) {
-        user.unionid = wxData.unionid;
-      }
-
+      user.avatar = avatarUrl;
+      user.avatarUpdateTime = hasAvatarChanged ? now : user.avatarUpdateTime;
+      user.gender = dto.gender;
+      user.city = dto.city;
       user.updatedAt = new Date();
       await this.userRepository.save(user);
     } else {
@@ -62,14 +81,13 @@ export class AuthService {
         id: uuidv4(),
         nickname: dto.nickName,
         uid: wxData.openid, // 使用 openid 作为 uid
-        openid: wxData.openid,
-        unionid: wxData.unionid,
-        sessionKey: this.wechatService.encryptSessionKey(wxData.session_key),
-        avatar: dto.avatarUrl || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132',
+        avatar: avatarUrl,
+        avatarUpdateTime: now,
+        gender: dto.gender,
+        city: dto.city,
         level: 1,
         accuracy: 0,
         totalJudged: 0,
-        correctCount: 0,
         streak: 0,
         maxStreak: 0,
         totalBotsBusted: 0,
@@ -89,7 +107,6 @@ export class AuthService {
       id: user.id,
       nickname: user.nickname,
       uid: user.uid,
-      openid: user.openid,
       avatar: user.avatar,
       level: user.level,
       accuracy: user.accuracy,
@@ -113,8 +130,12 @@ export class AuthService {
       where: { nickname: dto.nickname },
     });
 
+    // 生成默认头像
+    const defaultAvatar = dto.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(dto.nickname || 'User')}`;
+
     if (user) {
-      // 用户已存在，更新登录时间
+      // 用户已存在，更新登录时间和头像
+      user.avatar = defaultAvatar;
       user.updatedAt = new Date();
       await this.userRepository.save(user);
     } else {
@@ -123,11 +144,10 @@ export class AuthService {
         id: uuidv4(),
         nickname: dto.nickname,
         uid: mockUid,
-        avatar: dto.avatar || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132',
+        avatar: defaultAvatar,
         level: 1,
         accuracy: 0,
         totalJudged: 0,
-        correctCount: 0,
         streak: 0,
         maxStreak: 0,
         totalBotsBusted: 0,
@@ -168,6 +188,9 @@ export class AuthService {
       throw new NotFoundException('用户不存在');
     }
 
+    // Calculate correctCount from totalJudged and accuracy
+    const correctCount = Math.round((user.totalJudged * user.accuracy) / 100);
+
     return {
       id: user.id,
       nickname: user.nickname,
@@ -176,7 +199,7 @@ export class AuthService {
       level: user.level,
       accuracy: user.accuracy,
       totalJudged: user.totalJudged,
-      correctCount: user.correctCount,
+      correctCount: correctCount,
       streak: user.streak,
       maxStreak: user.maxStreak,
       totalBotsBusted: user.totalBotsBusted,

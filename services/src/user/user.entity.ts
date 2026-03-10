@@ -13,29 +13,26 @@ export class User {
   @Column({ type: 'varchar', length: 50, unique: true })
   uid: string;
 
-  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
-  openid: string;
-
-  @Column({ type: 'varchar', length: 100, unique: true, nullable: true })
-  unionid: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  sessionKey: string;
-
   @Column({ type: 'int', default: 1 })
   level: number;
 
   @Column({ type: 'text', nullable: true })
   avatar: string;
 
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  avatarUpdateTime: string;
+
+  @Column({ type: 'int', nullable: true })
+  gender: number;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  city: string;
+
   @Column({ type: 'float', default: 0 })
   accuracy: number;
 
   @Column({ type: 'int', default: 0 })
   totalJudged: number;
-
-  @Column({ name: 'correct_count', type: 'int', default: 0 })
-  correctCount: number;
 
   @Column({ type: 'int', default: 0 })
   streak: number;
