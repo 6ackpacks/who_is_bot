@@ -23,8 +23,8 @@ const ENV_CONFIG = {
   LOCAL_API_URL: 'http://localhost:3000',
 
   // 微信云托管配置（生产环境使用）
-  CLOUD_ENV: 'who-is-the-bot-backe-1ba5b1c4a6d',
-  CLOUD_SERVICE: 'who-is-the-bot-api2',  // 修改为实际的服务名称
+  CLOUD_ENV: 'prod-3ge8ht6pded7ed77',
+  CLOUD_SERVICE: 'who-is-the-bot-api2',
 
   // 是否使用 Mock 数据（调试用）
   USE_MOCK: false,
