@@ -40,7 +40,7 @@ export class AdminCommentService {
       where.userId = userId;
     }
     if (search) {
-      where.text = Like(`%${search}%`);
+      where.content = Like(`%${search}%`);
     }
 
     // 查询评论
@@ -79,7 +79,7 @@ export class AdminCommentService {
 
       return {
         id: comment.id,
-        content: comment.text,
+        content: comment.content,
         contentId: comment.contentId,
         contentTitle: content?.title || '未知内容',
         userId: comment.userId,
@@ -131,7 +131,7 @@ export class AdminCommentService {
     return {
       comment: {
         id: comment.id,
-        content: comment.text,
+        content: comment.content,
         contentId: comment.contentId,
         contentTitle: content?.title || '未知内容',
         userId: comment.userId,
