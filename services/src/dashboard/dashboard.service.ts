@@ -49,8 +49,8 @@ export class DashboardService {
       try {
         const todayActiveUsers = await this.judgmentRepository
           .createQueryBuilder('judgment')
-          .select('COUNT(DISTINCT judgment.userId)', 'count')
-          .where('judgment.createdAt >= :todayStart', { todayStart })
+          .select('COUNT(DISTINCT judgment.user_id)', 'count')
+          .where('judgment.created_at >= :todayStart', { todayStart })
           .getRawOne();
         todayActiveUsersCount = parseInt(todayActiveUsers?.count, 10) || 0;
       } catch (err) {
@@ -140,10 +140,10 @@ export class DashboardService {
 
       const result = await this.userRepository
         .createQueryBuilder('user')
-        .select('DATE(user.createdAt)', 'date')
+        .select('DATE(user.created_at)', 'date')
         .addSelect('COUNT(*)', 'count')
-        .where('user.createdAt >= :startDate', { startDate })
-        .groupBy('DATE(user.createdAt)')
+        .where('user.created_at >= :startDate', { startDate })
+        .groupBy('DATE(user.created_at)')
         .orderBy('date', 'ASC')
         .getRawMany();
 
@@ -189,11 +189,11 @@ export class DashboardService {
 
       const result = await this.judgmentRepository
         .createQueryBuilder('judgment')
-        .select('DATE(judgment.createdAt)', 'date')
+        .select('DATE(judgment.created_at)', 'date')
         .addSelect('COUNT(*)', 'total')
-        .addSelect('SUM(CASE WHEN judgment.isCorrect = true THEN 1 ELSE 0 END)', 'correct')
-        .where('judgment.createdAt >= :startDate', { startDate })
-        .groupBy('DATE(judgment.createdAt)')
+        .addSelect('SUM(CASE WHEN judgment.is_correct = true THEN 1 ELSE 0 END)', 'correct')
+        .where('judgment.created_at >= :startDate', { startDate })
+        .groupBy('DATE(judgment.created_at)')
         .orderBy('date', 'ASC')
         .getRawMany();
 

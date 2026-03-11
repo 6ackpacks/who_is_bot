@@ -292,8 +292,8 @@ export class JudgmentService {
     const judgmentsWithContent = await this.judgmentRepository
       .createQueryBuilder('judgment')
       .leftJoinAndSelect('judgment.content', 'content')
-      .where('judgment.userId = :userId', { userId })
-      .orderBy('judgment.createdAt', 'DESC')
+      .where('judgment.user_id = :userId', { userId })
+      .orderBy('judgment.created_at', 'DESC')
       .take(20)
       .getMany();
 
