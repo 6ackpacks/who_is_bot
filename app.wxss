@@ -4,11 +4,14 @@
 
 /* ===== Claude-Inspired Design System ===== */
 page {
-  /* Color Variables */
-  --bg-primary: #F9F8F6;
+  /* Color Variables - Exact Match to Design Spec */
+  --bg-primary: #F4F4F0;
   --bg-secondary: #F0EEE6;
   --accent-clay: #D97757;
+  --accent-error: #E76F51;
+  --accent-success: #10b981;
   --text-main: #1D1C16;
+  --text-secondary: #78716C;
   --text-muted: #66655F;
   --bg-dark: #111111;
   --surface-white: #FFFFFF;
@@ -18,11 +21,14 @@ page {
   --font-display: 'Poppins', 'PingFang SC', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Lora', 'Noto Serif SC', Georgia, serif;
 
-  /* Spacing & Sizing */
+  /* Spacing & Sizing - Design Spec Compliant */
+  --radius-large: 48rpx;
+  --radius-medium: 32rpx;
   --radius-soft: 28rpx;
   --radius-pill: 999rpx;
 
-  /* Shadows */
+  /* Shadows - Exact Match to Design Spec */
+  --shadow-card: 0 40rpx 80rpx -30rpx rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05), 0 4rpx 8rpx -2rpx rgba(0, 0, 0, 0.03);
   --shadow-md: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05), 0 4rpx 8rpx -2rpx rgba(0, 0, 0, 0.03);
   --shadow-lg: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05), 0 4rpx 8rpx -2rpx rgba(0, 0, 0, 0.03);

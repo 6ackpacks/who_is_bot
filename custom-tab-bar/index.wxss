@@ -1,4 +1,4 @@
-/* custom-tab-bar/index.wxss - Frosted Glass Navigation Bar */
+/* custom-tab-bar/index.wxss - Claude-Inspired Navigation Bar */
 
 .custom-tab-bar {
   position: fixed;
@@ -8,11 +8,11 @@
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(20rpx);
   -webkit-backdrop-filter: blur(20rpx);
-  border-top: 1rpx solid #F3F4F6;
-  padding: 16rpx 32rpx 32rpx 32rpx;
+  border-top: 1rpx solid var(--border-subtle, #E8E6DC);
+  padding: 20rpx 32rpx 32rpx 32rpx;
   padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
   border-radius: 48rpx 48rpx 0 0;
-  box-shadow: 0 -10rpx 40rpx rgba(0, 0, 0, 0.03);
+  box-shadow: 0 -8rpx 12rpx -2rpx rgba(0, 0, 0, 0.03);
   z-index: 100;
   display: flex;
   justify-content: space-between;
@@ -25,28 +25,21 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4rpx;
   position: relative;
-  transition: color 0.3s ease;
-}
-
-.tab-icon {
-  width: 48rpx;
-  height: 48rpx;
-  transition: all 0.3s ease;
+  transition: color 0.2s ease-in-out;
 }
 
 .tab-text {
   font-size: 40rpx;
   font-weight: 500;
   letter-spacing: 0.5rpx;
-  color: #9CA3AF;
-  transition: color 0.3s ease;
+  color: var(--text-muted, #66655F);
+  transition: color 0.2s ease-in-out;
 }
 
-/* Active State - Burgundy */
+/* Active State - Clay */
 .tab-item-active .tab-text {
-  color: #591C2E;
+  color: var(--accent-clay, #D97757);
 }
 
 /* Active Dot Indicator */
@@ -58,7 +51,7 @@
   transform: translateX(-50%);
   width: 8rpx;
   height: 8rpx;
-  background: #591C2E;
+  background: var(--accent-clay, #D97757);
   border-radius: 50%;
   margin-top: 8rpx;
 }

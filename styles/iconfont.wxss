@@ -298,7 +298,7 @@
 }
 
 .icon-black {
-  color: #000000;
+  color: var(--text-main, #1D1C16);
 }
 
 /* 图标交互效果 */

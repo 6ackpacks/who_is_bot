@@ -117,45 +117,44 @@
       <view class="result-content-card">
         <!-- 判定视觉容器 -->
         <view class="content-card">
-        <view class="judgment-visual">
+          <view class="judgment-visual">
+            <!-- 内容容器 - 9边形裁剪 -->
+            <view class="content-image-container">
+              <!-- 视频内容 -->
+              <video
+                wx:if="{{currentItem.type === 'video'}}"
+                class="content-media"
+                src="{{currentItem.url}}"
+                object-fit="cover"
+                autoplay="{{true}}"
+                loop="{{true}}"
+                muted="{{true}}"
+                show-center-play-btn="{{false}}"
+                show-play-btn="{{false}}"
+                controls="{{true}}"
+                bindplay="onVideoPlay"
+                bindpause="onVideoPause"
+                binderror="onVideoError"
+              ></video>
 
+              <!-- 图片内容 -->
+              <image
+                wx:elif="{{currentItem.type === 'image'}}"
+                class="content-media"
+                src="{{currentItem.url}}"
+                mode="aspectFill"
+              ></image>
 
-          <!-- 内容容器 - 9边形裁剪 -->
-          <view class="content-image-container">
-            <!-- 视频内容 -->
-            <video
-              wx:if="{{currentItem.type === 'video'}}"
-              class="content-media"
-              src="{{currentItem.url}}"
-              object-fit="cover"
-              autoplay="{{true}}"
-              loop="{{true}}"
-              muted="{{true}}"
-              show-center-play-btn="{{false}}"
-              show-play-btn="{{false}}"
-              controls="{{true}}"
-              bindplay="onVideoPlay"
-              bindpause="onVideoPause"
-              binderror="onVideoError"
-            ></video>
-
-            <!-- 图片内容 -->
-            <image
-              wx:elif="{{currentItem.type === 'image'}}"
-              class="content-media"
-              src="{{currentItem.url}}"
-              mode="aspectFill"
-            ></image>
-
-            <!-- 文字内容 -->
-            <view wx:else class="content-text-display">
-              <text>{{currentItem.text || currentItem.title}}</text>
+              <!-- 文字内容 -->
+              <view wx:else class="content-text-display">
+                <text>{{currentItem.text || currentItem.title}}</text>
+              </view>
             </view>
-          </view>
 
-          <!-- 来源标签 -->
-          <view class="tag-pill">
-            <text class="tag-dot">●</text> 来源: {{currentItem.provider || currentItem.modelTag || 'Unknown'}}
+            <!-- 来源标签 -->
+            <view class="tag-pill">
+              <text class="tag-dot">●</text> 来源: {{currentItem.provider || currentItem.modelTag || 'Unknown'}}
+            </view>
           </view>
         </view>
 
@@ -260,7 +259,7 @@
             </view>
           </block>
         </view>
-        </view>
+      </view>
       </view>
       <!-- 关闭主内容白色卡片容器 -->
 

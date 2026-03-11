@@ -7,9 +7,11 @@ import { Content } from '../content/content.entity';
 import { User } from '../user/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comment, Content, User])],
+  imports: [
+    TypeOrmModule.forFeature([Comment, Content, User]),
+  ],
   controllers: [CommentController],
   providers: [CommentService],
-  exports: [CommentService],
+  exports: [CommentService, TypeOrmModule],
 })
 export class CommentModule {}

@@ -1,13 +1,13 @@
-import { Entity, PrimaryColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 
 @Entity('content')
 export class Content {
-  @PrimaryColumn({ type: 'varchar', length: 36 })
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'varchar', length: 20 })
-  type: string; // 'text', 'image', 'video'
+  type: string;
 
   @Column({ type: 'text', nullable: true })
   url: string;
@@ -21,10 +21,10 @@ export class Content {
   @Column({ name: 'is_bot', type: 'boolean' })
   isAi: boolean;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   modelTag: string;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'varchar', length: 100, nullable: true })
   provider: string;
 
   @Column({ type: 'float' })
@@ -33,19 +33,20 @@ export class Content {
   @Column({ type: 'text' })
   explanation: string;
 
-  @Column({ name: 'total_votes', type: 'int', default: 0 })
+  @Column({ type: 'int', default: 0 })
   totalVotes: number;
 
-  @Column({ name: 'ai_votes', type: 'int', default: 0 })
+  @Column({ type: 'int', default: 0 })
   aiVotes: number;
 
-  @Column({ name: 'human_votes', type: 'int', default: 0 })
+  @Column({ type: 'int', default: 0 })
   humanVotes: number;
 
-  @Column({ name: 'correct_votes', type: 'int', default: 0 })
+  @Column({ type: 'int', default: 0 })
   correctVotes: number;
 
-  @ManyToOne(() => User, user => user.contents)
+  @ManyToOne(() => User, user => user.contents, { nullable: true })
+  @JoinColumn({ name: 'authorId' })
   author: User;
 
   @CreateDateColumn()

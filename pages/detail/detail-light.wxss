@@ -47,7 +47,7 @@
 .loading-text {
   font-size: 28rpx;
   color: #9CA3AF;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -75,7 +75,7 @@
   text-align: center;
   margin-bottom: 40rpx;
   line-height: 1.6;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -87,7 +87,7 @@
   font-size: 28rpx;
   font-weight: 600;
   border: none;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
   animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -112,17 +112,17 @@
 .page-title {
   font-size: 48rpx;
   font-weight: 700;
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   display: block;
   margin-bottom: 12rpx;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 .page-subtitle {
   font-size: 24rpx;
   color: #9CA3AF;
   display: block;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ===== 通用区块样式 ===== */
@@ -133,7 +133,7 @@
   text-transform: uppercase;
   letter-spacing: 1rpx;
   margin-bottom: 16rpx;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ===== 内容区域 ===== */
@@ -143,7 +143,7 @@
 }
 
 .content-card {
-  background: #FFFFFF;
+  background: var(--bg-primary, #F9F8F6);
   border-radius: 20rpx;
   padding: 40rpx;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
@@ -169,7 +169,7 @@
   font-size: 30rpx;
   line-height: 1.7;
   color: #1F2937;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   display: block;
   animation: fadeIn 0.5s ease-out 0.2s backwards;
 }
@@ -221,7 +221,7 @@
 }
 
 .answer-card {
-  background: #FFFFFF;
+  background: var(--bg-primary, #F9F8F6);
   border-radius: 20rpx;
   padding: 40rpx;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
@@ -235,7 +235,7 @@
   border-radius: 50rpx;
   font-size: 32rpx;
   font-weight: 700;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -282,7 +282,7 @@
   font-size: 26rpx;
   font-weight: 700;
   color: #FFFFFF;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ===== 解析区域 ===== */
@@ -292,7 +292,7 @@
 }
 
 .explanation-card {
-  background: #FFFFFF;
+  background: var(--bg-primary, #F9F8F6);
   border-radius: 20rpx;
   padding: 40rpx;
   box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.06);
@@ -307,7 +307,7 @@
   font-size: 28rpx;
   line-height: 1.7;
   color: #374151;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ===== 底部按钮 ===== */
@@ -325,7 +325,7 @@
   font-weight: 600;
   color: #FFFFFF;
   border: none;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
 }

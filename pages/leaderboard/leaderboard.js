@@ -21,6 +21,12 @@ Page({
   },
 
   onShow() {
+    // 页面显示时滚动到顶部
+    wx.pageScrollTo({
+      scrollTop: 0,
+      duration: 0  // 立即滚动，无动画
+    });
+
     // 每次显示页面时刷新数据和主题
     this.initTheme();
     this.loadLeaderboard();
@@ -114,6 +120,9 @@ Page({
 
   // 处理排行榜数据
   processLeaderboardData(users) {
+    console.log('========== 排行榜数据处理 ==========');
+    console.log('原始用户数量:', users.length);
+
     // 等级映射
     const levelMap = {
       '硅谷天才': 'level-4',
@@ -123,20 +132,71 @@ Page({
     };
 
     // 处理数据并添加 levelClass
-    return users.map(user => ({
-      ...user,
-      levelClass: levelMap[user.level] || 'level-1',
-      // 确保所有必需字段都存在
-      username: user.username || user.nickname || '匿名用户',
-      avatar: user.avatar || 'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132',
-      weeklyAccuracy: user.weeklyAccuracy || user.accuracy || 0,
-      accuracy: Math.round((user.accuracy || 0) * 10) / 10, // 保留一位小数
-      totalJudged: user.totalJudged || 0
-    }));
+    const processedUsers = users.map((user, index) => {
+      const username = user.username || user.nickname || '匿名用户';
+      // 生成默认头像，使用用户名作为种子
+      const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(username)}`;
+
+      const avatar = user.avatar || defaultAvatar;
+
+      // 只为前3名打印详细信息
+      if (index < 3) {
+        console.log(`\n用户 ${index + 1}:`);
+        console.log('  用户名:', username);
+        console.log('  原始头像:', user.avatar);
+        console.log('  最终头像:', avatar);
+        console.log('  头像来源:', user.avatar ? '后端' : 'DiceBear默认');
+      }
+
+      return {
+        ...user,
+        levelClass: levelMap[user.level] || 'level-1',
+        // 确保所有必需字段都存在
+        username: username,
+        avatar: avatar,
+        accuracy: Math.round((user.accuracy || 0) * 10) / 10, // 保留一位小数
+        weeklyAccuracy: user.weeklyAccuracy || 0,
+        totalJudged: user.totalJudged || 0
+      };
+    });
+
+    console.log('\n处理完成，用户数量:', processedUsers.length);
+    console.log('====================================');
+
+    return processedUsers;
   },
 
   // 重新加载
   handleRetry() {
     this.loadLeaderboard();
+  },
+
+  // 头像加载错误处理
+  handleAvatarError(e) {
+    const index = e.currentTarget.dataset.index;
+    console.log('========== 排行榜头像加载失败 ==========');
+    console.log('错误索引:', index);
+    console.log('错误事件:', e);
+
+    if (index !== undefined && this.data.users[index]) {
+      const user = this.data.users[index];
+      const username = user.username || '匿名用户';
+      const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(username)}`;
+
+      console.log('用户名:', username);
+      console.log('失败的头像 URL:', user.avatar);
+      console.log('切换到默认头像:', defaultAvatar);
+
+      // 更新头像为默认头像
+      const updatePath = `users[${index}].avatar`;
+      this.setData({
+        [updatePath]: defaultAvatar
+      });
+
+      console.log('头像已更新');
+    } else {
+      console.log('未找到对应的用户数据');
+    }
+    console.log('======================================');
   }
 });

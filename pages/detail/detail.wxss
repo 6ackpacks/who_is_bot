@@ -72,7 +72,7 @@
 .loading-text {
   font-size: 28rpx;
   color: rgba(255, 255, 255, 0.7);
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   animation: pulse 2s ease-in-out infinite;
 }
 
@@ -93,18 +93,18 @@
   text-align: center;
   margin-bottom: 40rpx;
   line-height: 1.6;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 .retry-btn {
   padding: 24rpx 60rpx;
   background: linear-gradient(135deg, #00D4FF 0%, #0096CC 100%);
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   border-radius: 50rpx;
   font-size: 28rpx;
   font-weight: 600;
   border: none;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   box-shadow: 0 8rpx 24rpx rgba(0, 212, 255, 0.4);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -130,7 +130,7 @@
   color: #FFFFFF;
   display: block;
   margin-bottom: 12rpx;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   text-shadow: 0 0 30rpx rgba(0, 212, 255, 0.5);
 }
 
@@ -138,7 +138,7 @@
   font-size: 24rpx;
   color: rgba(255, 255, 255, 0.5);
   display: block;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ===== 通用区块样式 ===== */
@@ -149,7 +149,7 @@
   text-transform: uppercase;
   letter-spacing: 1rpx;
   margin-bottom: 16rpx;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ===== 内容区域 ===== */
@@ -164,7 +164,7 @@
   border-radius: 20rpx;
   padding: 40rpx;
   border: 2rpx solid rgba(0, 212, 255, 0.2);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   position: relative;
 }
 
@@ -192,7 +192,7 @@
   font-size: 30rpx;
   line-height: 1.8;
   color: rgba(255, 255, 255, 0.95);
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   display: block;
 }
 
@@ -263,7 +263,7 @@
   border-radius: 20rpx;
   padding: 40rpx;
   border: 2rpx solid rgba(0, 212, 255, 0.2);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -274,7 +274,7 @@
   border-radius: 50rpx;
   font-size: 32rpx;
   font-weight: 700;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   display: flex;
   align-items: center;
   gap: 12rpx;
@@ -288,7 +288,7 @@
 
 .answer-human {
   background: linear-gradient(135deg, #00D4FF 0%, #0096CC 100%);
-  color: #000000;
+  color: var(--text-main, #1D1C16);
 }
 
 /* ===== 统计区域 ===== */
@@ -336,7 +336,7 @@
   font-size: 28rpx;
   font-weight: 700;
   color: #FFFFFF;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   position: relative;
   z-index: 1;
 }
@@ -353,7 +353,7 @@
   border-radius: 20rpx;
   padding: 40rpx;
   border: 2rpx solid rgba(0, 212, 255, 0.2);
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   position: relative;
 }
 
@@ -371,7 +371,7 @@
   font-size: 28rpx;
   line-height: 1.8;
   color: rgba(255, 255, 255, 0.9);
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ===== 底部按钮 ===== */
@@ -387,9 +387,9 @@
   border-radius: 48rpx;
   font-size: 32rpx;
   font-weight: 600;
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   border: none;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   box-shadow: 0 8rpx 24rpx rgba(0, 212, 255, 0.4);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -491,5 +491,5 @@
 }
 
 .theme-light .btn-primary {
-  color: #000000;
+  color: var(--text-main, #1D1C16);
 }

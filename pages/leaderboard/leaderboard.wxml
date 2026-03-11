@@ -27,10 +27,15 @@
       <!-- 第二名 (左侧) -->
       <view wx:if="{{users[1]}}" class="podium-item podium-second">
         <view class="podium-avatar-wrapper">
-          <image src="{{users[1].avatar}}" class="podium-avatar avatar-second"></image>
+          <image src="{{users[1].avatar}}" class="podium-avatar avatar-second" mode="aspectFill" binderror="handleAvatarError" data-index="1"></image>
         </view>
         <view class="podium-base base-second">
           <text class="podium-rank rank-second">2</text>
+        </view>
+        <view class="podium-info">
+          <text class="podium-name">{{users[1].username}}</text>
+          <text class="podium-stats">准确率 {{users[1].accuracy}}%</text>
+          <text class="podium-stats">{{users[1].totalJudged}} 题</text>
         </view>
       </view>
 
@@ -38,20 +43,30 @@
       <view wx:if="{{users[0]}}" class="podium-item podium-first">
         <view class="crown-icon">👑</view>
         <view class="podium-avatar-wrapper">
-          <image src="{{users[0].avatar}}" class="podium-avatar avatar-first"></image>
+          <image src="{{users[0].avatar}}" class="podium-avatar avatar-first" mode="aspectFill" binderror="handleAvatarError" data-index="0"></image>
         </view>
         <view class="podium-base base-first">
           <text class="podium-rank rank-first">1</text>
+        </view>
+        <view class="podium-info">
+          <text class="podium-name">{{users[0].username}}</text>
+          <text class="podium-stats">准确率 {{users[0].accuracy}}%</text>
+          <text class="podium-stats">{{users[0].totalJudged}} 题</text>
         </view>
       </view>
 
       <!-- 第三名 (右侧) -->
       <view wx:if="{{users[2]}}" class="podium-item podium-third">
         <view class="podium-avatar-wrapper">
-          <image src="{{users[2].avatar}}" class="podium-avatar avatar-third"></image>
+          <image src="{{users[2].avatar}}" class="podium-avatar avatar-third" mode="aspectFill" binderror="handleAvatarError" data-index="2"></image>
         </view>
         <view class="podium-base base-third">
           <text class="podium-rank rank-third">3</text>
+        </view>
+        <view class="podium-info">
+          <text class="podium-name">{{users[2].username}}</text>
+          <text class="podium-stats">准确率 {{users[2].accuracy}}%</text>
+          <text class="podium-stats">{{users[2].totalJudged}} 题</text>
         </view>
       </view>
 
@@ -65,12 +80,12 @@
         <text class="card-rank">{{index + 1}}</text>
 
         <!-- 头像 -->
-        <image src="{{item.avatar}}" class="card-avatar"></image>
+        <image src="{{item.avatar}}" class="card-avatar" mode="aspectFill" binderror="handleAvatarError" data-index="{{index}}"></image>
 
         <!-- 用户信息 -->
         <view class="card-info">
           <text class="card-name">{{item.username}}</text>
-          <text class="card-accuracy">准确率 {{item.weeklyAccuracy}}%</text>
+          <text class="card-accuracy">准确率 {{item.accuracy}}%</text>
         </view>
 
         <!-- 统计数据 -->

@@ -47,17 +47,43 @@ export class CommentController {
   /**
    * 获取指定内容的所有评论（公开访问）
    * GET /comments?contentId=xxx
+   * 或获取指定用户的所有评论
+   * GET /comments?userId=xxx
    */
   @Get()
-  async getComments(@Query('contentId') contentId: string) {
-    if (!contentId) {
+  async getComments(
+    @Query('contentId') contentId?: string,
+    @Query('userId') userId?: string,
+  ) {
+    if (!contentId && !userId) {
       return {
         success: false,
-        message: '缺少 contentId 参数',
+        message: '缺少 contentId 或 userId 参数',
+      };
+    }
+
+    if (userId) {
+      const result = await this.commentService.getCommentsByUserId(userId);
+      return {
+        success: true,
+        data: result,
       };
     }
 
     const result = await this.commentService.getCommentsByContentId(contentId);
+    return {
+      success: true,
+      data: result,
+    };
+  }
+
+  /**
+   * 获取用户评论统计（公开访问）
+   * GET /comments/user/:userId/stats
+   */
+  @Get('user/:userId/stats')
+  async getUserCommentStats(@Param('userId') userId: string) {
+    const result = await this.commentService.getUserCommentStats(userId);
     return {
       success: true,
       data: result,

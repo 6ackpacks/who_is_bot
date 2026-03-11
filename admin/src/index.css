@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #F9F8F6;
+  --bg-secondary: #F0EEE6;
+  --accent-clay: #D97757;
+  --text-main: #1D1C16;
+  --text-muted: #66655F;
+  --bg-dark: #111111;
+  --surface-white: #FFFFFF;
+  --border-subtle: #E8E6DC;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', 'PingFang SC', -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+}
+
+* {
+  box-sizing: border-box;
+}

@@ -17,6 +17,12 @@ Page({
   },
 
   onShow() {
+    // 页面显示时滚动到顶部
+    wx.pageScrollTo({
+      scrollTop: 0,
+      duration: 0  // 立即滚动，无动画
+    });
+
     this.initTheme();
   },
 

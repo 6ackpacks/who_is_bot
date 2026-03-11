@@ -166,17 +166,20 @@ export class JudgmentService {
       // 更新总判定数
       user.totalJudged += 1;
 
-      // 更新正确数和连胜
+      // 更新连胜
       if (dto.isCorrect) {
-        user.correctCount += 1;
         user.streak += 1;
         user.maxStreak = Math.max(user.maxStreak, user.streak);
       } else {
         user.streak = 0;
       }
 
+      // 计算正确数（从现有的 accuracy 推导）
+      const previousCorrectCount = Math.round((user.accuracy * (user.totalJudged - 1)) / 100);
+      const newCorrectCount = previousCorrectCount + (dto.isCorrect ? 1 : 0);
+
       // 计算总体准确率
-      user.accuracy = (user.correctCount / user.totalJudged) * 100;
+      user.accuracy = (newCorrectCount / user.totalJudged) * 100;
 
       // 更新周统计
       user.weeklyJudged += 1;
@@ -232,17 +235,20 @@ export class JudgmentService {
       // 更新总判定数
       user.totalJudged += 1;
 
-      // 更新正确数和连胜
+      // 更新连胜
       if (dto.isCorrect) {
-        user.correctCount += 1;
         user.streak += 1;
         user.maxStreak = Math.max(user.maxStreak, user.streak);
       } else {
         user.streak = 0;
       }
 
+      // 计算正确数（从现有的 accuracy 推导）
+      const previousCorrectCount = Math.round((user.accuracy * (user.totalJudged - 1)) / 100);
+      const newCorrectCount = previousCorrectCount + (dto.isCorrect ? 1 : 0);
+
       // 计算总体准确率
-      user.accuracy = (user.correctCount / user.totalJudged) * 100;
+      user.accuracy = (newCorrectCount / user.totalJudged) * 100;
 
       // 更新周统计
       user.weeklyJudged += 1;
@@ -297,6 +303,7 @@ export class JudgmentService {
       contentId: judgment.contentId,
       contentTitle: judgment.content ? judgment.content.title : '内容已删除',
       contentType: judgment.content ? judgment.content.type : 'text',
+      contentUrl: judgment.content ? judgment.content.url : null,
       userChoice: judgment.userChoice,
       isCorrect: judgment.isCorrect,
       createdAt: judgment.createdAt,
@@ -325,7 +332,6 @@ export class JudgmentService {
           level: 1,
           accuracy: 0,
           totalJudged: 0,
-          correctCount: 0,
           streak: 0,
           maxStreak: 0,
           totalBotsBusted: 0,
@@ -358,7 +364,6 @@ export class JudgmentService {
         level: 1,
         accuracy: 0,
         totalJudged: 0,
-        correctCount: 0,
         streak: 0,
         maxStreak: 0,
         totalBotsBusted: 0,

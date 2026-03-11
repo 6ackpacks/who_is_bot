@@ -1,7 +1,7 @@
 // components/icon/icon.js - Ant Design Icon Component Logic
 Component({
   properties: {
-    // Icon type (trophy, bar-chart, idcard, appstore, setting, info-circle, check-circle, close-circle, moon, sun)
+    // Icon type (trophy, bar-chart, idcard, appstore, setting, info-circle, check-circle, close-circle, moon, sun, ellipsis, close)
     type: {
       type: String,
       value: 'trophy'

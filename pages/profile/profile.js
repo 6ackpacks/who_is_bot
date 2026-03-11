@@ -2,104 +2,84 @@
 const app = getApp();
 const auth = require('../../utils/auth.js');
 const api = require('../../utils/api.js');
-const theme = require('../../utils/theme.js');
 
 Page({
   data: {
     userInfo: {
       nickname: 'Cyber_Detective',
-      level: 3,
-      levelName: '人机杀手',
-      nextLevel: '硅谷天才',
-      progress: 72,
-      remaining: 28,
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=MyUser'
-    },
-    stats: {
-      totalJudged: 850,
-      accuracy: 89.4,
-      streak: 12
+      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=MyUser',
+      bio: ''
     },
     isLoggedIn: false,
-    currentTheme: 'dark',
-    activeTab: 'achievements', // 当前激活的 Tab，默认显示成就
-    showMore: false, // 是否显示更多菜单
+    activeTab: 'judgments', // 当前激活的标签页
+    tabIndicatorLeft: 0, // 标签页指示器位置（百分比）
+    tabIndicatorWidth: 33.33, // 标签页指示器宽度（百分比）
 
-    // 最近判定记录（示例数据）
-    recentJudgments: [
-      {
-        id: 1,
-        contentType: 'text',
-        isCorrect: true,
-        time: '2小时前'
-      },
-      {
-        id: 2,
-        contentType: 'image',
-        isCorrect: true,
-        time: '5小时前'
-      },
-      {
-        id: 3,
-        contentType: 'video',
-        isCorrect: false,
-        time: '1天前'
-      }
+    // 用户排名
+    userRank: null,
+
+    // 判断统计
+    judgmentStats: {
+      total: 0,
+      correct: 0,
+      accuracy: 0
+    },
+
+    // 评论统计
+    commentStats: {
+      totalComments: 0,
+      totalLikes: 0
+    },
+
+    // 关注数据（mock数据）
+    followingCount: 7,
+    followersCount: 11,
+
+    // 判定记录
+    judgments: [],
+
+    // 评论列表
+    comments: [],
+
+    // 编辑资料弹窗
+    showEditModal: false,
+    editForm: {
+      avatar: '',
+      nickname: '',
+      bio: ''
+    },
+
+    // 申请提交表单
+    contentTypes: [
+      { value: 'text', label: '文本' },
+      { value: 'image', label: '图片' },
+      { value: 'video', label: '视频' }
     ],
-
-    // 成就列表
-    achievements: [
-      {
-        id: 1,
-        name: '火眼金睛',
-        description: '连续准确率达到 90%',
-        iconType: 'check-circle',
-        unlocked: true
-      },
-      {
-        id: 2,
-        name: '百战老将',
-        description: '完成 100 次判定',
-        iconType: 'trophy',
-        unlocked: true
-      },
-      {
-        id: 3,
-        name: '闪电判官',
-        description: '1分钟内完成10次正确判定',
-        iconType: 'check-circle',
-        unlocked: false
-      },
-      {
-        id: 4,
-        name: '完美侦探',
-        description: '连续50次判定全部正确',
-        iconType: 'trophy',
-        unlocked: false
-      }
-    ]
+    submitForm: {
+      typeIndex: 0,
+      url: '',
+      description: ''
+    }
   },
 
   onLoad() {
-    this.initTheme();
     this.checkLoginAndLoadData();
   },
 
   onShow() {
-    // 每次显示页面时检查登录状态和主题
-    this.initTheme();
+    // 页面显示时滚动到顶部
+    wx.pageScrollTo({
+      scrollTop: 0,
+      duration: 0
+    });
+
+    // 每次显示页面时检查登录状态
     this.checkLoginAndLoadData();
 
     // 更新自定义 tabBar 选中状态
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setSelected('pages/profile/profile');
     }
-  },
-
-  // 初始化主题
-  initTheme() {
-    const currentTheme = theme.getTheme();
-    this.setData({ currentTheme });
   },
 
   // 检查登录状态并加载数据
@@ -110,136 +90,259 @@ Page({
     if (isLoggedIn) {
       // 已登录，加载用户数据
       this.loadUserData();
-      this.loadRecentJudgments();
+      this.loadUserRank();
+      // TODO: 暂时禁用评论统计API调用，等待后端路由修复
+      // this.loadCommentStats();
+      // 使用默认值
+      this.setData({
+        commentStats: { totalComments: 0, totalLikes: 0 }
+      });
+      this.loadJudgments();
+      this.loadComments();
     } else {
-      // 未登录，显示默认数据
-      const globalStats = app.globalData.userStats;
-      if (globalStats) {
-        this.setData({
-          'stats.accuracy': globalStats.accuracy,
-          'stats.totalJudged': globalStats.totalJudged,
-          'stats.streak': globalStats.streak
-        });
-      }
+      // 未登录，显示提示
+      const guestAvatar = 'https://api.dicebear.com/7.x/avataaars/svg?seed=Guest';
+      this.setData({
+        userInfo: {
+          nickname: '未登录',
+          avatar: guestAvatar,
+          bio: '登录后查看更多功能'
+        },
+        userRank: null,
+        commentStats: { totalComments: 0, totalLikes: 0 },
+        judgments: [],
+        comments: []
+      });
     }
   },
 
   // 加载用户数据
   loadUserData() {
     const userInfo = auth.getUserInfo();
-    console.log('个人页面 - 读取的用户信息:', userInfo);
+    console.log('========== 个人主页加载用户数据 ==========');
+    console.log('从 storage 读取的用户信息:', userInfo);
 
     if (userInfo) {
-      const displayData = {
-        nickname: userInfo.nickname || 'Cyber_Detective',
-        avatar: userInfo.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=MyUser',
-        level: userInfo.level || 1,
-        levelName: userInfo.levelName || 'AI小白',
-        nextLevel: this.getNextLevel(userInfo.level || 1),
-        progress: userInfo.progress || 0,
-        remaining: userInfo.remaining || 100
-      };
+      // 生成默认头像，使用用户昵称作为种子
+      const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userInfo.nickname || 'User')}`;
 
-      console.log('个人页面 - 将要显示的数据:', displayData);
-      console.log('个人页面 - 头像 URL:', displayData.avatar);
+      const avatar = userInfo.avatar || defaultAvatar;
+      console.log('用户昵称:', userInfo.nickname);
+      console.log('存储的头像:', userInfo.avatar);
+      console.log('默认头像:', defaultAvatar);
+      console.log('最终使用的头像:', avatar);
 
       this.setData({
-        userInfo: displayData
+        userInfo: {
+          nickname: userInfo.nickname || 'Cyber_Detective',
+          avatar: avatar,
+          bio: userInfo.bio || ''
+        }
       });
-    }
 
-    // 获取统计数据
-    const userId = auth.getUserId();
-    if (userId) {
-      api.getUserStats(userId)
-        .then(res => {
-          if (res.success && res.data) {
-            this.setData({
-              'stats.totalJudged': res.data.totalJudged || 0,
-              'stats.accuracy': res.data.accuracy || 0,
-              'stats.streak': res.data.maxStreak || 0
-            });
-          }
-        })
-        .catch(err => {
-          console.error('获取统计数据失败:', err);
-        });
+      console.log('设置到页面的头像:', avatar);
+      console.log('======================================');
+    } else {
+      console.log('未找到用户信息');
+      console.log('======================================');
     }
   },
 
-  // 加载最近判定记录
-  loadRecentJudgments() {
+  // 加载用户排名
+  loadUserRank() {
     const userId = auth.getUserId();
     if (!userId) return;
 
-    api.getUserJudgments(userId, 1, 5)
+    api.getUserRank(userId)
       .then(res => {
-        if (res.success && res.data && res.data.list) {
-          const judgments = res.data.list.map(item => ({
-            id: item.id,
-            contentType: item.contentType || 'text',
-            isCorrect: item.isCorrect,
-            time: this.formatTime(item.createdAt)
-          }));
-          this.setData({ recentJudgments: judgments });
+        if (res.success && res.data) {
+          // 处理数字排名和字符串"未上榜"
+          const rank = res.data.rank;
+          if (typeof rank === 'number' && rank > 0) {
+            this.setData({ userRank: rank });
+          } else if (typeof rank === 'string') {
+            this.setData({ userRank: rank });
+          } else {
+            this.setData({ userRank: null });
+          }
+        } else {
+          this.setData({ userRank: null });
         }
       })
       .catch(err => {
-        console.error('获取判定记录失败:', err);
+        // 静默处理错误，不显示console.error
+        this.setData({ userRank: null });
       });
+  },
+
+  // 加载评论统计
+  loadCommentStats() {
+    const userId = auth.getUserId();
+    if (!userId) return;
+
+    api.getUserCommentStats(userId)
+      .then(res => {
+        if (res.success && res.data) {
+          this.setData({
+            commentStats: {
+              totalComments: res.data.totalComments || 0,
+              totalLikes: res.data.totalLikes || 0
+            }
+          });
+        }
+      })
+      .catch(err => {
+        // 静默处理错误，不显示console.error
+        // 设置默认值，避免显示错误
+        this.setData({
+          commentStats: {
+            totalComments: 0,
+            totalLikes: 0
+          }
+        });
+      });
+  },
+
+  // 加载判定记录
+  loadJudgments() {
+    const userId = auth.getUserId();
+    if (!userId) return;
+
+    api.getUserJudgments(userId)
+      .then(res => {
+        if (res && Array.isArray(res)) {
+          const judgments = res.map(item => {
+            // 验证 contentType 是否有效
+            const validTypes = ['text', 'image', 'video'];
+            const contentType = validTypes.includes(item.contentType) ? item.contentType : 'text';
+
+            return {
+              id: item.id,
+              contentId: item.contentId,
+              contentType: contentType,
+              isCorrect: item.isCorrect,
+              time: this.formatTime(item.createdAt),
+              title: item.contentTitle || '未知内容',
+              thumbnail: item.contentUrl || this.getDefaultThumbnail(contentType)
+            };
+          });
+          this.setData({ judgments });
+
+          // 计算判断统计
+          const total = judgments.length;
+          const correct = judgments.filter(j => j.isCorrect).length;
+          const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+
+          this.setData({
+            judgmentStats: {
+              total,
+              correct,
+              accuracy
+            }
+          });
+        }
+      })
+      .catch(err => {
+        // 静默处理错误，设置默认空数组
+        this.setData({
+          judgments: [],
+          judgmentStats: { total: 0, correct: 0, accuracy: 0 }
+        });
+      });
+  },
+
+  // 加载评论列表
+  loadComments() {
+    const userId = auth.getUserId();
+    if (!userId) return;
+
+    api.getComments({ userId })
+      .then(res => {
+        if (res.success && res.data && Array.isArray(res.data.comments)) {
+          const comments = res.data.comments.map(item => ({
+            id: item.id,
+            contentId: item.contentId,
+            content: item.content,
+            likes: item.likes || 0,
+            time: this.formatTime(item.createdAt),
+            // 使用可选链避免 item.content 为 null 时出错
+            contentTitle: item.content?.title || '未知内容'
+          }));
+          this.setData({ comments });
+        }
+      })
+      .catch(err => {
+        // 静默处理错误，设置空数组
+        this.setData({ comments: [] });
+      });
+  },
+
+  // 获取默认缩略图
+  getDefaultThumbnail(type) {
+    const thumbnailMap = {
+      'text': 'https://via.placeholder.com/100/D97757/FFFFFF?text=文本',
+      'image': 'https://via.placeholder.com/100/10B981/FFFFFF?text=图片',
+      'video': 'https://via.placeholder.com/100/3B82F6/FFFFFF?text=视频'
+    };
+    return thumbnailMap[type] || 'https://via.placeholder.com/100/9CA3AF/FFFFFF?text=?';
   },
 
   // 格式化时间
   formatTime(timestamp) {
+    if (!timestamp) return '未知时间';
+
     const now = Date.now();
     const diff = now - new Date(timestamp).getTime();
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
+    if (minutes < 1) return '刚刚';
     if (minutes < 60) return `${minutes}分钟前`;
     if (hours < 24) return `${hours}小时前`;
-    return `${days}天前`;
+    if (days < 30) return `${days}天前`;
+
+    const date = new Date(timestamp);
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   },
 
-  // 获取下一等级
-  getNextLevel(currentLevel) {
-    const levels = ['AI小白', '胜似人机', '人机杀手', '硅谷天才'];
-    return levels[currentLevel] || '已满级';
-  },
-
-  // 切换 Tab
+  // 切换标签页
   switchTab(e) {
     const tab = e.currentTarget.dataset.tab;
-    this.setData({ activeTab: tab });
-  },
+    const tabIndex = tab === 'judgments' ? 0 : tab === 'comments' ? 1 : 2;
+    const tabIndicatorLeft = tabIndex * 33.33;
 
-  // 滚动到成就区域
-  scrollToAchievements() {
-    this.setData({ activeTab: 'achievements' });
-  },
-
-  // 跳转到判定历史页面
-  goToHistory() {
-    if (!auth.isLoggedIn()) {
-      wx.showModal({
-        title: '提示',
-        content: '请先登录后查看判定历史',
-        confirmText: '去登录',
-        success: (res) => {
-          if (res.confirm) {
-            wx.navigateTo({
-              url: '/pages/login/login?redirect=/pages/profile/profile'
-            });
-          }
-        }
-      });
-      return;
-    }
-
-    wx.navigateTo({
-      url: '/pages/history/history'
+    this.setData({
+      activeTab: tab,
+      tabIndicatorLeft: tabIndicatorLeft,
+      tabIndicatorWidth: 33.33
     });
+  },
+
+  // 统计数据点击事件
+  handleStatClick(e) {
+    const type = e.currentTarget.dataset.type;
+
+    if (type === 'judgments') {
+      // 切换到判定记录标签页
+      this.setData({
+        activeTab: 'judgments',
+        tabIndicatorLeft: 0,
+        tabIndicatorWidth: 33.33
+      });
+    } else if (type === 'accuracy') {
+      wx.showToast({
+        title: '正确率详情功能开发中',
+        icon: 'none'
+      });
+    } else if (type === 'liked-comments') {
+      // 切换到评论标签页
+      this.setData({
+        activeTab: 'comments',
+        tabIndicatorLeft: 33.33,
+        tabIndicatorWidth: 33.33
+      });
+    }
   },
 
   // 跳转到排行榜
@@ -257,45 +360,149 @@ Page({
     });
   },
 
-  // 显示更多菜单
-  showMoreMenu() {
-    this.setData({ showMore: true });
-  },
+  // 登录/编辑资料
+  handleEditProfile() {
+    if (!auth.isLoggedIn()) {
+      // 未登录，跳转到登录页
+      wx.navigateTo({
+        url: '/pages/login/login?redirect=/pages/profile/profile'
+      });
+      return;
+    }
 
-  // 隐藏更多菜单
-  hideMoreMenu() {
-    this.setData({ showMore: false });
-  },
-
-  // 阻止冒泡
-  stopPropagation() {
-    // 阻止事件冒泡到 overlay
-  },
-
-  // 跳转到设置页面
-  goToSettings() {
-    this.hideMoreMenu();
-    wx.showToast({
-      title: '设置功能开发中',
-      icon: 'none'
+    // 已登录，打开编辑资料弹窗
+    this.setData({
+      showEditModal: true,
+      editForm: {
+        avatar: this.data.userInfo.avatar,
+        nickname: this.data.userInfo.nickname,
+        bio: this.data.userInfo.bio || ''
+      }
     });
   },
 
-  // 跳转到关于页面
-  goToAbout() {
-    this.hideMoreMenu();
-    wx.showToast({
-      title: '关于功能开发中',
-      icon: 'none'
+  // 关闭编辑资料弹窗
+  closeEditModal() {
+    this.setData({
+      showEditModal: false
     });
   },
 
-  // 分享侦探名片
-  handleShare() {
+  // 更换头像
+  handleChangeAvatar() {
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      sourceType: ['album', 'camera'],
+      success: (res) => {
+        const tempFilePath = res.tempFilePaths[0];
+        // TODO: 上传到服务器
+        this.setData({
+          'editForm.avatar': tempFilePath
+        });
+        wx.showToast({
+          title: '头像已选择',
+          icon: 'success'
+        });
+      }
+    });
+  },
+
+  // 昵称输入
+  onNicknameInput(e) {
+    this.setData({
+      'editForm.nickname': e.detail.value
+    });
+  },
+
+  // 简介输入
+  onBioInput(e) {
+    this.setData({
+      'editForm.bio': e.detail.value
+    });
+  },
+
+  // 保存资料
+  handleSaveProfile() {
+    const { nickname, bio, avatar } = this.data.editForm;
+
+    if (!nickname.trim()) {
+      wx.showToast({
+        title: '请输入昵称',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 更新本地数据
+    const userInfo = auth.getUserInfo();
+    const updatedUserInfo = {
+      ...userInfo,
+      nickname: nickname.trim(),
+      bio: bio.trim(),
+      avatar: avatar
+    };
+
+    // 保存到本地存储
+    wx.setStorageSync('userInfo', updatedUserInfo);
+
+    // 更新页面数据
+    this.setData({
+      userInfo: updatedUserInfo,
+      showEditModal: false
+    });
+
+    wx.showToast({
+      title: '保存成功',
+      icon: 'success'
+    });
+
+    // TODO: 同步到服务器
+  },
+
+  // 退出登录
+  handleLogout() {
+    wx.showModal({
+      title: '确认退出',
+      content: '退出登录后将无法保存判定记录，确定要退出吗？',
+      confirmText: '确定退出',
+      confirmColor: '#D97757',
+      success: (res) => {
+        if (res.confirm) {
+          auth.logout();
+          this.checkLoginAndLoadData();
+        }
+      }
+    });
+  },
+
+  // 内容类型选择
+  onContentTypeChange(e) {
+    this.setData({
+      'submitForm.typeIndex': e.detail.value
+    });
+  },
+
+  // URL 输入
+  onUrlInput(e) {
+    this.setData({
+      'submitForm.url': e.detail.value
+    });
+  },
+
+  // 说明输入
+  onDescriptionInput(e) {
+    this.setData({
+      'submitForm.description': e.detail.value
+    });
+  },
+
+  // 提交内容申请
+  handleSubmitContent() {
     if (!auth.isLoggedIn()) {
       wx.showModal({
         title: '提示',
-        content: '请先登录后再分享',
+        content: '请先登录后再提交申请',
         confirmText: '去登录',
         success: (res) => {
           if (res.confirm) {
@@ -308,57 +515,73 @@ Page({
       return;
     }
 
-    wx.showShareMenu({
-      withShareTicket: true,
-      menus: ['shareAppMessage', 'shareTimeline']
-    });
+    const { typeIndex, url, description } = this.data.submitForm;
+    const contentType = this.data.contentTypes[typeIndex].value;
 
-    wx.showToast({
-      title: '点击右上角分享',
-      icon: 'none'
-    });
-  },
+    // 验证表单
+    if (!url.trim()) {
+      wx.showToast({
+        title: '请输入内容链接',
+        icon: 'none'
+      });
+      return;
+    }
 
-  // 退出登录
-  handleLogout() {
+    if (!description.trim()) {
+      wx.showToast({
+        title: '请输入说明',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 显示提交成功提示
     wx.showModal({
-      title: '确认退出',
-      content: '退出登录后将无法保存判定记录，确定要退出吗？',
-      confirmText: '确定退出',
-      confirmColor: '#FF6B6B',
-      success: (res) => {
-        if (res.confirm) {
-          auth.logout();
-        }
+      title: '提交成功',
+      content: '感谢您的提交！我们会尽快审核您的内容。',
+      showCancel: false,
+      success: () => {
+        // 清空表单
+        this.setData({
+          'submitForm.typeIndex': 0,
+          'submitForm.url': '',
+          'submitForm.description': ''
+        });
       }
     });
-  },
 
-  // 切换主题
-  handleThemeToggle() {
-    const newTheme = theme.toggleTheme();
-    this.setData({
-      currentTheme: newTheme,
-      showMore: false // 关闭更多菜单
-    });
-
-    // 更新全局主题
-    app.globalData.theme = newTheme;
-
-    // 显示提示
-    wx.showToast({
-      title: newTheme === 'dark' ? '已切换到暗色模式' : '已切换到亮色模式',
-      icon: 'success',
-      duration: 1500
+    // TODO: 实际提交到后端
+    console.log('提交内容申请:', {
+      contentType,
+      url,
+      description
     });
   },
 
   // 页面分享配置
   onShareAppMessage() {
+    const nickname = this.data.userInfo.nickname;
     return {
-      title: `我是${this.data.userInfo.levelName}！准确率${this.data.stats.accuracy}%`,
+      title: `我是${nickname}，一起来找人机吧！`,
       path: '/pages/feed/feed',
       imageUrl: this.data.userInfo.avatar
     };
+  },
+
+  // 头像加载错误处理
+  handleAvatarError(e) {
+    console.log('========== 个人主页头像加载失败 ==========');
+    console.log('错误事件:', e);
+    console.log('当前头像 URL:', this.data.userInfo.avatar);
+
+    const nickname = this.data.userInfo.nickname || 'User';
+    const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(nickname)}`;
+
+    console.log('切换到默认头像:', defaultAvatar);
+    console.log('========================================');
+
+    this.setData({
+      'userInfo.avatar': defaultAvatar
+    });
   }
 });

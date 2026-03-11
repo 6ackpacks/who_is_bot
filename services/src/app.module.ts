@@ -9,6 +9,9 @@ import { AchievementModule } from './achievement/achievement.module';
 import { ScheduleModule } from './schedule/schedule.module';
 import { CommentModule } from './comment/comment.module';
 import { AuthModule } from './auth/auth.module';
+import { AdminModule } from './admin/admin.module';
+import { UploadModule } from './upload/upload.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 import { HealthController } from './health.controller';
 import { ProxyController } from './proxy.controller';
 
@@ -76,6 +79,9 @@ import { ProxyController } from './proxy.controller';
     ScheduleModule,
     CommentModule,
     AuthModule,
+    AdminModule,
+    UploadModule,
+    DashboardModule,
   ],
   controllers: [HealthController, ProxyController],
 })

@@ -37,12 +37,15 @@ export class UserController {
       };
     }
 
+    // Calculate correctCount from totalJudged and accuracy
+    const correctCount = Math.round((user.totalJudged * user.accuracy) / 100);
+
     return {
       success: true,
       data: {
         totalJudged: user.totalJudged,
         accuracy: Math.round(user.accuracy * 10) / 10,
-        correctCount: user.correctCount,
+        correctCount: correctCount,
         streak: user.streak,
         maxStreak: user.maxStreak,
         weeklyAccuracy: Math.round(user.weeklyAccuracy * 10) / 10,

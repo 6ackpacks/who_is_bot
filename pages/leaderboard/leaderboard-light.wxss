@@ -41,7 +41,7 @@
 .loading-text {
   font-size: 28rpx;
   color: #666666;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   font-weight: 600;
   animation: pulse 2s ease-in-out infinite;
 }
@@ -59,11 +59,11 @@
 
 .error-text {
   font-size: 28rpx;
-  color: #333333;
+  color: #1D1C16333;
   text-align: center;
   margin-bottom: 40rpx;
   line-height: 1.6;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -75,7 +75,7 @@
   font-size: 28rpx;
   font-weight: 600;
   border: none;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4rpx 12rpx rgba(59, 130, 246, 0.3);
   animation: slideInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -93,7 +93,7 @@
 
 /* ===== 页面标题 ===== */
 .page-header {
-  background: #FFFFFF;
+  background: var(--bg-primary, #F9F8F6);
   padding: 80rpx 40rpx 50rpx;
   margin-bottom: 30rpx;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
@@ -108,10 +108,10 @@
   font-size: 52rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   display: block;
   letter-spacing: -1rpx;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   line-height: 1.2;
   animation: slideInLeft 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -120,10 +120,10 @@
   font-size: 52rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   display: block;
   letter-spacing: -1rpx;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   line-height: 1.2;
   text-decoration: underline;
   text-decoration-color: #3B82F6;
@@ -136,7 +136,7 @@
   font-size: 22rpx;
   color: #9CA3AF;
   font-weight: 500;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   letter-spacing: 0.5rpx;
   animation: fadeIn 0.5s ease-out 0.2s backwards;
 }
@@ -147,7 +147,7 @@
   grid-template-columns: 100rpx 1fr 220rpx;
   align-items: center;
   padding: 25rpx 40rpx;
-  background: #FFFFFF;
+  background: var(--bg-primary, #F9F8F6);
   border-radius: 20rpx 20rpx 0 0;
   margin: 0 30rpx;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
@@ -163,7 +163,7 @@
   color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 2rpx;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 .th-rank {
@@ -199,7 +199,7 @@
 }
 
 .user-item {
-  background: #FFFFFF;
+  background: var(--bg-primary, #F9F8F6);
   padding: 28rpx 32rpx;
   display: grid;
   grid-template-columns: 100rpx 1fr 220rpx;
@@ -285,8 +285,8 @@
   font-size: 36rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  color: var(--text-main, #1D1C16);
+  font-family: var(--font-display);
 }
 
 /* ===== 用户信息 ===== */
@@ -326,11 +326,11 @@
 .user-name {
   font-size: 30rpx;
   font-weight: 700;
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 .user-meta {
@@ -347,7 +347,7 @@
   background: #F3F4F6;
   color: #6B7280;
   flex-shrink: 0;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -379,7 +379,7 @@
   font-size: 22rpx;
   color: #9CA3AF;
   font-weight: 500;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ===== 统计数据 ===== */
@@ -398,7 +398,7 @@
   color: #3B82F6;
   width: 80rpx;
   text-align: right;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -410,10 +410,10 @@
   font-size: 32rpx;
   font-weight: 900;
   font-style: italic;
-  color: #000000;
+  color: var(--text-main, #1D1C16);
   width: 80rpx;
   text-align: right;
-  font-family: "PingFang SC", -apple-system, sans-serif;
+  font-family: var(--font-display);
 }
 
 /* ===== 底部占位 ===== */

@@ -20,11 +20,11 @@ const ENV_CONFIG = {
 
   // 本地开发服务器地址（仅在 USE_LOCAL_API = true 时使用）
   // 格式：http://YOUR_LOCAL_IP:PORT 或 http://localhost:PORT
-  LOCAL_API_URL: 'http://172.16.41.100:80',
+  LOCAL_API_URL: 'http://localhost:3000',
 
   // 微信云托管配置（生产环境使用）
   CLOUD_ENV: 'prod-3ge8ht6pded7ed77',
-  CLOUD_SERVICE: 'who-is-the-bot-api2',
+  CLOUD_SERVICE: 'who-is-the-bot-api',
 
   // 是否使用 Mock 数据（调试用）
   USE_MOCK: false,
@@ -180,7 +180,8 @@ function cloudRequest(options) {
     data = {},
     showLoading = false,
     loadingText = '加载中...',
-    needAuth = false
+    needAuth = false,
+    suppressErrorToast = false // 是否抑制错误提示
   } = options;
 
   // 如果使用本地服务器，直接使用 wx.request
@@ -232,20 +233,24 @@ function cloudRequest(options) {
             resolve(res.data);
           } else {
             console.error('本地请求失败:', res);
-            wx.showToast({
-              title: `请求失败: ${res.statusCode}`,
-              icon: 'none'
-            });
+            if (!suppressErrorToast) {
+              wx.showToast({
+                title: `请求失败: ${res.statusCode}`,
+                icon: 'none'
+              });
+            }
             reject(new Error(`请求失败: ${res.statusCode}`));
           }
         },
         fail: (err) => {
           if (showLoading) wx.hideLoading();
           console.error('本地请求失败:', err);
-          wx.showToast({
-            title: '网络请求失败',
-            icon: 'none'
-          });
+          if (!suppressErrorToast) {
+            wx.showToast({
+              title: '网络请求失败',
+              icon: 'none'
+            });
+          }
           reject(err);
         }
       });
@@ -291,6 +296,16 @@ function cloudRequest(options) {
           // 后端返回错误，拒绝 Promise
           const errorMsg = res.data.message || res.data.error || '请求失败';
           console.error('云托管请求失败:', res.data);
+
+          // 如果不抑制错误提示，显示toast
+          if (!suppressErrorToast) {
+            wx.showToast({
+              title: Array.isArray(errorMsg) ? errorMsg[0] : errorMsg,
+              icon: 'none',
+              duration: 2000
+            });
+          }
+
           reject(new Error(Array.isArray(errorMsg) ? errorMsg[0] : errorMsg));
         } else {
           // 成功响应
@@ -300,6 +315,16 @@ function cloudRequest(options) {
       fail: (err) => {
         if (showLoading) wx.hideLoading();
         console.error('云托管请求失败:', err);
+
+        // 如果不抑制错误提示，显示toast
+        if (!suppressErrorToast) {
+          wx.showToast({
+            title: '网络请求失败',
+            icon: 'none',
+            duration: 2000
+          });
+        }
+
         reject(err);
       }
     });
@@ -610,12 +635,55 @@ function updateUserInfo(userId, data) {
  * 获取评论列表
  */
 function getComments(params) {
+  // 只传递有值的参数，避免传入 undefined
+  const requestData = {};
+  if (params.contentId !== undefined && params.contentId !== null) {
+    requestData.contentId = params.contentId;
+  }
+  if (params.userId !== undefined && params.userId !== null) {
+    requestData.userId = params.userId;
+  }
+
   return cloudRequest({
     path: '/comments',
     method: 'GET',
-    data: {
-      contentId: params.contentId
+    data: requestData,
+    suppressErrorToast: params.userId ? true : false // 获取用户评论时静默处理错误
+  }).catch(err => {
+    // 如果是获取用户评论且失败，返回空列表
+    if (params.userId) {
+      console.log('获取用户评论失败，返回空列表:', err.message || err);
+      return {
+        success: true,
+        data: {
+          total: 0,
+          comments: []
+        }
+      };
     }
+    // 其他情况抛出错误
+    throw err;
+  });
+}
+
+/**
+ * 获取用户评论统计
+ */
+function getUserCommentStats(userId) {
+  return cloudRequest({
+    path: `/comments/user/${userId}/stats`,
+    method: 'GET',
+    suppressErrorToast: true // 静默处理错误，避免显示404提示
+  }).catch(err => {
+    // 如果用户不存在或没有评论，返回默认值
+    console.log('获取评论统计失败，返回默认值:', err.message || err);
+    return {
+      success: true,
+      data: {
+        totalComments: 0,
+        totalLikes: 0
+      }
+    };
   });
 }
 
@@ -676,6 +744,7 @@ module.exports = {
   getUserInfo,
   updateUserInfo,
   getComments,
+  getUserCommentStats,
   createComment,
   likeComment,
   deleteComment,

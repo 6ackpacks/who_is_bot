@@ -11,10 +11,6 @@ export class CreateCommentDto {
   userId?: string;
 
   @IsString()
-  @IsOptional()
-  guestId?: string;
-
-  @IsString()
   @IsNotEmpty({ message: '评论内容不能为空' })
   @MinLength(1, { message: '评论内容至少需要 1 个字符' })
   @MaxLength(500, { message: '评论内容不能超过 500 个字符' })
@@ -26,8 +22,4 @@ export class CreateCommentDto {
     return value;
   })
   content: string;
-
-  @IsString()
-  @IsOptional()
-  parentId?: string;
 }

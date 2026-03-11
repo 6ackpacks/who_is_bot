@@ -8,17 +8,17 @@
   ],
   "cloud": true,
   "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#F9F8F6",
     "navigationBarTitleText": "谁是人机?",
     "navigationBarTextStyle": "black",
-    "backgroundColor": "#f5f5f5"
+    "backgroundColor": "#F9F8F6"
   },
   "tabBar": {
     "custom": true,
-    "color": "#8B92A8",
-    "selectedColor": "#00F2FF",
-    "backgroundColor": "#0F111A",
+    "color": "#66655F",
+    "selectedColor": "#D97757",
+    "backgroundColor": "#F0EEE6",
     "borderStyle": "white",
     "list": [
       {

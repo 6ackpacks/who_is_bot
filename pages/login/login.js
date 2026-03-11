@@ -42,18 +42,39 @@ Page({
                   console.log('微信登录成功:', res);
 
                   if (res.success && res.data) {
+                    console.log('========== 登录成功 ==========');
                     console.log('后端返回的完整数据:', res.data);
-                    console.log('用户头像:', res.data.avatar);
+                    console.log('后端返回的头像字段:', res.data.avatar);
+                    console.log('微信返回的头像:', profileRes.userInfo.avatarUrl);
+
+                    // 确保头像字段存在，优先级：后端 > 微信 > 默认
+                    const avatar = res.data.avatar ||
+                                   profileRes.userInfo.avatarUrl ||
+                                   `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(res.data.nickname || 'User')}`;
+
+                    console.log('最终使用的头像:', avatar);
 
                     // 保存用户信息和 token
+                    const userInfo = {
+                      ...res.data,
+                      avatar: avatar
+                    };
+
+                    console.log('准备保存的用户信息:', userInfo);
+
                     auth.saveLoginInfo({
                       token: res.data.accessToken,
                       userId: res.data.id,
-                      userInfo: res.data
+                      userInfo: userInfo
                     });
 
                     // 验证保存的数据
-                    console.log('保存后的用户信息:', auth.getUserInfo());
+                    const savedInfo = auth.getUserInfo();
+                    console.log('========== 验证保存结果 ==========');
+                    console.log('保存后的用户信息:', savedInfo);
+                    console.log('保存后的头像字段:', savedInfo?.avatar);
+                    console.log('头像是否存在:', !!savedInfo?.avatar);
+                    console.log('================================');
 
                     this.setData({ loading: false });
 
