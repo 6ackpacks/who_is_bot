@@ -52,13 +52,13 @@ export class AdminContentService {
           search: `%${search}%`,
         });
 
-        // Apply sorting - use actual database column names (now all camelCase)
+        // Apply sorting - use actual database column names (snake_case)
         const sortFieldMap = {
-          'createdAt': 'content.createdAt',
-          'totalVotes': 'content.totalVotes',
-          'updatedAt': 'content.updatedAt',
+          'createdAt': 'content.created_at',
+          'totalVotes': 'content.total_votes',
+          'updatedAt': 'content.updated_at',
         };
-        const sortField = sortFieldMap[sortBy] || 'content.createdAt';
+        const sortField = sortFieldMap[sortBy] || 'content.created_at';
         queryBuilder.orderBy(sortField, sortOrder);
 
         // Apply pagination

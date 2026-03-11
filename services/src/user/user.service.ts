@@ -110,19 +110,19 @@ export class UserService {
           'user.uid',
           'user.avatar',
           'user.accuracy',
-          'user.totalJudged',
-          'user.correctCount',
+          'user.total_judged',
+          'user.correct_count',
           'user.streak',
-          'user.maxStreak',
-          'user.totalBotsBusted',
-          'user.weeklyAccuracy',
-          'user.weeklyJudged',
-          'user.weeklyCorrect',
+          'user.max_streak',
+          'user.total_bots_busted',
+          'user.weekly_accuracy',
+          'user.weekly_judged',
+          'user.weekly_correct',
           'user.level',
         ])
-        .where('user.totalJudged >= :minJudged', { minJudged: 5 })
+        .where('user.total_judged >= :minJudged', { minJudged: 5 })
         .orderBy('user.accuracy', 'DESC')
-        .addOrderBy('user.totalJudged', 'DESC')
+        .addOrderBy('user.total_judged', 'DESC')
         .limit(this.CACHE_SIZE) // 缓存前100名
         .getMany();
 
