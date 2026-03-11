@@ -45,7 +45,7 @@ export class CommentService {
     const comment = this.commentRepository.create({
       contentId: dto.contentId,
       userId: dto.userId,
-      text: dto.content,
+      content: dto.content,
     });
 
     const savedComment = await this.commentRepository.save(comment);
@@ -284,7 +284,7 @@ export class CommentService {
     return {
       id: comment.id,
       contentId: comment.contentId,
-      content: comment.text,
+      content: comment.content,
       likes: comment.likes,
       createdAt: comment.createdAt,
       user: user

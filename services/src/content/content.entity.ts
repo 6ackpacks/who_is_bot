@@ -33,16 +33,16 @@ export class Content {
   @Column({ type: 'text' })
   explanation: string;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ name: 'totalVotes', type: 'int', default: 0 })
   totalVotes: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ name: 'aiVotes', type: 'int', default: 0 })
   aiVotes: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ name: 'humanVotes', type: 'int', default: 0 })
   humanVotes: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ name: 'correctVotes', type: 'int', default: 0 })
   correctVotes: number;
 
   @ManyToOne(() => User, user => user.contents, { nullable: true })
