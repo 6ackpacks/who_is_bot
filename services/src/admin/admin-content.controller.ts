@@ -4,6 +4,7 @@ import { AdminGuard } from './guards/admin.guard';
 import { QueryContentDto } from './dto/query-content.dto';
 import { CreateContentDto } from '../content/dto/create-content.dto';
 import { UpdateContentStatsDto } from './dto/update-content-stats.dto';
+import { UpdateContentDto } from './dto/update-content.dto';
 import { BatchDeleteDto } from './dto/batch-delete.dto';
 
 @Controller('admin/content')
@@ -60,6 +61,19 @@ export class AdminContentController {
       this.logger.error(`Error in update for id ${id}:`, error);
       throw new HttpException(
         error.message || 'Failed to update content',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Patch(':id')
+  async patch(@Param('id') id: string, @Body() updateContentDto: UpdateContentDto) {
+    try {
+      return await this.adminContentService.patch(id, updateContentDto);
+    } catch (error) {
+      this.logger.error(`Error in patch for id ${id}:`, error);
+      throw new HttpException(
+        error.message || 'Failed to patch content',
         error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

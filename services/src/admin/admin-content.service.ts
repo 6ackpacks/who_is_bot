@@ -6,6 +6,7 @@ import { Comment } from '../comment/comment.entity';
 import { QueryContentDto } from './dto/query-content.dto';
 import { CreateContentDto } from '../content/dto/create-content.dto';
 import { UpdateContentStatsDto } from './dto/update-content-stats.dto';
+import { UpdateContentDto } from './dto/update-content.dto';
 
 @Injectable()
 export class AdminContentService {
@@ -52,13 +53,13 @@ export class AdminContentService {
           search: `%${search}%`,
         });
 
-        // Apply sorting - use actual database column names (snake_case)
+        // Apply sorting - use TypeORM entity property names (maps to actual DB columns via @Column name)
         const sortFieldMap = {
-          'createdAt': 'content.created_at',
-          'totalVotes': 'content.total_votes',
-          'updatedAt': 'content.updated_at',
+          'createdAt': 'content.createdAt',
+          'totalVotes': 'content.totalVotes',
+          'updatedAt': 'content.updatedAt',
         };
-        const sortField = sortFieldMap[sortBy] || 'content.created_at';
+        const sortField = sortFieldMap[sortBy] || 'content.createdAt';
         queryBuilder.orderBy(sortField, sortOrder);
 
         // Apply pagination
@@ -165,6 +166,22 @@ export class AdminContentService {
       return this.contentRepository.save(content);
     } catch (error) {
       console.error('Error in AdminContentService.update:', error);
+      throw error;
+    }
+  }
+
+  async patch(id: string, updateContentDto: UpdateContentDto) {
+    try {
+      const content = await this.contentRepository.findOne({ where: { id } });
+
+      if (!content) {
+        throw new NotFoundException('内容不存在');
+      }
+
+      Object.assign(content, updateContentDto);
+      return this.contentRepository.save(content);
+    } catch (error) {
+      console.error('Error in AdminContentService.patch:', error);
       throw error;
     }
   }

@@ -21,37 +21,37 @@ export class Content {
   @Column({ name: 'is_bot', type: 'boolean' })
   isAi: boolean;
 
-  @Column({ name: 'model_tag', type: 'varchar', length: 100, nullable: true })
+  @Column({ name: 'modelTag', type: 'varchar', length: 100, nullable: true })
   modelTag: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   provider: string;
 
-  @Column({ name: 'deception_rate', type: 'float' })
+  @Column({ name: 'deceptionRate', type: 'float' })
   deceptionRate: number;
 
   @Column({ type: 'text' })
   explanation: string;
 
-  @Column({ name: 'total_votes', type: 'int', default: 0 })
+  @Column({ name: 'totalVotes', type: 'int', default: 0 })
   totalVotes: number;
 
-  @Column({ name: 'ai_votes', type: 'int', default: 0 })
+  @Column({ name: 'aiVotes', type: 'int', default: 0 })
   aiVotes: number;
 
-  @Column({ name: 'human_votes', type: 'int', default: 0 })
+  @Column({ name: 'humanVotes', type: 'int', default: 0 })
   humanVotes: number;
 
-  @Column({ name: 'correct_votes', type: 'int', default: 0 })
+  @Column({ name: 'correctVotes', type: 'int', default: 0 })
   correctVotes: number;
 
   @ManyToOne(() => User, user => user.contents, { nullable: true })
-  @JoinColumn({ name: 'author_id' })
+  @JoinColumn({ name: 'authorId' })
   author: User;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

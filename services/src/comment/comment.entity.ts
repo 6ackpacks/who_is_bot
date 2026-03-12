@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
-  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity('comments')
@@ -11,27 +10,19 @@ export class Comment {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ name: 'content_id', type: 'varchar', length: 36 })
+  @Column({ name: 'contentId', type: 'varchar', length: 36 })
   contentId: string;
 
-  @Column({ name: 'user_id', type: 'varchar', length: 36, nullable: true })
+  @Column({ name: 'userId', type: 'varchar', length: 36, nullable: true })
   userId: string;
 
-  @Column({ name: 'guest_id', type: 'varchar', length: 50, nullable: true })
-  guestId: string;
-
-  @Column({ type: 'text' })
+  // comments 表中实际列名为 text，不是 content
+  @Column({ name: 'text', type: 'text' })
   content: string;
-
-  @Column({ name: 'parent_id', type: 'varchar', length: 36, nullable: true })
-  parentId: string;
 
   @Column({ type: 'int', default: 0 })
   likes: number;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
 }

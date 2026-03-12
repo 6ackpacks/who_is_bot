@@ -111,9 +111,10 @@ export class CommentService {
     }
 
     // 使用JOIN一次性获取用户的所有评论及关联的内容信息，避免N+1问题
+    // 注意：content 表（单数）对应 Content 实体，不是 contents
     const commentsWithContent = await this.commentRepository
       .createQueryBuilder('comment')
-      .leftJoin('contents', 'content', 'content.id = comment.content_id')
+      .leftJoin('content', 'content', 'content.id = comment.contentId')
       .select([
         'comment.id',
         'comment.contentId',

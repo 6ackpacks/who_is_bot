@@ -14,12 +14,12 @@ export class Admin {
   @Column({ type: 'enum', enum: ['super', 'normal'], default: 'normal' })
   role: 'super' | 'normal';
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: 'createdAt' })
   createdAt: Date;
 
-  @Column({ name: 'last_login_at', type: 'timestamp', nullable: true })
+  @Column({ name: 'lastLoginAt', type: 'timestamp', nullable: true })
   lastLoginAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: 'updatedAt' })
   updatedAt: Date;
 }

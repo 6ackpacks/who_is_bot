@@ -16,6 +16,8 @@ import { AdminContentController } from './admin-content.controller';
 import { AdminContentService } from './admin-content.service';
 import { AdminCommentController } from './admin-comment.controller';
 import { AdminCommentService } from './admin-comment.service';
+import { AdminStatsController } from './admin-stats.controller';
+import { AdminStatsService } from './admin-stats.service';
 import { AdminGuard } from './guards/admin.guard';
 
 @Module({
@@ -36,12 +38,14 @@ import { AdminGuard } from './guards/admin.guard';
     AdminUserController,
     AdminContentController,
     AdminCommentController,
+    AdminStatsController,
   ],
   providers: [
     AdminAuthService,
     AdminUserService,
     AdminContentService,
     AdminCommentService,
+    AdminStatsService,
     AdminGuard,
   ],
   exports: [

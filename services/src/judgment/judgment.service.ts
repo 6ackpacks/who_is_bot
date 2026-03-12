@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Judgment } from './judgment.entity';
 import { Content } from '../content/content.entity';
 import { User } from '../user/user.entity';
 import { SubmitJudgmentDto } from './dto/submit-judgment.dto';
+import { QueryJudgmentDto } from './dto/query-judgment.dto';
+import { UpdateJudgmentDto } from './dto/update-judgment.dto';
+import { JudgmentListResponseDto, JudgmentResponseDto } from './dto/judgment-response.dto';
 
 @Injectable()
 export class JudgmentService {
@@ -284,17 +287,154 @@ export class JudgmentService {
   }
 
   /**
+   * 获取判定列表（支持分页、筛选）
+   */
+  async findAll(query: QueryJudgmentDto): Promise<JudgmentListResponseDto> {
+    const { page = 1, limit = 20, userId, contentId, userChoice, isCorrect, sortBy = 'created_at', sortOrder = 'DESC' } = query;
+
+    const queryBuilder = this.judgmentRepository
+      .createQueryBuilder('judgment')
+      .leftJoinAndSelect('judgment.content', 'content');
+
+    // 应用筛选条件：QueryBuilder 中使用实体属性名（驼峰），TypeORM 会自动转换为 DB 列名
+    if (userId) {
+      queryBuilder.andWhere('judgment.userId = :userId', { userId });
+    }
+
+    if (contentId) {
+      queryBuilder.andWhere('judgment.contentId = :contentId', { contentId });
+    }
+
+    if (userChoice) {
+      queryBuilder.andWhere('judgment.userChoice = :userChoice', { userChoice });
+    }
+
+    if (isCorrect !== undefined) {
+      const isCorrectBool = isCorrect === 'true';
+      queryBuilder.andWhere('judgment.isCorrect = :isCorrect', { isCorrect: isCorrectBool });
+    }
+
+    // 应用排序：QueryBuilder 中必须使用实体属性名（驼峰），不是 DB 列名
+    const sortFieldMap: Record<string, string> = {
+      'created_at': 'createdAt',
+      'user_choice': 'userChoice',
+    };
+    const sortField = sortFieldMap[sortBy] || 'createdAt';
+    queryBuilder.orderBy(`judgment.${sortField}`, sortOrder);
+
+    // 分页
+    const skip = (page - 1) * limit;
+    queryBuilder.skip(skip).take(limit);
+
+    // 执行查询
+    const [judgments, total] = await queryBuilder.getManyAndCount();
+
+    // 格式化返回数据
+    const data: JudgmentResponseDto[] = judgments.map((judgment) => ({
+      id: judgment.id,
+      userId: judgment.userId,
+      contentId: judgment.contentId,
+      userChoice: judgment.userChoice,
+      isCorrect: judgment.isCorrect,
+      guestId: judgment.guestId,
+      createdAt: judgment.createdAt,
+      content: judgment.content ? {
+        id: judgment.content.id,
+        title: judgment.content.title,
+        type: judgment.content.type,
+        url: judgment.content.url,
+      } : undefined,
+    }));
+
+    return {
+      data,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * 获取单个判定详情
+   */
+  async findOne(id: string): Promise<JudgmentResponseDto> {
+    const judgment = await this.judgmentRepository
+      .createQueryBuilder('judgment')
+      .leftJoinAndSelect('judgment.content', 'content')
+      .where('judgment.id = :id', { id })
+      .getOne();
+
+    if (!judgment) {
+      throw new NotFoundException(`判定记录 ${id} 不存在`);
+    }
+
+    return {
+      id: judgment.id,
+      userId: judgment.userId,
+      contentId: judgment.contentId,
+      userChoice: judgment.userChoice,
+      isCorrect: judgment.isCorrect,
+      guestId: judgment.guestId,
+      createdAt: judgment.createdAt,
+      content: judgment.content ? {
+        id: judgment.content.id,
+        title: judgment.content.title,
+        type: judgment.content.type,
+        url: judgment.content.url,
+      } : undefined,
+    };
+  }
+
+  /**
+   * 更新判定状态
+   */
+  async update(id: string, updateDto: UpdateJudgmentDto): Promise<JudgmentResponseDto> {
+    const judgment = await this.judgmentRepository.findOne({ where: { id } });
+
+    if (!judgment) {
+      throw new NotFoundException(`判定记录 ${id} 不存在`);
+    }
+
+    // 更新字段
+    if (updateDto.userChoice !== undefined) {
+      judgment.userChoice = updateDto.userChoice;
+    }
+
+    if (updateDto.isCorrect !== undefined) {
+      judgment.isCorrect = updateDto.isCorrect;
+    }
+
+    await this.judgmentRepository.save(judgment);
+
+    return this.findOne(id);
+  }
+
+  /**
+   * 删除判定
+   */
+  async remove(id: string): Promise<void> {
+    const judgment = await this.judgmentRepository.findOne({ where: { id } });
+
+    if (!judgment) {
+      throw new NotFoundException(`判定记录 ${id} 不存在`);
+    }
+
+    await this.judgmentRepository.remove(judgment);
+  }
+
+  /**
    * 获取用户判定历史
    * 优化：使用JOIN查询避免N+1问题
    */
-  async getUserJudgments(userId: string) {
+  async getUserJudgments(userId: string, limit: number = 20) {
     // 使用JOIN一次性获取判定和内容信息，避免N+1查询问题
     const judgmentsWithContent = await this.judgmentRepository
       .createQueryBuilder('judgment')
       .leftJoinAndSelect('judgment.content', 'content')
-      .where('judgment.user_id = :userId', { userId })
-      .orderBy('judgment.created_at', 'DESC')
-      .take(20)
+      .where('judgment.userId = :userId', { userId })
+      .orderBy('judgment.createdAt', 'DESC')
+      .take(limit)
       .getMany();
 
     // 格式化返回数据
