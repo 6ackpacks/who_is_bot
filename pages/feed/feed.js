@@ -738,6 +738,14 @@ Page({
       return;
     }
 
+    if (!currentItem || !currentItem.id) {
+      wx.showToast({
+        title: '内容加载中，请稍后再试',
+        icon: 'none'
+      });
+      return;
+    }
+
     const commentData = {
       contentId: currentItem.id,
       content: commentInput.trim()
