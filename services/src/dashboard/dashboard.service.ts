@@ -140,10 +140,10 @@ export class DashboardService {
 
       const result = await this.userRepository
         .createQueryBuilder('user')
-        .select('DATE(user.created_at)', 'date')
+        .select('DATE(user.createdAt)', 'date')
         .addSelect('COUNT(*)', 'count')
-        .where('user.created_at >= :startDate', { startDate })
-        .groupBy('DATE(user.created_at)')
+        .where('user.createdAt >= :startDate', { startDate })
+        .groupBy('DATE(user.createdAt)')
         .orderBy('date', 'ASC')
         .getRawMany();
 
@@ -220,7 +220,7 @@ export class DashboardService {
     try {
       const contents = await this.contentRepository
         .createQueryBuilder('content')
-        .orderBy('content.total_votes', 'DESC')
+        .orderBy('content.totalVotes', 'DESC')
         .limit(limit)
         .getMany();
 

@@ -104,11 +104,11 @@ export class AdminStatsService {
     const stats = await this.contentRepository
       .createQueryBuilder('content')
       .select('content.type', 'type')
-      .addSelect('content.is_bot', 'isAi')
+      .addSelect('content.isAi', 'isAi')
       .addSelect('COUNT(*)', 'count')
       .addSelect('AVG(content.totalVotes)', 'avgVotes')
       .addSelect('SUM(content.totalVotes)', 'totalVotes')
-      .groupBy('content.type, content.is_bot')
+      .groupBy('content.type, content.isAi')
       .getRawMany();
 
     return {
