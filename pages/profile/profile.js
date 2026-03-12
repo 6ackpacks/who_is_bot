@@ -119,18 +119,12 @@ Page({
   // 加载用户数据
   loadUserData() {
     const userInfo = auth.getUserInfo();
-    console.log('========== 个人主页加载用户数据 ==========');
-    console.log('从 storage 读取的用户信息:', userInfo);
+    const userId = auth.getUserId();
 
     if (userInfo) {
-      // 生成默认头像，使用用户昵称作为种子
+      // 先用本地缓存信息快速渲染
       const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userInfo.nickname || 'User')}`;
-
       const avatar = userInfo.avatar || defaultAvatar;
-      console.log('用户昵称:', userInfo.nickname);
-      console.log('存储的头像:', userInfo.avatar);
-      console.log('默认头像:', defaultAvatar);
-      console.log('最终使用的头像:', avatar);
 
       this.setData({
         userInfo: {
@@ -139,12 +133,40 @@ Page({
           bio: userInfo.bio || ''
         }
       });
+    }
 
-      console.log('设置到页面的头像:', avatar);
-      console.log('======================================');
-    } else {
-      console.log('未找到用户信息');
-      console.log('======================================');
+    // 从后端获取实时统计数据（totalJudged、accuracy 等）
+    if (userId) {
+      api.getUserProfile(userId)
+        .then(res => {
+          if (res && res.success && res.data) {
+            const profile = res.data;
+
+            // 用后端返回的头像和昵称覆盖（如果有）
+            const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.nickname || 'User')}`;
+            const avatar = profile.avatar || defaultAvatar;
+
+            this.setData({
+              userInfo: {
+                nickname: profile.nickname || this.data.userInfo.nickname,
+                avatar: avatar,
+                bio: profile.bio || this.data.userInfo.bio || ''
+              },
+              judgmentStats: {
+                total: profile.totalJudged || 0,
+                correct: Math.round(((profile.accuracy || 0) * (profile.totalJudged || 0)) / 100),
+                accuracy: Math.round((profile.accuracy || 0) * 10) / 10
+              },
+              commentStats: {
+                totalComments: profile.totalComments || 0,
+                totalLikes: profile.totalLikes || 0
+              }
+            });
+          }
+        })
+        .catch(() => {
+          // 静默处理，已用本地缓存数据显示
+        });
     }
   },
 
@@ -210,9 +232,11 @@ Page({
 
     api.getUserJudgments(userId)
       .then(res => {
-        if (res && Array.isArray(res)) {
-          const judgments = res.map(item => {
-            // 验证 contentType 是否有效
+        // 后端 GET /judgment/history 直接返回数组
+        const rawList = Array.isArray(res) ? res : (res && Array.isArray(res.data) ? res.data : []);
+
+        if (rawList.length > 0) {
+          const judgments = rawList.map(item => {
             const validTypes = ['text', 'image', 'video'];
             const contentType = validTypes.includes(item.contentType) ? item.contentType : 'text';
 
@@ -228,25 +252,20 @@ Page({
           });
           this.setData({ judgments });
 
-          // 计算判断统计
-          const total = judgments.length;
-          const correct = judgments.filter(j => j.isCorrect).length;
-          const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
-
-          this.setData({
-            judgmentStats: {
-              total,
-              correct,
-              accuracy
-            }
-          });
+          // 仅当 profile 接口未提供统计时用列表数据兜底
+          if (this.data.judgmentStats.total === 0) {
+            const total = judgments.length;
+            const correct = judgments.filter(j => j.isCorrect).length;
+            const accuracy = total > 0 ? Math.round((correct / total) * 100) : 0;
+            this.setData({
+              judgmentStats: { total, correct, accuracy }
+            });
+          }
         }
       })
-      .catch(err => {
-        // 静默处理错误，设置默认空数组
+      .catch(() => {
         this.setData({
           judgments: [],
-          judgmentStats: { total: 0, correct: 0, accuracy: 0 }
         });
       });
   },
@@ -265,14 +284,13 @@ Page({
             content: item.content,
             likes: item.likes || 0,
             time: this.formatTime(item.createdAt),
-            // 使用可选链避免 item.content 为 null 时出错
-            contentTitle: item.content?.title || '未知内容'
+            // 后端返回 contentItem 对象包含关联内容信息
+            contentTitle: (item.contentItem && item.contentItem.title) || '未知内容'
           }));
           this.setData({ comments });
         }
       })
-      .catch(err => {
-        // 静默处理错误，设置空数组
+      .catch(() => {
         this.setData({ comments: [] });
       });
   },

@@ -423,6 +423,18 @@ function submitJudgment(data) {
 }
 
 /**
+ * 获取用户完整个人资料
+ * 对应后端 GET /user/:id/profile
+ */
+function getUserProfile(userId) {
+  return cloudRequest({
+    path: `/user/${userId}/profile`,
+    method: 'GET',
+    suppressErrorToast: true
+  });
+}
+
+/**
  * 获取用户统计数据
  */
 function getUserStats(userId) {
@@ -735,6 +747,7 @@ module.exports = {
   getFeed,
   submitJudgment,
   getUserStats,
+  getUserProfile,
   getUserJudgments,
   getUserRank,
   getContentById,
