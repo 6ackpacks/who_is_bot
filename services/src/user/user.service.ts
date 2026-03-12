@@ -310,7 +310,7 @@ export class UserService {
     const achievementStats = await this.userAchievementRepository
       .createQueryBuilder('ua')
       .select('COUNT(*)', 'unlocked')
-      .where('ua.userId = :userId', { userId })
+      .where('ua.user = :userId', { userId })
       .getRawOne();
 
     const totalAchievements = await this.userAchievementRepository
@@ -396,14 +396,14 @@ export class UserService {
     // 2. 获取最近的评论记录（使用JOIN避免N+1问题）
     const comments = await this.commentRepository
       .createQueryBuilder('comment')
-      .leftJoin('contents', 'content', 'content.id = comment.content_id')
+      .leftJoin('content', 'content', 'content.id = comment.contentId')
       .select([
-        'comment.id',
-        'comment.content',
-        'comment.contentId',
-        'comment.createdAt',
-        'content.title',
-        'content.type',
+        'comment.id AS comment_id',
+        'comment.content AS comment_content',
+        'comment.contentId AS comment_contentId',
+        'comment.createdAt AS comment_createdAt',
+        'content.title AS content_title',
+        'content.type AS content_type',
       ])
       .where('comment.userId = :userId', { userId })
       .orderBy('comment.createdAt', 'DESC')
@@ -411,11 +411,12 @@ export class UserService {
       .getRawMany();
 
     comments.forEach((comment) => {
+      const text = comment.comment_content || '';
       activities.push({
         id: comment.comment_id,
         type: 'comment',
         title: '发表评论',
-        description: comment.comment_content.substring(0, 50) + (comment.comment_content.length > 50 ? '...' : ''),
+        description: text.substring(0, 50) + (text.length > 50 ? '...' : ''),
         contentId: comment.comment_contentId,
         contentTitle: comment.content_title,
         contentType: comment.content_type,
@@ -446,6 +447,19 @@ export class UserService {
     // 4. 按时间排序并限制数量
     activities.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
     return activities.slice(0, limit);
+  }
+
+  /**
+   * 更新用户个人资料（头像、昵称）
+   */
+  async updateProfile(userId: string, data: { avatar?: string; nickname?: string }): Promise<User> {
+    const fields: Partial<User> = {};
+    if (data.avatar !== undefined) fields.avatar = data.avatar;
+    if (data.nickname !== undefined) fields.nickname = data.nickname;
+    if (Object.keys(fields).length > 0) {
+      await this.userRepository.update(userId, fields);
+    }
+    return this.findOne(userId);
   }
 
   /**

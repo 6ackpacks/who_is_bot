@@ -122,6 +122,23 @@ export class UserController {
   }
 
   /**
+   * 更新当前用户个人资料（需要认证）
+   */
+  @Patch('profile')
+  @UseGuards(JwtAuthGuard)
+  async updateProfile(
+    @CurrentUser() user: CurrentUserData,
+    @Body() body: { avatar?: string; nickname?: string },
+  ) {
+    try {
+      const updated = await this.userService.updateProfile(user.userId, body);
+      return { success: true, data: updated };
+    } catch (error) {
+      return { success: false, message: error.message || '更新资料失败' };
+    }
+  }
+
+  /**
    * 更新用户统计（需要认证，只能更新自己的数据）
    * 注意：这个端点应该被废弃，统计应该由系统自动更新
    */
