@@ -522,6 +522,7 @@ Page({
   // 下一题
   handleNext() {
     const nextIndex = (this.data.currentIndex + 1) % this.data.displayItems.length;
+    const nextItem = this.data.displayItems[nextIndex];
 
     // 添加卡片重置动画
     this.setData({
@@ -531,14 +532,17 @@ Page({
     setTimeout(() => {
       this.setData({
         currentIndex: nextIndex,
-        currentItem: this.data.displayItems[nextIndex],
+        currentItem: nextItem,
         viewState: 'judging',
         showDetails: false,
         userChoice: null,
         isCorrect: false,
         judgeButtonDisabled: false,
         cardSwipeClass: '',
-        likedComments: [] // 重置已点赞列表
+        likedComments: [], // 重置已点赞列表
+        comments: [],       // 重置评论列表
+        commentInput: '',   // 清空评论输入框
+        replyingTo: null    // 清除回复状态
       });
     }, 100);
   },
@@ -598,15 +602,19 @@ Page({
   // Swiper 切换事件
   onSwiperChange(e) {
     const newIndex = e.detail.current;
+    const newItem = this.data.displayItems[newIndex];
     console.log('Swiper changed to index:', newIndex);
     this.setData({
       currentIndex: newIndex,
-      currentItem: this.data.displayItems[newIndex],
+      currentItem: newItem,
       viewState: 'judging',  // 切换到新内容时重置为判定状态
       showDetails: false,
       userChoice: null,
       isCorrect: false,
-      videoPlaying: true  // 重置视频播放状态
+      videoPlaying: true,    // 重置视频播放状态
+      comments: [],          // 重置评论列表
+      commentInput: '',      // 清空评论输入框
+      replyingTo: null       // 清除回复状态
     });
   },
 
@@ -748,8 +756,11 @@ Page({
       return;
     }
 
+    // 立刻快照 contentId，防止切题后回调使用错误的 contentId
+    const lockedContentId = currentItem.id;
+
     const commentData = {
-      contentId: currentItem.id,
+      contentId: lockedContentId,
       content: commentInput.trim()
     };
 
@@ -776,8 +787,10 @@ Page({
           replyingTo: null
         });
 
-        // 刷新评论列表
-        this.loadComments();
+        // 只有当前题目仍是提交时的题目，才刷新评论列表
+        if (this.data.currentItem && this.data.currentItem.id === lockedContentId) {
+          this.loadComments();
+        }
       })
       .catch(err => {
         console.error('评论失败', err);
