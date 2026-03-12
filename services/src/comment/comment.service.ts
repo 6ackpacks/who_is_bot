@@ -112,20 +112,22 @@ export class CommentService {
 
     // 使用JOIN一次性获取用户的所有评论及关联的内容信息，避免N+1问题
     // 注意：content 表（单数）对应 Content 实体，不是 contents
+    // 注意：getRawMany() 使用 DB 列名作为别名后缀，comment.content 属性对应 DB 列 text，
+    //       所以原始结果为 comment_text 而非 comment_content，必须用显式 AS 别名统一命名
     const commentsWithContent = await this.commentRepository
       .createQueryBuilder('comment')
       .leftJoin('content', 'content', 'content.id = comment.contentId')
       .select([
-        'comment.id',
-        'comment.contentId',
-        'comment.content',
-        'comment.likes',
-        'comment.createdAt',
-        'content.id',
-        'content.title',
-        'content.type',
-        'content.url',
-        'content.text',
+        'comment.id AS comment_id',
+        'comment.contentId AS comment_contentId',
+        'comment.content AS comment_content',
+        'comment.likes AS comment_likes',
+        'comment.createdAt AS comment_createdAt',
+        'content.id AS content_id',
+        'content.title AS content_title',
+        'content.type AS content_type',
+        'content.url AS content_url',
+        'content.text AS content_text',
       ])
       .where('comment.userId = :userId', { userId })
       .orderBy('comment.createdAt', 'DESC')
