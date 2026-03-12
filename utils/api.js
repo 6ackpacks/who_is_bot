@@ -631,7 +631,7 @@ function wxLogin(code, userInfo) {
 }
 
 /**
- * 更新用户信息
+ * 更新用户信息（通过 userId）
  */
 function updateUserInfo(userId, data) {
   return cloudRequest({
@@ -640,6 +640,21 @@ function updateUserInfo(userId, data) {
     data,
     showLoading: true,
     loadingText: '保存中...'
+  });
+}
+
+/**
+ * 更新当前登录用户的 profile（头像、昵称等）
+ * JWT 携带身份，无需传 userId
+ * 对应后端 PATCH /user/profile
+ */
+function updateProfile(data) {
+  return cloudRequest({
+    path: '/user/profile',
+    method: 'PATCH',
+    data,
+    needAuth: true,
+    showLoading: false
   });
 }
 
@@ -756,6 +771,7 @@ module.exports = {
   mockLogin,
   getUserInfo,
   updateUserInfo,
+  updateProfile,
   getComments,
   getUserCommentStats,
   createComment,

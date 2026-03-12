@@ -61,8 +61,38 @@
       <text class="slogan">在数字迷雾中，寻找唯一的真相。</text>
     </view>
 
-    <!-- 头像和昵称填写区域 -->
-    <view class="profile-section">
+    <!-- ① 默认登录区块：仅在「完善信息」未显示时可见 -->
+    <view hidden="{{showProfileSetup}}">
+      <!-- 登录按钮 -->
+      <button
+        class="login-btn"
+        bindtap="handleWxLogin"
+        loading="{{loading}}"
+        disabled="{{loading}}"
+      >
+        <text class="btn-text">{{loading ? '验证中...' : '微信号一键登录'}}</text>
+      </button>
+
+      <!-- 隐私提示 -->
+      <view class="privacy-tips">
+        <text class="tips-text">登录即表示同意</text>
+        <text class="tips-link" bindtap="showPrivacy">用户协议</text>
+        <text class="tips-text">和</text>
+        <text class="tips-link" bindtap="showPrivacy">隐私政策</text>
+      </view>
+
+      <!-- 跳过按钮 -->
+      <view class="skip-wrapper">
+        <text class="skip-btn" bindtap="handleSkip">暂不登录，先体验</text>
+      </view>
+    </view>
+
+    <!-- ② 完善信息区块：首次登录后展示 -->
+    <view hidden="{{!showProfileSetup}}" class="profile-section">
+      <view class="profile-setup-title">
+        <text class="profile-setup-hint">登录成功！请完善您的信息</text>
+      </view>
+
       <!-- 头像选择按钮（open-type=chooseAvatar 是微信官方当前唯一有效方案） -->
       <button
         class="avatar-btn"
@@ -89,30 +119,13 @@
           maxlength="20"
         />
       </view>
+
+      <!-- 确认按钮 -->
+      <button class="login-btn confirm-btn" bindtap="confirmProfile">
+        <text class="btn-text">确认并进入</text>
+      </button>
     </view>
 
-    <!-- 登录按钮 -->
-    <button
-      class="login-btn"
-      bindtap="handleWxLogin"
-      loading="{{loading}}"
-      disabled="{{loading || !canLogin}}"
-    >
-      <text class="btn-text">{{loading ? '验证中...' : '微信号一键登录'}}</text>
-    </button>
-
-    <!-- 隐私提示 -->
-    <view class="privacy-tips">
-      <text class="tips-text">登录即表示同意</text>
-      <text class="tips-link" bindtap="showPrivacy">用户协议</text>
-      <text class="tips-text">和</text>
-      <text class="tips-link" bindtap="showPrivacy">隐私政策</text>
-    </view>
-
-    <!-- 跳过按钮 -->
-    <view class="skip-wrapper">
-      <text class="skip-btn" bindtap="handleSkip">暂不登录，先体验</text>
-    </view>
   </view>
 
 </view>

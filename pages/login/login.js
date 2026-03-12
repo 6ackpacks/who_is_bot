@@ -5,15 +5,18 @@ const auth = require('../../utils/auth.js');
 Page({
   data: {
     loading: false,
+    // 登录主流程状态
+    showProfileSetup: false, // 是否显示完善信息区块（首次登录时展示）
+    // 完善信息区块使用的字段
     avatarUrl: '',    // 用户选择的头像临时路径
     nickname: '',     // 用户输入的昵称
-    canLogin: false   // 是否满足登录条件（昵称至少2字符）
+    // 临时保存登录后返回的用户信息，供 confirmProfile 使用
+    _pendingUser: null
   },
 
   onLoad(options) {
     // 检查是否已登录
     if (auth.isLoggedIn()) {
-      // 已登录，跳转到首页
       this.redirectToHome();
     }
 
@@ -21,10 +24,92 @@ Page({
     this.redirectUrl = options.redirect || '/pages/feed/feed';
   },
 
+  // ──────────────────────────────────────────────────────────────
+  // 主登录按钮：直接调微信登录，不依赖头像/昵称
+  // ──────────────────────────────────────────────────────────────
+  handleWxLogin() {
+    if (this.data.loading) return;
+
+    this.setData({ loading: true });
+
+    wx.login({
+      success: (loginRes) => {
+        if (!loginRes.code) {
+          console.error('获取登录码失败:', loginRes.errMsg);
+          this.setData({ loading: false });
+          wx.showToast({ title: '登录失败，请重试', icon: 'none' });
+          return;
+        }
+
+        console.log('获取登录码成功:', loginRes.code);
+
+        // 静默登录：昵称和头像传空，让后端用默认值创建用户
+        api.wxLogin(loginRes.code, { nickName: '微信用户', avatarUrl: '' })
+          .then(res => {
+            console.log('微信登录响应:', res);
+
+            if (!res.success || !res.data) {
+              throw new Error('登录失败');
+            }
+
+            const user = res.data;
+
+            // 确定最终头像
+            const avatar = user.avatar ||
+              `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.nickname || 'User')}`;
+
+            // 保存登录信息到本地
+            auth.saveLoginInfo({
+              token: user.accessToken,
+              userId: user.id,
+              userInfo: { ...user, avatar }
+            });
+
+            this.setData({ loading: false });
+
+            // 判断是否首次登录（nickname 为空或是后端默认值）
+            const isFirstLogin = !user.nickname ||
+              user.nickname === '微信用户' ||
+              user.nickname === 'User' ||
+              user.nickname === 'WeiXin User';
+
+            if (isFirstLogin) {
+              // 首次登录：显示完善信息区块，不跳转
+              this.setData({
+                showProfileSetup: true,
+                _pendingUser: { ...user, avatar }
+              });
+            } else {
+              // 老用户：直接进入主页
+              wx.showToast({ title: '登录成功', icon: 'success', duration: 1500 });
+              setTimeout(() => this.redirectToHome(), 1500);
+            }
+          })
+          .catch(err => {
+            console.error('微信登录失败:', err);
+            this.setData({ loading: false });
+            wx.showToast({
+              title: err.message || '登录失败，请重试',
+              icon: 'none',
+              duration: 2000
+            });
+          });
+      },
+      fail: (err) => {
+        console.error('wx.login 调用失败:', err);
+        this.setData({ loading: false });
+        wx.showToast({ title: '登录失败，请重试', icon: 'none' });
+      }
+    });
+  },
+
+  // ──────────────────────────────────────────────────────────────
+  // 完善信息区块回调
+  // ──────────────────────────────────────────────────────────────
+
   /**
    * 用户点击 open-type="chooseAvatar" 按钮后的回调
    * 微信官方自 2022 年起的唯一有效头像获取方式
-   * e.detail.avatarUrl 为临时路径，需上传到服务器持久化
    */
   onChooseAvatar(e) {
     const avatarUrl = e.detail.avatarUrl;
@@ -36,121 +121,55 @@ Page({
    * 昵称输入框回调（type="nickname" 会弹出微信昵称键盘）
    */
   onNicknameInput(e) {
-    const nickname = e.detail.value || '';
-    // 昵称至少 2 个字符才能登录（与后端 MinLength(2) 校验对齐）
-    this.setData({
-      nickname,
-      canLogin: nickname.trim().length >= 2
-    });
+    this.setData({ nickname: e.detail.value || '' });
   },
 
-  // 微信登录
-  handleWxLogin() {
-    if (this.data.loading) return;
+  /**
+   * 确认完善信息，更新后端并跳转主页
+   */
+  confirmProfile() {
+    const { avatarUrl, nickname } = this.data;
 
-    const nickname = this.data.nickname.trim();
-    if (nickname.length < 2) {
-      wx.showToast({
-        title: '请先输入昵称（至少2个字符）',
-        icon: 'none',
-        duration: 2000
-      });
+    if (!nickname || nickname.trim().length < 2) {
+      wx.showToast({ title: '昵称至少需要2个字符', icon: 'none', duration: 2000 });
       return;
     }
 
-    this.setData({ loading: true });
+    const trimmedNickname = nickname.trim();
 
-    // 调用 wx.login 获取登录码，头像和昵称已在用户主动操作时获取
-    wx.login({
-      success: (loginRes) => {
-        if (loginRes.code) {
-          console.log('获取登录码成功:', loginRes.code);
+    wx.showLoading({ title: '保存中...', mask: true });
 
-          // 构造 userInfo，与原 wx.getUserProfile 返回格式兼容
-          const userInfo = {
-            nickName: nickname,
-            avatarUrl: this.data.avatarUrl || ''
-          };
+    const userId = auth.getUserId();
 
-          // 调用后端微信登录接口
-          api.wxLogin(loginRes.code, userInfo)
-            .then(res => {
-              console.log('微信登录成功:', res);
-
-              if (res.success && res.data) {
-                console.log('========== 登录成功 ==========');
-                console.log('后端返回的完整数据:', res.data);
-                console.log('后端返回的头像字段:', res.data.avatar);
-
-                // 确保头像字段存在，优先级：后端 > 本地选择 > 默认生成
-                const avatar = res.data.avatar ||
-                               this.data.avatarUrl ||
-                               `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(res.data.nickname || 'User')}`;
-
-                console.log('最终使用的头像:', avatar);
-
-                // 保存用户信息和 token
-                const savedUserInfo = {
-                  ...res.data,
-                  avatar: avatar
-                };
-
-                auth.saveLoginInfo({
-                  token: res.data.accessToken,
-                  userId: res.data.id,
-                  userInfo: savedUserInfo
-                });
-
-                // 验证保存的数据
-                const savedInfo = auth.getUserInfo();
-                console.log('保存后的用户信息:', savedInfo);
-                console.log('保存后的头像字段:', savedInfo?.avatar);
-                console.log('================================');
-
-                this.setData({ loading: false });
-
-                wx.showToast({
-                  title: '登录成功',
-                  icon: 'success',
-                  duration: 1500
-                });
-
-                // 延迟跳转，让用户看到成功提示
-                setTimeout(() => {
-                  this.redirectToHome();
-                }, 1500);
-              } else {
-                throw new Error('登录失败');
-              }
-            })
-            .catch(err => {
-              console.error('微信登录失败:', err);
-              this.setData({ loading: false });
-              wx.showToast({
-                title: err.message || '登录失败，请重试',
-                icon: 'none',
-                duration: 2000
-              });
-            });
-        } else {
-          console.error('获取登录码失败:', loginRes.errMsg);
-          this.setData({ loading: false });
-          wx.showToast({
-            title: '登录失败，请重试',
-            icon: 'none'
-          });
-        }
-      },
-      fail: (err) => {
-        console.error('wx.login 调用失败:', err);
-        this.setData({ loading: false });
-        wx.showToast({
-          title: '登录失败，请重试',
-          icon: 'none'
+    // 调用更新用户接口
+    api.updateProfile({ avatar: avatarUrl, nickname: trimmedNickname })
+      .then(() => {
+        // 更新本地存储的用户信息
+        auth.updateUserInfo({
+          avatar: avatarUrl || this.data._pendingUser?.avatar || '',
+          nickname: trimmedNickname
         });
-      }
-    });
+
+        wx.hideLoading();
+        wx.showToast({ title: '设置成功', icon: 'success', duration: 1500 });
+        setTimeout(() => this.redirectToHome(), 1500);
+      })
+      .catch(err => {
+        wx.hideLoading();
+        console.error('更新用户信息失败:', err);
+        // 即使后端更新失败，也先在本地保存，不阻断流程
+        auth.updateUserInfo({
+          avatar: avatarUrl || this.data._pendingUser?.avatar || '',
+          nickname: trimmedNickname
+        });
+        wx.showToast({ title: '保存成功', icon: 'success', duration: 1500 });
+        setTimeout(() => this.redirectToHome(), 1500);
+      });
   },
+
+  // ──────────────────────────────────────────────────────────────
+  // 工具方法
+  // ──────────────────────────────────────────────────────────────
 
   // 跳转到首页
   redirectToHome() {
@@ -168,7 +187,6 @@ Page({
       cancelText: '去登录',
       success: (res) => {
         if (res.confirm) {
-          // 标记为游客模式
           auth.setGuestMode(true);
           this.redirectToHome();
         }

@@ -192,13 +192,32 @@
   }
 }
 
-/* 头像和昵称填写区域 */
+/* 头像和昵称填写区域（完善信息区块） */
 .profile-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 60rpx;
   animation: fadeInUp 1s ease-out 0.3s both;
+  width: 100%;
+}
+
+/* 完善信息区块顶部提示 */
+.profile-setup-title {
+  margin-bottom: 40rpx;
+  text-align: center;
+}
+
+.profile-setup-hint {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-main, #1D1C16);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* 确认按钮（复用 login-btn，加一点顶部间距区分） */
+.confirm-btn {
+  margin-top: 40rpx;
 }
 
 /* 头像选择按钮 */
