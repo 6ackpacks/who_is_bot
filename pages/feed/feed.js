@@ -563,11 +563,34 @@ Page({
     console.error('Current video URL:', this.data.currentItem?.url);
     console.error('Current item type:', this.data.currentItem?.type);
     console.error('Current item full data:', this.data.currentItem);
-    wx.showToast({
-      title: '视频加载失败',
-      icon: 'none',
-      duration: 2000
-    });
+
+    // 将当前视频内容降级为文字展示，避免白屏
+    const currentIndex = this.data.currentIndex;
+    const displayItems = this.data.displayItems;
+    if (displayItems && displayItems[currentIndex]) {
+      // 更新 displayItems 中对应条目，将 type 改为 text，清空 url
+      const updatedItems = displayItems.map((item, idx) => {
+        if (idx === currentIndex) {
+          return Object.assign({}, item, { type: 'text', url: null });
+        }
+        return item;
+      });
+      this.setData({
+        displayItems: updatedItems,
+        currentItem: updatedItems[currentIndex]
+      });
+      wx.showToast({
+        title: '视频无法加载，已切换为文字模式',
+        icon: 'none',
+        duration: 2000
+      });
+    } else {
+      wx.showToast({
+        title: '视频加载失败',
+        icon: 'none',
+        duration: 2000
+      });
+    }
   },
 
   // Swiper 切换事件
