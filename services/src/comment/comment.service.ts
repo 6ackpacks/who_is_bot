@@ -110,47 +110,55 @@ export class CommentService {
       };
     }
 
-    // 获取用户的所有评论
-    const comments = await this.commentRepository.find({
-      where: { userId },
-      order: { createdAt: 'DESC' },
-    });
-
-    // 获取所有相关的内容ID
-    const contentIds = comments
-      .map(c => c.contentId)
-      .filter((id, index, self) => self.indexOf(id) === index); // 去重
-
-    // 批量查询内容信息
-    const contents = contentIds.length > 0
-      ? await this.contentRepository.find({
-          where: { id: In(contentIds) },
-        })
-      : [];
-
-    // 创建内容ID到内容对象的映射
-    const contentMap = new Map(contents.map(c => [c.id, c]));
+    // 使用JOIN一次性获取用户的所有评论及关联的内容信息，避免N+1问题
+    const commentsWithContent = await this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoin('contents', 'content', 'content.id = comment.content_id')
+      .select([
+        'comment.id',
+        'comment.contentId',
+        'comment.content',
+        'comment.likes',
+        'comment.createdAt',
+        'content.id',
+        'content.title',
+        'content.type',
+        'content.url',
+        'content.text',
+      ])
+      .where('comment.userId = :userId', { userId })
+      .orderBy('comment.createdAt', 'DESC')
+      .getRawMany();
 
     // 创建用户映射（只包含当前用户）
     const userMap = new Map([[user.id, user]]);
 
     // 格式化评论并附加内容信息
-    const formattedComments = comments.map(comment => {
-      const content = contentMap.get(comment.contentId);
-      return {
-        ...this.formatComment(comment, userMap),
-        content: content ? {
-          id: content.id,
-          title: content.title,
-          type: content.type,
-          url: content.url,
-          text: content.text,
-        } : null,
-      };
-    });
+    const formattedComments = commentsWithContent.map(row => ({
+      id: row.comment_id,
+      contentId: row.comment_contentId,
+      content: row.comment_content,
+      likes: row.comment_likes,
+      createdAt: new Date(row.comment_createdAt),
+      user: {
+        id: user.id,
+        nickname: user.nickname,
+        avatar: (user.avatar && !user.avatar.includes('example.com') && !user.avatar.includes('placeholder.com'))
+          ? user.avatar
+          : `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(user.nickname || 'User')}`,
+        level: user.level,
+      },
+      contentItem: row.content_id ? {
+        id: row.content_id,
+        title: row.content_title,
+        type: row.content_type,
+        url: row.content_url,
+        text: row.content_text,
+      } : null,
+    }));
 
     return {
-      total: comments.length,
+      total: formattedComments.length,
       comments: formattedComments,
     };
   }

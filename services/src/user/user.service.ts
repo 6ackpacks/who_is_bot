@@ -1,8 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserProfileDto, UserActivityDto } from './dto/user-profile.dto';
+import { UserAchievement } from '../achievement/user-achievement.entity';
+import { Comment } from '../comment/comment.entity';
+import { Judgment } from '../judgment/judgment.entity';
 
 /**
  * 排行榜缓存接口
@@ -40,6 +44,12 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(UserAchievement)
+    private userAchievementRepository: Repository<UserAchievement>,
+    @InjectRepository(Comment)
+    private commentRepository: Repository<Comment>,
+    @InjectRepository(Judgment)
+    private judgmentRepository: Repository<Judgment>,
   ) {}
 
   async findAll(): Promise<User[]> {
@@ -110,19 +120,18 @@ export class UserService {
           'user.uid',
           'user.avatar',
           'user.accuracy',
-          'user.total_judged',
-          'user.correct_count',
+          'user.totalJudged',
           'user.streak',
-          'user.max_streak',
-          'user.total_bots_busted',
-          'user.weekly_accuracy',
-          'user.weekly_judged',
-          'user.weekly_correct',
+          'user.maxStreak',
+          'user.totalBotsBusted',
+          'user.weeklyAccuracy',
+          'user.weeklyJudged',
+          'user.weeklyCorrect',
           'user.level',
         ])
-        .where('user.total_judged >= :minJudged', { minJudged: 5 })
+        .where('user.totalJudged >= :minJudged', { minJudged: 5 })
         .orderBy('user.accuracy', 'DESC')
-        .addOrderBy('user.total_judged', 'DESC')
+        .addOrderBy('user.totalJudged', 'DESC')
         .limit(this.CACHE_SIZE) // 缓存前100名
         .getMany();
 
@@ -281,5 +290,213 @@ export class UserService {
 
     // 清除排行榜缓存
     this.clearLeaderboardCache();
+  }
+
+  /**
+   * 获取用户完整个人资料
+   * 包含所有前端需要的数据：基本信息、统计、成就、评论等
+   */
+  async getUserProfile(userId: string): Promise<UserProfileDto> {
+    // 1. 获取用户基本信息
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('用户不存在');
+    }
+
+    // 2. 获取成就统计
+    const achievementStats = await this.userAchievementRepository
+      .createQueryBuilder('ua')
+      .select('COUNT(*)', 'unlocked')
+      .where('ua.userId = :userId', { userId })
+      .getRawOne();
+
+    const totalAchievements = await this.userAchievementRepository
+      .createQueryBuilder('a')
+      .select('COUNT(DISTINCT a.achievement_id)', 'total')
+      .getRawOne();
+
+    // 3. 获取评论统计
+    const comments = await this.commentRepository.find({
+      where: { userId },
+      select: ['likes'],
+    });
+
+    const totalComments = comments.length;
+    const totalLikes = comments.reduce((sum, comment) => sum + comment.likes, 0);
+
+    // 4. 计算等级进度
+    const levelInfo = this.calculateLevelProgress(user);
+
+    // 5. 计算正确数
+    const correctCount = Math.round((user.totalJudged * user.accuracy) / 100);
+
+    // 6. 组装完整的个人资料数据
+    const profile: UserProfileDto = {
+      id: user.id,
+      nickname: user.nickname,
+      uid: user.uid,
+      avatar: user.avatar,
+      level: user.level,
+      levelName: this.getLevelName(user.level),
+      totalJudged: user.totalJudged,
+      accuracy: Math.round(user.accuracy * 10) / 10,
+      correctCount,
+      streak: user.streak,
+      maxStreak: user.maxStreak,
+      weeklyAccuracy: Math.round(user.weeklyAccuracy * 10) / 10,
+      weeklyJudged: user.weeklyJudged,
+      weeklyCorrect: user.weeklyCorrect,
+      progress: levelInfo.progress,
+      nextLevel: levelInfo.nextLevel,
+      nextLevelRequirement: levelInfo.nextLevelRequirement,
+      totalAchievements: parseInt(totalAchievements.total) || 0,
+      unlockedAchievements: parseInt(achievementStats.unlocked) || 0,
+      totalComments,
+      totalLikes,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
+    return profile;
+  }
+
+  /**
+   * 获取用户活动记录（最近20条）
+   * 整合判定、评论、成就三种活动类型
+   */
+  async getUserActivities(userId: string, limit: number = 20): Promise<UserActivityDto[]> {
+    const activities: UserActivityDto[] = [];
+
+    // 1. 获取最近的判定记录（使用JOIN避免N+1问题）
+    const judgments = await this.judgmentRepository
+      .createQueryBuilder('judgment')
+      .leftJoinAndSelect('judgment.content', 'content')
+      .where('judgment.userId = :userId', { userId })
+      .orderBy('judgment.createdAt', 'DESC')
+      .take(10)
+      .getMany();
+
+    judgments.forEach((judgment) => {
+      activities.push({
+        id: judgment.id,
+        type: 'judgment',
+        title: judgment.isCorrect ? '判定正确' : '判定错误',
+        description: `判断「${judgment.content?.title || '内容已删除'}」为 ${judgment.userChoice === 'ai' ? 'AI' : '人类'}`,
+        isCorrect: judgment.isCorrect,
+        contentId: judgment.contentId,
+        contentTitle: judgment.content?.title,
+        contentType: judgment.content?.type,
+        createdAt: judgment.createdAt,
+      });
+    });
+
+    // 2. 获取最近的评论记录（使用JOIN避免N+1问题）
+    const comments = await this.commentRepository
+      .createQueryBuilder('comment')
+      .leftJoin('contents', 'content', 'content.id = comment.content_id')
+      .select([
+        'comment.id',
+        'comment.content',
+        'comment.contentId',
+        'comment.createdAt',
+        'content.title',
+        'content.type',
+      ])
+      .where('comment.userId = :userId', { userId })
+      .orderBy('comment.createdAt', 'DESC')
+      .take(10)
+      .getRawMany();
+
+    comments.forEach((comment) => {
+      activities.push({
+        id: comment.comment_id,
+        type: 'comment',
+        title: '发表评论',
+        description: comment.comment_content.substring(0, 50) + (comment.comment_content.length > 50 ? '...' : ''),
+        contentId: comment.comment_contentId,
+        contentTitle: comment.content_title,
+        contentType: comment.content_type,
+        createdAt: new Date(comment.comment_createdAt),
+      });
+    });
+
+    // 3. 获取最近解锁的成就（使用JOIN避免N+1问题）
+    const achievements = await this.userAchievementRepository
+      .createQueryBuilder('ua')
+      .leftJoinAndSelect('ua.achievement', 'achievement')
+      .where('ua.userId = :userId', { userId })
+      .orderBy('ua.unlockedAt', 'DESC')
+      .take(10)
+      .getMany();
+
+    achievements.forEach((ua) => {
+      activities.push({
+        id: ua.id,
+        type: 'achievement',
+        title: '解锁成就',
+        description: `获得「${ua.achievement.name}」成就`,
+        achievementIcon: ua.achievement.icon,
+        createdAt: ua.unlockedAt,
+      });
+    });
+
+    // 4. 按时间排序并限制数量
+    activities.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    return activities.slice(0, limit);
+  }
+
+  /**
+   * 计算等级进度
+   */
+  private calculateLevelProgress(user: User): {
+    progress: number;
+    nextLevel: string;
+    nextLevelRequirement: number;
+  } {
+    const levelThresholds = [
+      { level: 1, name: 'AI小白', requirement: 0 },
+      { level: 2, name: '胜似人机', requirement: 10 },
+      { level: 3, name: '人机杀手', requirement: 50 },
+      { level: 4, name: '硅谷天才', requirement: 100 },
+    ];
+
+    const currentLevel = levelThresholds.find(l => l.level === user.level);
+    const nextLevelIndex = levelThresholds.findIndex(l => l.level === user.level) + 1;
+
+    if (nextLevelIndex >= levelThresholds.length) {
+      // 已达到最高等级
+      return {
+        progress: 100,
+        nextLevel: '已满级',
+        nextLevelRequirement: currentLevel.requirement,
+      };
+    }
+
+    const nextLevel = levelThresholds[nextLevelIndex];
+    const currentRequirement = currentLevel.requirement;
+    const nextRequirement = nextLevel.requirement;
+
+    // 计算进度百分比
+    const progress = Math.min(
+      100,
+      Math.round(((user.totalJudged - currentRequirement) / (nextRequirement - currentRequirement)) * 100)
+    );
+
+    return {
+      progress,
+      nextLevel: nextLevel.name,
+      nextLevelRequirement: nextRequirement,
+    };
+  }
+
+  /**
+   * 获取等级名称
+   */
+  private getLevelName(level: number): string {
+    const levels = ['AI小白', '胜似人机', '人机杀手', '硅谷天才'];
+    return levels[level - 1] || 'AI小白';
   }
 }

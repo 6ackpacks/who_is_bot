@@ -12,8 +12,18 @@ export class ContentController {
   }
 
   @Get('feed')
-  getFeed(@Query('limit') limit?: number) {
-    return this.contentService.getFeed(limit);
+  async getFeed(
+    @Query('limit') limit?: string,
+    @Query('offset') offset?: string,
+  ) {
+    const limitNum = limit ? parseInt(limit, 10) : 20;
+    const offsetNum = offset ? parseInt(offset, 10) : 0;
+    const items = await this.contentService.getFeed(limitNum, offsetNum);
+    return {
+      success: true,
+      data: items,
+      total: items.length,
+    };
   }
 
   @Get(':id')
