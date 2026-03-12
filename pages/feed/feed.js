@@ -313,6 +313,14 @@ Page({
       displayItems = [...items].sort(() => Math.random() - 0.5);
     }
 
+    // 渲染前过滤无效视频URL，降级为 text，避免触发 404 错误
+    displayItems = displayItems.map(item => {
+      if (item.type === 'video' && (!item.url || item.url.includes('example.com') || item.url.startsWith('https://example.com'))) {
+        return { ...item, type: 'text', url: null };
+      }
+      return item;
+    });
+
     // 确保有数据
     if (displayItems.length === 0) {
       console.error('没有可显示的内容');
@@ -564,20 +572,14 @@ Page({
     console.error('Current item type:', this.data.currentItem?.type);
     console.error('Current item full data:', this.data.currentItem);
 
-    // 将当前视频内容降级为文字展示，避免白屏
-    const currentIndex = this.data.currentIndex;
-    const displayItems = this.data.displayItems;
-    if (displayItems && displayItems[currentIndex]) {
-      // 更新 displayItems 中对应条目，将 type 改为 text，清空 url
-      const updatedItems = displayItems.map((item, idx) => {
-        if (idx === currentIndex) {
-          return Object.assign({}, item, { type: 'text', url: null });
-        }
-        return item;
-      });
+    // 将当前 video 降级为 text
+    const items = this.data.displayItems || [];
+    const idx = this.data.currentIndex || 0;
+    if (items[idx]) {
+      items[idx] = { ...items[idx], type: 'text', url: null };
       this.setData({
-        displayItems: updatedItems,
-        currentItem: updatedItems[currentIndex]
+        displayItems: items,
+        currentItem: items[idx],
       });
       wx.showToast({
         title: '视频无法加载，已切换为文字模式',
