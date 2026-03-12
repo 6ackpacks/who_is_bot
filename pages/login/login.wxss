@@ -192,6 +192,76 @@
   }
 }
 
+/* 头像和昵称填写区域 */
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 60rpx;
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+/* 头像选择按钮 */
+.avatar-btn {
+  width: 160rpx;
+  height: 200rpx;
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-bottom: 0;
+}
+
+.avatar-btn::after {
+  border: none;
+}
+
+.avatar-preview {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--text-main, #1D1C16);
+  background: #e0e0e0;
+  display: block;
+}
+
+.avatar-hint {
+  font-size: 22rpx;
+  color: #999999;
+  margin-top: 12rpx;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* 昵称输入框 */
+.nickname-wrapper {
+  width: 500rpx;
+  margin-top: 24rpx;
+  border: 3rpx solid var(--text-main, #1D1C16);
+  border-radius: 50rpx;
+  padding: 0 36rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.nickname-input {
+  width: 100%;
+  height: 80rpx;
+  font-size: 28rpx;
+  color: var(--text-main, #1D1C16);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: transparent;
+}
+
+.nickname-placeholder {
+  color: #bbbbbb;
+  font-size: 26rpx;
+}
+
 /* 登录按钮 */
 .login-btn {
   width: 500rpx;

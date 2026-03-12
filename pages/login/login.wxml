@@ -61,12 +61,42 @@
       <text class="slogan">在数字迷雾中，寻找唯一的真相。</text>
     </view>
 
+    <!-- 头像和昵称填写区域 -->
+    <view class="profile-section">
+      <!-- 头像选择按钮（open-type=chooseAvatar 是微信官方当前唯一有效方案） -->
+      <button
+        class="avatar-btn"
+        open-type="chooseAvatar"
+        bindchooseavatar="onChooseAvatar"
+      >
+        <image
+          class="avatar-preview"
+          src="{{avatarUrl || '/assets/default-avatar.png'}}"
+          mode="aspectFill"
+        />
+        <text class="avatar-hint">{{avatarUrl ? '点击更换头像' : '点击选择头像'}}</text>
+      </button>
+
+      <!-- 昵称输入框（type=nickname 会弹出微信昵称键盘） -->
+      <view class="nickname-wrapper">
+        <input
+          class="nickname-input"
+          type="nickname"
+          placeholder="请输入昵称（2-20个字符）"
+          placeholder-class="nickname-placeholder"
+          value="{{nickname}}"
+          bindinput="onNicknameInput"
+          maxlength="20"
+        />
+      </view>
+    </view>
+
     <!-- 登录按钮 -->
     <button
       class="login-btn"
       bindtap="handleWxLogin"
       loading="{{loading}}"
-      disabled="{{loading}}"
+      disabled="{{loading || !canLogin}}"
     >
       <text class="btn-text">{{loading ? '验证中...' : '微信号一键登录'}}</text>
     </button>
