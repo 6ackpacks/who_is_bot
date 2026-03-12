@@ -25,6 +25,50 @@ export class UserController {
   }
 
   /**
+   * 获取用户完整个人资料（公开访问）
+   * 包含所有前端需要的数据：基本信息、统计、成就、评论等
+   */
+  @Get(':id/profile')
+  async getUserProfile(@Param('id') id: string) {
+    try {
+      const profile = await this.userService.getUserProfile(id);
+      return {
+        success: true,
+        data: profile,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || '获取用户资料失败',
+      };
+    }
+  }
+
+  /**
+   * 获取用户活动记录（公开访问）
+   * 整合判定、评论、成就三种活动类型
+   */
+  @Get(':id/activities')
+  async getUserActivities(
+    @Param('id') id: string,
+    @Query('limit') limit?: string,
+  ) {
+    try {
+      const limitNum = limit ? parseInt(limit) : 20;
+      const activities = await this.userService.getUserActivities(id, limitNum);
+      return {
+        success: true,
+        data: activities,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message || '获取用户活动失败',
+      };
+    }
+  }
+
+  /**
    * 获取用户统计信息（公开访问）
    */
   @Get(':id/stats')

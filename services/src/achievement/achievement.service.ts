@@ -76,8 +76,59 @@ export class AchievementService {
 
   /**
    * 获取用户所有成就（包括已解锁和未解锁）
+   * 优化：使用单次JOIN查询避免N+1问题
    */
   async getUserAchievements(userId: string) {
+    // 使用LEFT JOIN一次性获取所有成就及用户解锁状态
+    const achievementsWithStatus = await this.achievementRepository
+      .createQueryBuilder('achievement')
+      .leftJoin(
+        'user_achievements',
+        'ua',
+        'ua.achievement_id = achievement.id AND ua.user_id = :userId',
+        { userId }
+      )
+      .select([
+        'achievement.id',
+        'achievement.name',
+        'achievement.description',
+        'achievement.icon',
+        'achievement.type',
+        'achievement.requirement_value',
+        'achievement.points',
+        'ua.unlocked_at',
+      ])
+      .orderBy('achievement.points', 'ASC')
+      .getRawMany();
+
+    // 格式化数据
+    return achievementsWithStatus.map(row => ({
+      id: row.achievement_id,
+      name: row.achievement_name,
+      description: row.achievement_description,
+      icon: row.achievement_icon,
+      type: row.achievement_type,
+      requirementValue: row.achievement_requirement_value,
+      points: row.achievement_points,
+      unlocked: !!row.ua_unlocked_at,
+      unlockedAt: row.ua_unlocked_at || null,
+    }));
+  }
+
+  /**
+   * 获取用户成就进度
+   * 返回用户当前进度与成就要求的对比
+   */
+  async getUserAchievementProgress(userId: string) {
+    // 获取用户信息
+    const user = await this.achievementRepository.manager.findOne(User, {
+      where: { id: userId },
+    });
+
+    if (!user) {
+      return [];
+    }
+
     // 获取所有成就
     const allAchievements = await this.achievementRepository.find({
       order: { points: 'ASC' },
@@ -93,18 +144,45 @@ export class AchievementService {
       userAchievements.map(ua => [ua.achievement.id, ua.unlockedAt])
     );
 
-    // 组合数据
-    return allAchievements.map(achievement => ({
-      id: achievement.id,
-      name: achievement.name,
-      description: achievement.description,
-      icon: achievement.icon,
-      type: achievement.type,
-      requirementValue: achievement.requirementValue,
-      points: achievement.points,
-      unlocked: unlockedMap.has(achievement.id),
-      unlockedAt: unlockedMap.get(achievement.id) || null,
-    }));
+    // 计算每个成就的进度
+    return allAchievements.map(achievement => {
+      const unlocked = unlockedMap.has(achievement.id);
+      let currentValue = 0;
+      let progress = 0;
+
+      // 根据成就类型获取当前进度
+      if (!unlocked) {
+        switch (achievement.type) {
+          case 'judgment_count':
+            currentValue = user.totalJudged;
+            break;
+          case 'accuracy':
+            currentValue = user.accuracy;
+            break;
+          case 'streak':
+            currentValue = user.maxStreak;
+            break;
+        }
+        progress = Math.min(100, Math.round((currentValue / achievement.requirementValue) * 100));
+      } else {
+        progress = 100;
+        currentValue = achievement.requirementValue;
+      }
+
+      return {
+        id: achievement.id,
+        name: achievement.name,
+        description: achievement.description,
+        icon: achievement.icon,
+        type: achievement.type,
+        requirementValue: achievement.requirementValue,
+        currentValue,
+        progress,
+        points: achievement.points,
+        unlocked,
+        unlockedAt: unlockedMap.get(achievement.id) || null,
+      };
+    });
   }
 
   /**

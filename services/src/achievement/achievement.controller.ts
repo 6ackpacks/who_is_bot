@@ -26,6 +26,27 @@ export class AchievementController {
   }
 
   /**
+   * 获取用户成就进度
+   * 返回用户当前进度与成就要求的对比
+   */
+  @Get('user/:userId/progress')
+  async getUserAchievementProgress(@Param('userId') userId: string) {
+    try {
+      const progress = await this.achievementService.getUserAchievementProgress(userId);
+      return {
+        success: true,
+        data: progress,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: '获取成就进度失败',
+        error: error.message,
+      };
+    }
+  }
+
+  /**
    * 获取所有成就定义
    */
   @Get('all')
