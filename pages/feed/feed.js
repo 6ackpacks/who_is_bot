@@ -455,11 +455,15 @@ Page({
         const displayHumanPercent = res.stats.displayHumanPercent !== undefined
           ? res.stats.displayHumanPercent
           : (res.stats.humanPercentage !== undefined ? res.stats.humanPercentage : 100 - displayAiPercent);
+        const displayTotalVotes = res.stats.displayTotalVotes !== undefined
+          ? res.stats.displayTotalVotes
+          : res.stats.totalVotes;
         this.setData({
           'currentItem.displayAiPercent': displayAiPercent,
           'currentItem.displayHumanPercent': displayHumanPercent,
           'currentItem.correctPercentage': res.stats.correctPercentage,
-          'currentItem.totalVotes': res.stats.totalVotes
+          'currentItem.totalVotes': res.stats.totalVotes,
+          'currentItem.displayTotalVotes': displayTotalVotes
         });
         // 数据就位后再启动数字滚动动画
         this.animatePercentage(displayAiPercent);

@@ -262,9 +262,10 @@ export class AdminContentService {
       const realAiPercent = totalVotes > 0 ? Math.round((aiVotes / totalVotes) * 100) : 50;
       const realHumanPercent = totalVotes > 0 ? Math.round((humanVotes / totalVotes) * 100) : 50;
 
-      const statsSource = c.statsSource || 'real';
+      const statsSource = c.statsSource ?? 'real';
       let displayAiPercent: number;
       let displayHumanPercent: number;
+      let displayTotalVotes: number;
 
       if (
         statsSource === 'manual' &&
@@ -275,9 +276,11 @@ export class AdminContentService {
       ) {
         displayAiPercent = c.manualAiPercent;
         displayHumanPercent = c.manualHumanPercent;
+        displayTotalVotes = c.manualTotalVotes ?? totalVotes;
       } else {
         displayAiPercent = realAiPercent;
         displayHumanPercent = realHumanPercent;
+        displayTotalVotes = totalVotes;
       }
 
       const escapeCsv = (val: string | null | undefined) =>
@@ -291,7 +294,7 @@ export class AdminContentService {
         c.modelTag || '',
         c.isAi ? '是' : '否',
         c.deceptionRate ?? '',
-        totalVotes,
+        displayTotalVotes,
         displayAiPercent,
         displayHumanPercent,
         statsSource,
@@ -311,7 +314,7 @@ export class AdminContentService {
       }
 
       // Validate real vote stats consistency
-      const { totalVotes, aiVotes, humanVotes, correctVotes, statsSource, manualAiPercent, manualHumanPercent } = updateStatsDto;
+      const { totalVotes, aiVotes, humanVotes, correctVotes, statsSource, manualAiPercent, manualHumanPercent, manualTotalVotes } = updateStatsDto;
 
       if (totalVotes !== undefined && aiVotes !== undefined && humanVotes !== undefined) {
         if (totalVotes !== aiVotes + humanVotes) {

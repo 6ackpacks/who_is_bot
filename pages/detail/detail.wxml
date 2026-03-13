@@ -68,12 +68,17 @@
       <!-- 统计数据 -->
       <view class="stats-section">
         <view class="section-label">社区判定</view>
+        <view class="stats-participant">
+          <text class="participant-count">{{content.displayTotalVotes || content.totalVotes || 0}} 人参与</text>
+        </view>
         <view class="stats-bar">
-          <view class="stat-item stat-ai" style="width: {{content.displayAiPercent}}%">
-            <text class="stat-text">AI {{content.displayAiPercent}}%</text>
-          </view>
-          <view class="stat-item stat-human" style="width: {{content.displayHumanPercent}}%">
+          <!-- 真人侧：深色，左侧 -->
+          <view class="stat-item stat-human-dark" style="width: {{content.displayHumanPercent}}%; background: #1a1a1a;">
             <text class="stat-text">真人 {{content.displayHumanPercent}}%</text>
+          </view>
+          <!-- AI侧：浅色，右侧 -->
+          <view class="stat-item stat-ai-light" style="width: {{content.displayAiPercent}}%; background: #e0e0e0;">
+            <text class="stat-text stat-text-dark">AI {{content.displayAiPercent}}%</text>
           </view>
         </view>
       </view>

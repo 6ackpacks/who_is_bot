@@ -53,6 +53,10 @@ Page({
         }
 
         if (content) {
+          // Ensure displayTotalVotes falls back to totalVotes if the API doesn't return it
+          if (content.displayTotalVotes === undefined || content.displayTotalVotes === null) {
+            content.displayTotalVotes = content.totalVotes;
+          }
           this.setData({
             content,
             loading: false

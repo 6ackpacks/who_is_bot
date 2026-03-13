@@ -865,24 +865,38 @@ image.content-media {
   position: relative;
   margin-bottom: 16rpx;
   box-shadow: inset 0 2rpx 4rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: row;
 }
 
-/* Progress bar animation - matches tolearn.md spec: cubic-bezier(0.16, 1, 0.3, 1), 1.2s, 0.5s delay */
-.progress-fill {
+/* 真人侧：深色，左侧 */
+.progress-fill-human {
   height: 100%;
-  background: var(--text-main, #1D1C16);
-  border-radius: 8rpx;
+  background: #1a1a1a;
+  border-radius: 8rpx 0 0 8rpx;
   position: relative;
   overflow: hidden;
   animation: progressGrow 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
+  flex-shrink: 0;
+}
+
+/* AI侧：浅色，右侧 */
+.progress-fill-ai {
+  height: 100%;
+  background: #e0e0e0;
+  border-radius: 0 8rpx 8rpx 0;
+  position: relative;
+  overflow: hidden;
+  animation: progressGrow 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
+  flex-shrink: 0;
 }
 
 @keyframes progressGrow {
   0% { width: 0 !important; }
 }
 
-/* Shimmer effect - matches tolearn.md spec: linear -100% to 200%, 2s duration, 1.5s delay */
-.progress-fill::after {
+/* Shimmer effect on the human (dark) side */
+.progress-fill-human::after {
   content: '';
   position: absolute;
   top: 0;

@@ -18,7 +18,7 @@ function formatContent(content: Content): any {
   const realHumanPercent = totalVotes > 0 ? Math.round((humanVotes / totalVotes) * 100) : 50;
 
   // Determine display percentages based on statsSource
-  const statsSource = content.statsSource || 'real';
+  const statsSource = content.statsSource ?? 'real';
   let displayAiPercent: number;
   let displayHumanPercent: number;
 
@@ -59,8 +59,10 @@ function formatContent(content: Content): any {
     statsSource,
     manualAiPercent: content.manualAiPercent ?? null,
     manualHumanPercent: content.manualHumanPercent ?? null,
+    manualTotalVotes: content.manualTotalVotes ?? null,
     displayAiPercent,
     displayHumanPercent,
+    displayTotalVotes: content.manualTotalVotes ?? totalVotes,
     createdAt: content.createdAt,
     updatedAt: content.updatedAt,
   };

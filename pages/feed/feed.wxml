@@ -165,7 +165,7 @@
           <view class="stat-main">
             <view class="stat-label">
               <text>全网共识度</text>
-              <text class="stat-badge">{{currentItem.totalVotes || 12403}} 人参与</text>
+              <text class="stat-badge">{{currentItem.displayTotalVotes || currentItem.totalVotes || 12403}} 人参与</text>
             </view>
             <view class="stat-value">
               <text class="percentage-large">{{displayPercentage}}</text>
@@ -174,7 +174,10 @@
             </view>
           </view>
           <view class="progress-track">
-            <view class="progress-fill" style="width: {{currentItem.displayAiPercent}}%"></view>
+            <!-- 真人侧：深色，左侧 -->
+            <view class="progress-fill-human" style="width: {{currentItem.displayHumanPercent}}%; background: #1a1a1a;"></view>
+            <!-- AI侧：浅色，右侧 -->
+            <view class="progress-fill-ai" style="width: {{currentItem.displayAiPercent}}%; background: #e0e0e0;"></view>
           </view>
           <view class="progress-labels">
             <text class="progress-label-item">真人 {{currentItem.displayHumanPercent}}%</text>

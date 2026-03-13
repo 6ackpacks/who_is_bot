@@ -45,14 +45,17 @@ export class Content {
   @Column({ name: 'correctVotes', type: 'int', default: 0 })
   correctVotes: number;
 
-  @Column({ type: 'varchar', length: 10, default: 'real' })
+  @Column({ name: 'statsSource', type: 'varchar', length: 10, default: 'real' })
   statsSource: 'manual' | 'real';
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ name: 'manualAiPercent', type: 'float', nullable: true })
   manualAiPercent: number | null;
 
-  @Column({ type: 'float', nullable: true })
+  @Column({ name: 'manualHumanPercent', type: 'float', nullable: true })
   manualHumanPercent: number | null;
+
+  @Column({ name: 'manualTotalVotes', type: 'int', nullable: true })
+  manualTotalVotes: number | null;
 
   @ManyToOne(() => User, user => user.contents, { nullable: true })
   @JoinColumn({ name: 'authorId' })

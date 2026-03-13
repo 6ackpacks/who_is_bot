@@ -20,6 +20,13 @@ export default function ContentDetail() {
   const [statsForm] = Form.useForm();
   const [statsSource, setStatsSource] = useState<'manual' | 'real'>('real');
   const [statsLoading, setStatsLoading] = useState(false);
+  // Local state mirrors for the save payload
+  const [localManualAiPercent, setLocalManualAiPercent] = useState<number | null>(null);
+  const [localManualHumanPercent, setLocalManualHumanPercent] = useState<number | null>(null);
+
+  // Participant count override state
+  const [localManualTotalVotes, setLocalManualTotalVotes] = useState<number | null>(null);
+  const [totalVotesLoading, setTotalVotesLoading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -38,10 +45,15 @@ export default function ContentDetail() {
       const c = response.content;
       const source = c.statsSource ?? 'real';
       setStatsSource(source);
+      const aiPct = c.manualAiPercent ?? null;
+      const humanPct = c.manualHumanPercent ?? null;
+      setLocalManualAiPercent(aiPct);
+      setLocalManualHumanPercent(humanPct);
+      setLocalManualTotalVotes(c.manualTotalVotes ?? null);
       statsForm.setFieldsValue({
         statsSource: source,
-        manualAiPercent: c.manualAiPercent ?? undefined,
-        manualHumanPercent: c.manualHumanPercent ?? undefined,
+        manualAiPercent: aiPct ?? undefined,
+        manualHumanPercent: humanPct ?? undefined,
       });
     } catch (error) {
       console.error('Failed to load content:', error);
@@ -55,19 +67,15 @@ export default function ContentDetail() {
       const values = await statsForm.validateFields();
       setStatsLoading(true);
 
-      const payload: Parameters<typeof contentApi.updateStats>[1] = {
-        statsSource: values.statsSource,
-      };
-
-      if (values.statsSource === 'manual') {
-        payload.manualAiPercent = values.manualAiPercent;
-        payload.manualHumanPercent = values.manualHumanPercent;
-      }
-
-      const updated = await contentApi.updateStats(id!, payload);
+      const localStatsSource = values.statsSource as 'manual' | 'real';
+      const updated = await contentApi.updateStats(id!, {
+        statsSource: localStatsSource,
+        manualAiPercent: localManualAiPercent,
+        manualHumanPercent: localManualHumanPercent,
+      });
       // updateStats returns the content object directly
       setContent(prev => prev ? { ...prev, ...updated } : prev);
-      setStatsSource(values.statsSource);
+      setStatsSource(localStatsSource);
       message.success('数据来源已更新');
     } catch (error: any) {
       if (error?.response?.data?.message) {
@@ -77,6 +85,45 @@ export default function ContentDetail() {
       }
     } finally {
       setStatsLoading(false);
+    }
+  };
+
+  const handleTotalVotesSave = async () => {
+    setTotalVotesLoading(true);
+    try {
+      const updated = await contentApi.updateStats(id!, {
+        manualTotalVotes: localManualTotalVotes,
+      });
+      setContent(prev => prev ? { ...prev, ...updated } : prev);
+      message.success('参与人数已更新');
+    } catch (error: any) {
+      if (error?.response?.data?.message) {
+        message.error(error.response.data.message);
+      } else {
+        message.error('保存失败，请重试');
+      }
+    } finally {
+      setTotalVotesLoading(false);
+    }
+  };
+
+  const handleTotalVotesClear = async () => {
+    setTotalVotesLoading(true);
+    try {
+      const updated = await contentApi.updateStats(id!, {
+        manualTotalVotes: null,
+      });
+      setContent(prev => prev ? { ...prev, ...updated } : prev);
+      setLocalManualTotalVotes(null);
+      message.success('已清除，将显示真实参与人数');
+    } catch (error: any) {
+      if (error?.response?.data?.message) {
+        message.error(error.response.data.message);
+      } else {
+        message.error('清除失败，请重试');
+      }
+    } finally {
+      setTotalVotesLoading(false);
     }
   };
 
@@ -224,7 +271,10 @@ export default function ContentDetail() {
                     { type: 'number', min: 0, max: 100, message: '范围 0–100' },
                   ]}
                 >
-                  <InputNumber min={0} max={100} precision={1} style={{ width: 120 }} addonAfter="%" />
+                  <InputNumber
+                    min={0} max={100} precision={1} style={{ width: 120 }} addonAfter="%"
+                    onChange={(val) => setLocalManualAiPercent(val as number | null)}
+                  />
                 </Form.Item>
                 <Form.Item
                   name="manualHumanPercent"
@@ -234,7 +284,10 @@ export default function ContentDetail() {
                     { type: 'number', min: 0, max: 100, message: '范围 0–100' },
                   ]}
                 >
-                  <InputNumber min={0} max={100} precision={1} style={{ width: 120 }} addonAfter="%" />
+                  <InputNumber
+                    min={0} max={100} precision={1} style={{ width: 120 }} addonAfter="%"
+                    onChange={(val) => setLocalManualHumanPercent(val as number | null)}
+                  />
                 </Form.Item>
               </Space>
               <div style={{ color: '#8c8c8c', fontSize: 12, marginTop: -8 }}>两者之和应为 100</div>
@@ -254,6 +307,38 @@ export default function ContentDetail() {
             </Space>
           </div>
         </Form>
+
+        <Divider orientation="left">
+          参与人数设置
+          <Tooltip title="设置后小程序显示的参与人数将使用此值，留空则显示真实投票人数">
+            <InfoCircleOutlined style={{ marginLeft: 6, color: '#8c8c8c', cursor: 'help' }} />
+          </Tooltip>
+        </Divider>
+
+        <Space wrap align="center" style={{ marginBottom: 8 }}>
+          <InputNumber
+            min={0}
+            step={1}
+            precision={0}
+            value={localManualTotalVotes ?? undefined}
+            placeholder="留空显示真实人数"
+            style={{ width: 180 }}
+            addonAfter="人"
+            onChange={(val) => setLocalManualTotalVotes(val as number | null)}
+          />
+          <Button type="primary" loading={totalVotesLoading} onClick={handleTotalVotesSave}>
+            保存参与人数
+          </Button>
+          <Button loading={totalVotesLoading} onClick={handleTotalVotesClear}>
+            清除（显示真实）
+          </Button>
+        </Space>
+        <div style={{ color: '#8c8c8c', fontSize: 12 }}>
+          提示：留空则显示真实参与人数（当前真实：{content.totalVotes} 人）
+          {content.displayTotalVotes !== undefined && (
+            <span style={{ marginLeft: 8 }}>· 当前展示：{content.displayTotalVotes} 人</span>
+          )}
+        </div>
       </Card>
 
       <Card title="解释说明" className="mb-4">

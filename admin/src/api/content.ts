@@ -34,6 +34,7 @@ export const contentApi = {
     statsSource?: 'manual' | 'real';
     manualAiPercent?: number | null;
     manualHumanPercent?: number | null;
+    manualTotalVotes?: number | null;
   }) =>
     api.patch<any, ContentInfo>(`/admin/content/${id}/stats`, stats),
 

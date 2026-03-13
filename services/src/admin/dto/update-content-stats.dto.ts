@@ -36,4 +36,9 @@ export class UpdateContentStatsDto {
   @Min(0)
   @Max(100)
   manualHumanPercent?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  manualTotalVotes?: number;
 }

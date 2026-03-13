@@ -28,6 +28,9 @@ export interface ContentInfo {
   manualHumanPercent: number | null;
   displayAiPercent: number;
   displayHumanPercent: number;
+  // Participant count override
+  manualTotalVotes?: number | null;
+  displayTotalVotes?: number;
   // Legacy percentage fields (computed from real votes)
   aiPercentage?: number;
   humanPercentage?: number;
