@@ -168,7 +168,7 @@
               <text class="stat-badge">{{currentItem.displayTotalVotes || currentItem.totalVotes || 12403}} 人参与</text>
             </view>
             <view class="stat-value">
-              <text class="percentage-large">{{displayPercentage}}</text>
+              <text class="percentage-large">{{currentItem.displayAiPercent}}</text>
               <text class="percentage-unit">%</text>
               <text class="percentage-label">认为是AI</text>
             </view>
