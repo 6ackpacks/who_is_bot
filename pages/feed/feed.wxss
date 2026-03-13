@@ -869,8 +869,8 @@ image.content-media {
   flex-direction: row;
 }
 
-/* 真人侧：深色，左侧 */
-.progress-fill-human {
+/* AI侧：深色，左侧 */
+.progress-fill-ai {
   height: 100%;
   background: #1a1a1a;
   border-radius: 8rpx 0 0 8rpx;
@@ -880,8 +880,8 @@ image.content-media {
   flex-shrink: 0;
 }
 
-/* AI侧：浅色，右侧 */
-.progress-fill-ai {
+/* 真人侧：浅色，右侧 */
+.progress-fill-human {
   height: 100%;
   background: #e0e0e0;
   border-radius: 0 8rpx 8rpx 0;
@@ -895,8 +895,8 @@ image.content-media {
   0% { width: 0 !important; }
 }
 
-/* Shimmer effect on the human (dark) side */
-.progress-fill-human::after {
+/* Shimmer effect on the AI (dark) side */
+.progress-fill-ai::after {
   content: '';
   position: absolute;
   top: 0;

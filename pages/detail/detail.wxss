@@ -324,8 +324,8 @@
   position: relative;
 }
 
-/* 真人侧：深色，左侧 */
-.stat-human-dark {
+/* AI侧：深色，左侧 */
+.stat-ai-dark {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -333,8 +333,8 @@
   transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* AI侧：浅色，右侧 */
-.stat-ai-light {
+/* 真人侧：浅色，右侧 */
+.stat-human-light {
   display: flex;
   align-items: center;
   justify-content: center;

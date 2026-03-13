@@ -72,13 +72,13 @@
           <text class="participant-count">{{content.displayTotalVotes || content.totalVotes || 0}} 人参与</text>
         </view>
         <view class="stats-bar">
-          <!-- 真人侧：深色，左侧 -->
-          <view class="stat-item stat-human-dark" style="width: {{content.displayHumanPercent}}%; background: #1a1a1a;">
-            <text class="stat-text">真人 {{content.displayHumanPercent}}%</text>
+          <!-- AI侧：深色，左侧 -->
+          <view class="stat-item stat-ai-dark" style="width: {{content.displayAiPercent}}%; background: #1a1a1a;">
+            <text class="stat-text">AI {{content.displayAiPercent}}%</text>
           </view>
-          <!-- AI侧：浅色，右侧 -->
-          <view class="stat-item stat-ai-light" style="width: {{content.displayAiPercent}}%; background: #e0e0e0;">
-            <text class="stat-text stat-text-dark">AI {{content.displayAiPercent}}%</text>
+          <!-- 真人侧：浅色，右侧 -->
+          <view class="stat-item stat-human-light" style="width: {{content.displayHumanPercent}}%; background: #e0e0e0;">
+            <text class="stat-text stat-text-dark">真人 {{content.displayHumanPercent}}%</text>
           </view>
         </view>
       </view>
