@@ -144,13 +144,18 @@ Page({
       type: 'light'
     });
 
-    // 直接进入解析界面
+    // 直接进入解析界面，重置动画数字
     this.setData({
-      viewState: 'revealed'
+      viewState: 'revealed',
+      displayPercentage: 0
     });
 
     // 加载评论
     this.loadComments();
+
+    // 启动百分比动画（使用已有的 displayAiPercent，若无则为 0）
+    const targetPercent = (this.data.currentItem && this.data.currentItem.displayAiPercent) || 0;
+    this.animatePercentage(targetPercent);
   },
 
   // 从后端加载数据

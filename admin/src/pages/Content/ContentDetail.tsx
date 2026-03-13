@@ -73,8 +73,35 @@ export default function ContentDetail() {
         manualAiPercent: localManualAiPercent,
         manualHumanPercent: localManualHumanPercent,
       });
-      // updateStats returns the content object directly
-      setContent(prev => prev ? { ...prev, ...updated } : prev);
+
+      // Compute displayAiPercent / displayHumanPercent the same way the backend
+      // content.service.ts helper does, because the updateStats endpoint returns
+      // the raw saved entity without those computed fields.
+      const totalVotes = updated.totalVotes ?? 0;
+      const realAiPctCalc = totalVotes > 0
+        ? Math.round(((updated.aiVotes ?? 0) / totalVotes) * 100)
+        : 50;
+      const realHumanPctCalc = totalVotes > 0
+        ? Math.round(((updated.humanVotes ?? 0) / totalVotes) * 100)
+        : 50;
+      const isManual =
+        localStatsSource === 'manual' &&
+        localManualAiPercent != null &&
+        localManualHumanPercent != null;
+      const derivedDisplayAiPercent = isManual ? localManualAiPercent! : realAiPctCalc;
+      const derivedDisplayHumanPercent = isManual ? localManualHumanPercent! : realHumanPctCalc;
+
+      // updateStats returns the content object directly; merge and inject derived display fields
+      setContent(prev =>
+        prev
+          ? {
+              ...prev,
+              ...updated,
+              displayAiPercent: derivedDisplayAiPercent,
+              displayHumanPercent: derivedDisplayHumanPercent,
+            }
+          : prev
+      );
       setStatsSource(localStatsSource);
       message.success('数据来源已更新');
     } catch (error: any) {
