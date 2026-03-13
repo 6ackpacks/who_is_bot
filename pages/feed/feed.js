@@ -403,6 +403,27 @@ Page({
     // 保存判断记录
     this.saveJudgment(contentId, choice);
 
+    // 短暂延迟后显示结果，增强反馈感
+    setTimeout(() => {
+      this.setData({
+        viewState: 'revealed',
+        isCorrect: isCorrect,
+        showAnimation: true,
+        displayPercentage: 0 // 重置动画数字，等待 API 返回真实值
+      });
+
+      // 加载评论
+      this.loadComments();
+
+      // 动画结束后重置
+      setTimeout(() => {
+        this.setData({
+          showAnimation: false,
+          judgeButtonDisabled: false
+        });
+      }, 300);
+    }, 200);
+
     // 提交判定结果到后端（改进错误处理）
     api.submitJudgment({
       contentId: this.data.currentItem.id,
@@ -425,7 +446,7 @@ Page({
         return;
       }
 
-      // 更新当前内容的统计数据
+      // 更新当前内容的统计数据，然后启动动画
       if (res.success && res.stats) {
         // Prefer new displayAiPercent/displayHumanPercent fields; fall back to legacy aiPercentage
         const displayAiPercent = res.stats.displayAiPercent !== undefined
@@ -440,9 +461,12 @@ Page({
           'currentItem.correctPercentage': res.stats.correctPercentage,
           'currentItem.totalVotes': res.stats.totalVotes
         });
+        // 数据就位后再启动数字滚动动画
+        this.animatePercentage(displayAiPercent);
       } else {
-        // 如果没有统计数据，生成随机占比
+        // 如果没有统计数据，生成随机占比并启动动画
         this.updateRandomStats();
+        this.animatePercentage(this.data.currentItem.displayAiPercent || 0);
       }
     }).catch(err => {
       console.error('提交判定失败', err);
@@ -457,32 +481,10 @@ Page({
         });
       }
 
-      // 即使提交失败也显示随机统计数据
+      // 即使提交失败也显示随机统计数据并启动动画
       this.updateRandomStats();
+      this.animatePercentage(this.data.currentItem.displayAiPercent || 0);
     });
-
-    // 短暂延迟后显示结果，增强反馈感
-    setTimeout(() => {
-      this.setData({
-        viewState: 'revealed',
-        isCorrect: isCorrect,
-        showAnimation: true
-      });
-
-      // 启动数字动画
-      this.animatePercentage(this.data.currentItem.displayAiPercent || 82);
-
-      // 加载评论
-      this.loadComments();
-
-      // 动画结束后重置
-      setTimeout(() => {
-        this.setData({
-          showAnimation: false,
-          judgeButtonDisabled: false
-        });
-      }, 300);
-    }, 200);
   },
 
   // 数字滚动动画
@@ -549,7 +551,8 @@ Page({
         likedComments: [], // 重置已点赞列表
         comments: [],       // 重置评论列表
         commentInput: '',   // 清空评论输入框
-        replyingTo: null    // 清除回复状态
+        replyingTo: null,   // 清除回复状态
+        displayPercentage: 0 // 重置数字动画，避免显示上一题的值
       });
     }, 100);
   },

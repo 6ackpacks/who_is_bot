@@ -234,6 +234,74 @@ export class AdminContentService {
     }
   }
 
+  async exportToCsv(): Promise<string> {
+    const contents = await this.contentRepository.find({
+      order: { createdAt: 'ASC' },
+    });
+
+    const header = [
+      '内容ID',
+      '标题',
+      '类型',
+      '厂商',
+      '模型',
+      '是否AI',
+      '难度',
+      '参与人数',
+      'AI判定%',
+      '真人判定%',
+      '数据来源',
+      '创建时间',
+    ];
+
+    const rows = contents.map(c => {
+      const totalVotes = c.totalVotes || 0;
+      const aiVotes = c.aiVotes || 0;
+      const humanVotes = c.humanVotes || 0;
+
+      const realAiPercent = totalVotes > 0 ? Math.round((aiVotes / totalVotes) * 100) : 50;
+      const realHumanPercent = totalVotes > 0 ? Math.round((humanVotes / totalVotes) * 100) : 50;
+
+      const statsSource = c.statsSource || 'real';
+      let displayAiPercent: number;
+      let displayHumanPercent: number;
+
+      if (
+        statsSource === 'manual' &&
+        c.manualAiPercent !== null &&
+        c.manualAiPercent !== undefined &&
+        c.manualHumanPercent !== null &&
+        c.manualHumanPercent !== undefined
+      ) {
+        displayAiPercent = c.manualAiPercent;
+        displayHumanPercent = c.manualHumanPercent;
+      } else {
+        displayAiPercent = realAiPercent;
+        displayHumanPercent = realHumanPercent;
+      }
+
+      const escapeCsv = (val: string | null | undefined) =>
+        `"${(val || '').replace(/"/g, '""')}"`;
+
+      return [
+        c.id,
+        escapeCsv(c.title),
+        c.type,
+        c.provider || '',
+        c.modelTag || '',
+        c.isAi ? '是' : '否',
+        c.deceptionRate ?? '',
+        totalVotes,
+        displayAiPercent,
+        displayHumanPercent,
+        statsSource,
+        c.createdAt ? c.createdAt.toISOString().split('T')[0] : '',
+      ].join(',');
+    });
+
+    return [header.join(','), ...rows].join('\n');
+  }
+
   async updateStats(id: string, updateStatsDto: UpdateContentStatsDto) {
     try {
       const content = await this.contentRepository.findOne({ where: { id } });

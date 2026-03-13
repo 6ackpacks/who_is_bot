@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Patch, Body, Param, Query, UseGuards, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Patch, Body, Param, Query, UseGuards, HttpException, HttpStatus, Logger, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { AdminContentService } from './admin-content.service';
 import { AdminGuard } from './guards/admin.guard';
 import { QueryContentDto } from './dto/query-content.dto';
@@ -22,6 +23,22 @@ export class AdminContentController {
       this.logger.error('Error in findAll:', error);
       throw new HttpException(
         error.message || 'Failed to fetch content list',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  @Get('export')
+  async exportCsv(@Res() res: Response) {
+    try {
+      const csv = await this.adminContentService.exportToCsv();
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.setHeader('Content-Disposition', 'attachment; filename="content-export.csv"');
+      res.send('\uFEFF' + csv); // BOM for Excel UTF-8
+    } catch (error) {
+      this.logger.error('Error in exportCsv:', error);
+      throw new HttpException(
+        error.message || 'Failed to export content',
         error.status || HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

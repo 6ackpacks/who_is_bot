@@ -168,17 +168,17 @@
               <text class="stat-badge">{{currentItem.totalVotes || 12403}} 人参与</text>
             </view>
             <view class="stat-value">
-              <text class="percentage-large">{{displayPercentage || currentItem.displayAiPercent || 82}}</text>
+              <text class="percentage-large">{{displayPercentage}}</text>
               <text class="percentage-unit">%</text>
               <text class="percentage-label">认为是AI</text>
             </view>
           </view>
           <view class="progress-track">
-            <view class="progress-fill" style="width: {{currentItem.displayAiPercent || 82}}%"></view>
+            <view class="progress-fill" style="width: {{currentItem.displayAiPercent}}%"></view>
           </view>
           <view class="progress-labels">
-            <text class="progress-label-item">真人 {{currentItem.displayHumanPercent || (100 - (currentItem.displayAiPercent || 82))}}%</text>
-            <text class="progress-label-item">AI {{currentItem.displayAiPercent || 82}}%</text>
+            <text class="progress-label-item">真人 {{currentItem.displayHumanPercent}}%</text>
+            <text class="progress-label-item">AI {{currentItem.displayAiPercent}}%</text>
           </view>
         </view>
 

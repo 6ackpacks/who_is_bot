@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, Button, Input, Select, Space, Tag, Popconfirm, message } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, DownloadOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { contentApi } from '../../api/content';
 import { ContentInfo } from '../../types';
@@ -42,6 +42,27 @@ export default function ContentList() {
       loadData();
     } catch (error) {
       console.error('Failed to delete content:', error);
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      const token = localStorage.getItem('admin_token');
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/admin/content/export`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `content-export-${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      message.error('导出失败');
     }
   };
 
@@ -153,9 +174,14 @@ export default function ContentList() {
     <div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">内容管理</h1>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/content/create')}>
-          创建内容
-        </Button>
+        <Space>
+          <Button icon={<DownloadOutlined />} onClick={handleExport}>
+            导出数据
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/content/create')}>
+            创建内容
+          </Button>
+        </Space>
       </div>
 
       <Space className="mb-4" wrap>

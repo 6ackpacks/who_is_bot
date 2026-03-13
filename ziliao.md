@@ -77,6 +77,9 @@
 | `aiVotes` | `aiVotes` | int | 否 | 0 | 投票认为是 AI 的次数 |
 | `humanVotes` | `humanVotes` | int | 否 | 0 | 投票认为是人类的次数 |
 | `correctVotes` | `correctVotes` | int | 否 | 0 | 投票正确次数 |
+| `statsSource` | `statsSource` | varchar(10) | 否 | `'real'` | 数据来源：`manual`（预设）或 `real`（真实投票） |
+| `manualAiPercent` | `manualAiPercent` | float | 是 | NULL | 管理员手动设置的 AI 判定百分比（0-100） |
+| `manualHumanPercent` | `manualHumanPercent` | float | 是 | NULL | 管理员手动设置的真人判定百分比（0-100） |
 | `authorId` | `authorId` | varchar(36) | 是 | NULL | 作者 ID，外键 → `users.id` |
 | `createdAt` | `createdAt` | timestamp | 否 | 自动 | 创建时间 |
 | `updatedAt` | `updatedAt` | timestamp | 否 | 自动 | 更新时间 |

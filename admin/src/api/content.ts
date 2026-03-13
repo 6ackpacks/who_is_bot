@@ -36,4 +36,7 @@ export const contentApi = {
     manualHumanPercent?: number | null;
   }) =>
     api.patch<any, ContentInfo>(`/admin/content/${id}/stats`, stats),
+
+  exportCsv: () =>
+    api.get('/admin/content/export', { responseType: 'blob' }),
 };
