@@ -21,6 +21,9 @@ export default function ContentCreate() {
 
     try {
       const response = await uploadApi.uploadFile(formData);
+      // Set the form field value so Ant Design's form state tracks the COS URL.
+      form.setFieldValue('url', response.url);
+      // Also keep local state for the preview line below the upload button.
       setFileUrl(response.url);
       message.success('上传成功');
       return false;
@@ -46,7 +49,9 @@ export default function ContentCreate() {
       if (contentType === 'text') {
         data.text = values.text;
       } else {
-        data.url = fileUrl || values.url;
+        // values.url is now always correct: set by form.setFieldValue after upload,
+        // or typed directly by the user into the Input. No dual-state workaround needed.
+        data.url = values.url;
       }
 
       await contentApi.create(data);
@@ -112,7 +117,7 @@ export default function ContentCreate() {
                 name="url"
                 rules={[{ required: !fileUrl, message: `请上传${contentType === 'image' ? '图片' : '视频'}` }]}
               >
-                <Input placeholder="或直接输入URL" value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} />
+                <Input placeholder="或直接输入URL" />
               </Form.Item>
               <Form.Item>
                 <Upload

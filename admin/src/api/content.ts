@@ -27,10 +27,13 @@ export const contentApi = {
     api.post<any, { success: boolean; deletedCount: number }>('/admin/content/batch-delete', { ids }),
 
   updateStats: (id: string, stats: {
-    totalVotes: number;
-    aiVotes: number;
-    humanVotes: number;
-    correctVotes: number;
+    totalVotes?: number;
+    aiVotes?: number;
+    humanVotes?: number;
+    correctVotes?: number;
+    statsSource?: 'manual' | 'real';
+    manualAiPercent?: number | null;
+    manualHumanPercent?: number | null;
   }) =>
-    api.patch<any, { content: ContentInfo }>(`/admin/content/${id}/stats`, stats),
+    api.patch<any, ContentInfo>(`/admin/content/${id}/stats`, stats),
 };

@@ -22,6 +22,15 @@ export interface ContentInfo {
   humanVotes: number;
   correctVotes: number;
   accuracy: number;
+  // Stats source toggle fields
+  statsSource: 'manual' | 'real';
+  manualAiPercent: number | null;
+  manualHumanPercent: number | null;
+  displayAiPercent: number;
+  displayHumanPercent: number;
+  // Legacy percentage fields (computed from real votes)
+  aiPercentage?: number;
+  humanPercentage?: number;
   createdAt: string;
   updatedAt: string;
 }

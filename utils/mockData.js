@@ -12,6 +12,8 @@ const MOCK_FEED = [
     authorId: 'ai_01',
     provider: '特工少女',
     deceptionRate: 72,
+    displayAiPercent: 72,
+    displayHumanPercent: 28,
     explanation: "这段话模仿了MBTI人格测试中的常见的\"巴纳姆效应\"描述。看似深刻且个性化，实则模糊并适用于大多数人。由 DeepSeek 生成。",
     comments: [
       { id: 'c1', user: '猪猪侠', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', text: '这种话术太典型了，一眼AI生成的星座运势感。', likes: 12, isOfficial: false },
@@ -29,6 +31,8 @@ const MOCK_FEED = [
     authorId: 'human_01',
     provider: '美术课代表',
     deceptionRate: 15,
+    displayAiPercent: 15,
+    displayHumanPercent: 85,
     explanation: "这是插画师的手绘作品。注意线条的笔触自然变化和构图中的逻辑细节，尤其是龙舟上人物的神态，这是目前AI难以完美复刻的。",
     comments: [
       { id: 'c3', user: 'DesignPro', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jack', text: '这线条一看就是手绘的，AI画不出这种随性。', likes: 45, isOfficial: false }
@@ -46,6 +50,8 @@ const MOCK_FEED = [
     authorId: 'human_02',
     provider: '爱心市民',
     deceptionRate: 8,
+    displayAiPercent: 8,
+    displayHumanPercent: 92,
     explanation: "这是真实用户的日常生活记录。情感表达自然朴素，逻辑链条（淋雨->带回->洗澡->取名）符合人类行为模式，没有AI常见的过度修饰。",
     comments: [
       { id: 'c4', user: '汪汪队', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dog', text: '太暖了！好人一生平安。', likes: 88, isOfficial: false }
@@ -62,6 +68,8 @@ const MOCK_FEED = [
     authorId: 'ai_02',
     provider: 'AI 实验室',
     deceptionRate: 88,
+    displayAiPercent: 88,
+    displayHumanPercent: 12,
     explanation: "Midjourney v6 生成。虽然光影效果极其逼真，但请注意背景霓虹灯牌上的文字是乱码，且左下角路人的手指结构略显怪异。",
     comments: [
       { id: 'c5', user: '细节控', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Annie', text: '不放大看真看不出来，现在MJ太强了。', likes: 102, isOfficial: false }
@@ -79,6 +87,8 @@ const MOCK_FEED = [
     authorId: 'ai_03',
     provider: '科学探索者',
     deceptionRate: 65,
+    displayAiPercent: 65,
+    displayHumanPercent: 35,
     explanation: "AI生成的科普文本。虽然术语使用正确，但缺乏真实科研人员的个人见解和争议性观点。真正的物理学家通常会加入更多个人理解和学术争论。",
     comments: [
       { id: 'c6', user: '物理狂人', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Physics', text: '说得太教科书了，真正搞量子的不会这么写。', likes: 34, isOfficial: false },
@@ -96,6 +106,8 @@ const MOCK_FEED = [
     authorId: 'ai_04',
     provider: '夜景收藏家',
     deceptionRate: 76,
+    displayAiPercent: 76,
+    displayHumanPercent: 24,
     explanation: "DALL-E 3 生成的城市夜景。整体构图和光影处理很专业，但仔细观察建筑物的窗户排列会发现不符合建筑学规律，且远处的霓虹灯文字模糊不清。",
     comments: [
       { id: 'c8', user: '建筑师老王', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Wang', text: '窗户的排列完全不对，这栋楼根本盖不起来。', likes: 56, isOfficial: false }
@@ -113,6 +125,8 @@ const MOCK_FEED = [
     authorId: 'human_03',
     provider: '做梦大师',
     deceptionRate: 12,
+    displayAiPercent: 12,
+    displayHumanPercent: 88,
     explanation: "真实用户的梦境分享。包含了真实的生理反馈（腰疼）和自嘲式幽默，这种随意的表达方式和逻辑跳跃是AI难以模仿的人类特征。",
     comments: [
       { id: 'c9', user: '解梦专家', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dream', text: '哈哈哈笑死，这个太真实了。', likes: 67, isOfficial: false }
@@ -129,6 +143,8 @@ const MOCK_FEED = [
     authorId: 'human_04',
     provider: '美食博主',
     deceptionRate: 18,
+    displayAiPercent: 18,
+    displayHumanPercent: 82,
     explanation: "专业摄影师拍摄的美食照片。注意食物表面的真实质感、自然的光线反射，以及背景中略微失焦但真实存在的餐具细节。AI生成的食物往往过于完美而失去真实感。",
     comments: [
       { id: 'c10', user: '吃货小分队', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Food', text: '看着就很有食欲，AI做不出这种真实感。', likes: 92, isOfficial: false }
@@ -146,6 +162,8 @@ const MOCK_FEED = [
     authorId: 'ai_05',
     provider: '科技观察者',
     deceptionRate: 58,
+    displayAiPercent: 58,
+    displayHumanPercent: 42,
     explanation: "AI生成的科技评论。文字流畅且观点平衡，但缺乏具体案例和个人经历。真实的科技评论者通常会引用具体数据、新闻事件或个人体验来支撑观点。",
     comments: [
       { id: 'c11', user: '科技迷', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tech', text: '说得挺对的，但感觉像是AI写的。', likes: 41, isOfficial: false }
@@ -162,6 +180,8 @@ const MOCK_FEED = [
     authorId: 'ai_06',
     provider: '艺术实验室',
     deceptionRate: 82,
+    displayAiPercent: 82,
+    displayHumanPercent: 18,
     explanation: "Stable Diffusion 生成的抽象艺术作品。色彩搭配和构图都很专业，但缺乏艺术家的个人风格和创作意图。真正的抽象艺术背后通常有明确的创作理念和情感表达。",
     comments: [
       { id: 'c12', user: '艺术评论家', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Art', text: '技术上很完美，但缺少灵魂。', likes: 73, isOfficial: false }

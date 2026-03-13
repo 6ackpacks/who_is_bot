@@ -427,9 +427,16 @@ Page({
 
       // 更新当前内容的统计数据
       if (res.success && res.stats) {
+        // Prefer new displayAiPercent/displayHumanPercent fields; fall back to legacy aiPercentage
+        const displayAiPercent = res.stats.displayAiPercent !== undefined
+          ? res.stats.displayAiPercent
+          : res.stats.aiPercentage;
+        const displayHumanPercent = res.stats.displayHumanPercent !== undefined
+          ? res.stats.displayHumanPercent
+          : (res.stats.humanPercentage !== undefined ? res.stats.humanPercentage : 100 - displayAiPercent);
         this.setData({
-          'currentItem.aiPercentage': res.stats.aiPercentage,
-          'currentItem.humanPercentage': res.stats.humanPercentage,
+          'currentItem.displayAiPercent': displayAiPercent,
+          'currentItem.displayHumanPercent': displayHumanPercent,
           'currentItem.correctPercentage': res.stats.correctPercentage,
           'currentItem.totalVotes': res.stats.totalVotes
         });
@@ -463,7 +470,7 @@ Page({
       });
 
       // 启动数字动画
-      this.animatePercentage(this.data.currentItem.aiPercentage || 82);
+      this.animatePercentage(this.data.currentItem.displayAiPercent || 82);
 
       // 加载评论
       this.loadComments();
@@ -914,12 +921,18 @@ Page({
 
   // Sort mode removed as per requirements
 
-  // 更新随机统计数据（提取公共逻辑）
+  // 更新随机统计数据（提取公共逻辑，仅在后端无数据时使用）
   updateRandomStats() {
-    const randomAiPercentage = Math.floor(Math.random() * 60) + 20; // 20-80%
+    // Use displayAiPercent from API if already set; only generate random values as last resort
+    const existingAi = this.data.currentItem && this.data.currentItem.displayAiPercent;
+    if (existingAi !== undefined && existingAi !== null) {
+      // Backend already provided display values — trigger animation but don't overwrite
+      return;
+    }
+    const randomAiPercent = Math.floor(Math.random() * 60) + 20; // 20-80%
     this.setData({
-      'currentItem.aiPercentage': randomAiPercentage,
-      'currentItem.humanPercentage': 100 - randomAiPercentage,
+      'currentItem.displayAiPercent': randomAiPercent,
+      'currentItem.displayHumanPercent': 100 - randomAiPercent,
       'currentItem.correctPercentage': Math.floor(Math.random() * 40) + 40, // 40-80%
       'currentItem.totalVotes': Math.floor(Math.random() * 500) + 100 // 100-600
     });

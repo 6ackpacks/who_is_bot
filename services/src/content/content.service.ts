@@ -13,6 +13,29 @@ function formatContent(content: Content): any {
   const humanVotes = content.humanVotes || 0;
   const correctVotes = content.correctVotes || 0;
 
+  // Real vote-based percentages (always calculated for reference)
+  const realAiPercent = totalVotes > 0 ? Math.round((aiVotes / totalVotes) * 100) : 50;
+  const realHumanPercent = totalVotes > 0 ? Math.round((humanVotes / totalVotes) * 100) : 50;
+
+  // Determine display percentages based on statsSource
+  const statsSource = content.statsSource || 'real';
+  let displayAiPercent: number;
+  let displayHumanPercent: number;
+
+  if (
+    statsSource === 'manual' &&
+    content.manualAiPercent !== null &&
+    content.manualAiPercent !== undefined &&
+    content.manualHumanPercent !== null &&
+    content.manualHumanPercent !== undefined
+  ) {
+    displayAiPercent = content.manualAiPercent;
+    displayHumanPercent = content.manualHumanPercent;
+  } else {
+    displayAiPercent = realAiPercent;
+    displayHumanPercent = realHumanPercent;
+  }
+
   return {
     id: content.id,
     type: content.type,
@@ -28,10 +51,16 @@ function formatContent(content: Content): any {
     aiVotes,
     humanVotes,
     correctVotes,
-    // 前端需要的计算字段
-    aiPercentage: totalVotes > 0 ? Math.round((aiVotes / totalVotes) * 100) : 50,
-    humanPercentage: totalVotes > 0 ? Math.round((humanVotes / totalVotes) * 100) : 50,
+    // 前端需要的计算字段（保留兼容旧字段）
+    aiPercentage: realAiPercent,
+    humanPercentage: realHumanPercent,
     correctPercentage: totalVotes > 0 ? Math.round((correctVotes / totalVotes) * 100) : 0,
+    // 新增：全网判断数据来源控制字段
+    statsSource,
+    manualAiPercent: content.manualAiPercent ?? null,
+    manualHumanPercent: content.manualHumanPercent ?? null,
+    displayAiPercent,
+    displayHumanPercent,
     createdAt: content.createdAt,
     updatedAt: content.updatedAt,
   };

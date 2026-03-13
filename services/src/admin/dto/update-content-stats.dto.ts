@@ -1,4 +1,4 @@
-import { IsInt, Min, IsOptional } from 'class-validator';
+import { IsInt, Min, IsOptional, IsIn, IsNumber, Max } from 'class-validator';
 
 export class UpdateContentStatsDto {
   @IsOptional()
@@ -20,4 +20,20 @@ export class UpdateContentStatsDto {
   @IsInt()
   @Min(0)
   correctVotes?: number;
+
+  @IsOptional()
+  @IsIn(['manual', 'real'])
+  statsSource?: 'manual' | 'real';
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  manualAiPercent?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  @Max(100)
+  manualHumanPercent?: number;
 }

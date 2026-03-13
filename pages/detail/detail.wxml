@@ -69,11 +69,11 @@
       <view class="stats-section">
         <view class="section-label">社区判定</view>
         <view class="stats-bar">
-          <view class="stat-item stat-ai" style="width: {{content.aiVotes}}%">
-            <text class="stat-text">AI {{content.aiVotes}}%</text>
+          <view class="stat-item stat-ai" style="width: {{content.displayAiPercent}}%">
+            <text class="stat-text">AI {{content.displayAiPercent}}%</text>
           </view>
-          <view class="stat-item stat-human" style="width: {{content.humanVotes}}%">
-            <text class="stat-text">真人 {{content.humanVotes}}%</text>
+          <view class="stat-item stat-human" style="width: {{content.displayHumanPercent}}%">
+            <text class="stat-text">真人 {{content.displayHumanPercent}}%</text>
           </view>
         </view>
       </view>

@@ -242,8 +242,8 @@ export class AdminContentService {
         throw new NotFoundException('内容不存在');
       }
 
-      // Validate stats consistency
-      const { totalVotes, aiVotes, humanVotes, correctVotes } = updateStatsDto;
+      // Validate real vote stats consistency
+      const { totalVotes, aiVotes, humanVotes, correctVotes, statsSource, manualAiPercent, manualHumanPercent } = updateStatsDto;
 
       if (totalVotes !== undefined && aiVotes !== undefined && humanVotes !== undefined) {
         if (totalVotes !== aiVotes + humanVotes) {
@@ -257,7 +257,21 @@ export class AdminContentService {
         }
       }
 
-      // Update stats
+      // Validate manual stats when switching to manual source
+      if (statsSource === 'manual') {
+        const aiPct = manualAiPercent !== undefined ? manualAiPercent : content.manualAiPercent;
+        const humanPct = manualHumanPercent !== undefined ? manualHumanPercent : content.manualHumanPercent;
+
+        if (aiPct === null || aiPct === undefined || humanPct === null || humanPct === undefined) {
+          throw new BadRequestException('切换为预设数据时，AI 占比和真人占比均为必填项');
+        }
+
+        if (aiPct + humanPct > 100) {
+          throw new BadRequestException('AI 占比与真人占比之和不能超过 100');
+        }
+      }
+
+      // Update stats (assign only defined fields to avoid overwriting unrelated columns)
       Object.assign(content, updateStatsDto);
       const updatedContent = await this.contentRepository.save(content);
 

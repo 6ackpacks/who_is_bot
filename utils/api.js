@@ -514,6 +514,8 @@ function getContentById(contentId) {
         isAI: true,
         aiVotes: 65,
         humanVotes: 35,
+        displayAiPercent: 65,
+        displayHumanPercent: 35,
         explanation: '这段内容具有明显的AI生成特征，包括规整的句式结构和缺乏个人情感表达。',
         createdAt: new Date().toISOString()
       }
