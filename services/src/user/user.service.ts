@@ -452,10 +452,12 @@ export class UserService {
   /**
    * 更新用户个人资料（头像、昵称）
    */
-  async updateProfile(userId: string, data: { avatar?: string; nickname?: string }): Promise<User> {
+  async updateProfile(userId: string, data: { avatar?: string; nickname?: string; bio?: string; tags?: string }): Promise<User> {
     const fields: Partial<User> = {};
     if (data.avatar !== undefined) fields.avatar = data.avatar;
     if (data.nickname !== undefined) fields.nickname = data.nickname;
+    if (data.bio !== undefined) fields.bio = data.bio;
+    if (data.tags !== undefined) fields.tags = data.tags;
     if (Object.keys(fields).length > 0) {
       await this.userRepository.update(userId, fields);
     }

@@ -128,7 +128,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   async updateProfile(
     @CurrentUser() user: CurrentUserData,
-    @Body() body: { avatar?: string; nickname?: string },
+    @Body() body: { avatar?: string; nickname?: string; bio?: string; tags?: string },
   ) {
     try {
       const updated = await this.userService.updateProfile(user.userId, body);

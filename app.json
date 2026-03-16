@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/login/login",
+    "pages/edit-profile/edit-profile",
     "pages/feed/feed",
     "pages/leaderboard/leaderboard",
     "pages/profile/profile",

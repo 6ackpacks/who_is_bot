@@ -154,9 +154,9 @@ Page({
         // 确保所有必需字段都存在
         username: username,
         avatar: avatar,
-        accuracy: Math.round((user.accuracy || 0) * 10) / 10, // 保留一位小数
+        accuracy: Math.round(((user.weeklyAccuracy !== undefined ? user.weeklyAccuracy : user.accuracy) || 0) * 10) / 10,
         weeklyAccuracy: user.weeklyAccuracy || 0,
-        totalJudged: user.totalJudged || 0
+        totalJudged: user.weeklyJudged !== undefined ? user.weeklyJudged : (user.totalJudged || 0)
       };
     });
 

@@ -28,6 +28,12 @@ export class User {
   @Column({ type: 'varchar', length: 50, nullable: true })
   city: string;
 
+  @Column({ type: 'text', nullable: true })
+  bio: string;
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  tags: string; // JSON array stored as string, e.g. '["火眼金睛","AI爱好者"]'
+
   @Column({ type: 'float', default: 0 })
   accuracy: number;
 

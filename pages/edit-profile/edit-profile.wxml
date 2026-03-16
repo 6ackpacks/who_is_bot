@@ -1,0 +1,94 @@
+<!--pages/edit-profile/edit-profile.wxml-->
+<view class="edit-container">
+
+  <!-- 顶部导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-back" bindtap="handleBack">
+      <text class="nav-back-icon">←</text>
+    </view>
+    <text class="nav-title">编辑资料</text>
+    <button class="nav-save-btn" bindtap="handleSave" loading="{{saving}}">保存</button>
+  </view>
+
+  <scroll-view scroll-y class="edit-scroll">
+    <view class="edit-body">
+
+      <!-- 头像区域 -->
+      <view class="avatar-section" bindtap="handleChangeAvatar">
+        <image src="{{form.avatar}}" class="edit-avatar" mode="aspectFill" binderror="handleAvatarError"></image>
+        <text class="avatar-hint">点击更换头像</text>
+      </view>
+
+      <!-- 名称 -->
+      <view class="field-section">
+        <text class="field-label">名称</text>
+        <input
+          class="field-input"
+          value="{{form.nickname}}"
+          bindinput="onNicknameInput"
+          placeholder="请输入昵称"
+          maxlength="20"
+          placeholder-class="field-placeholder"
+        />
+      </view>
+
+      <!-- 个人简介 -->
+      <view class="field-section">
+        <text class="field-label">个人简介</text>
+        <textarea
+          class="field-textarea"
+          value="{{form.bio}}"
+          bindinput="onBioInput"
+          placeholder="介绍一下自己吧..."
+          maxlength="100"
+          placeholder-class="field-placeholder"
+          auto-height
+        />
+        <text class="field-count">{{form.bio.length}}/100</text>
+      </view>
+
+      <!-- 我的标签 -->
+      <view class="field-section">
+        <text class="field-label">我的标签</text>
+        <view class="tags-selected">
+          <view
+            wx:for="{{form.tags}}"
+            wx:key="index"
+            class="tag-pill tag-selected">
+            <text class="tag-text">{{item}}</text>
+            <text class="tag-remove" bindtap="removeTag" data-index="{{index}}">×</text>
+          </view>
+          <view class="tag-add-input-wrap" wx:if="{{form.tags.length < 8}}">
+            <input
+              class="tag-add-input"
+              value="{{customTagInput}}"
+              bindinput="onCustomTagInput"
+              bindconfirm="addCustomTag"
+              placeholder="+ 自定义标签..."
+              maxlength="10"
+              placeholder-class="tag-add-placeholder"
+            />
+          </view>
+        </view>
+
+        <!-- 推荐标签 -->
+        <view class="recommended-section">
+          <text class="recommended-label">推荐标签</text>
+          <view class="recommended-tags">
+            <view
+              wx:for="{{recommendedTags}}"
+              wx:key="index"
+              class="tag-pill {{selectedTagsMap[item] ? 'tag-recommended-selected' : 'tag-recommended'}}"
+              bindtap="toggleRecommendedTag"
+              data-tag="{{item}}">
+              <text class="tag-text">{{item}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="bottom-spacer"></view>
+    </view>
+  </scroll-view>
+
+</view>

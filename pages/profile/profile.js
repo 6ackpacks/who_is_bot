@@ -8,7 +8,8 @@ Page({
     userInfo: {
       nickname: 'Cyber_Detective',
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=MyUser',
-      bio: ''
+      bio: '',
+      tags: []
     },
     isLoggedIn: false,
     activeTab: 'judgments', // 当前激活的标签页
@@ -106,7 +107,8 @@ Page({
         userInfo: {
           nickname: '未登录',
           avatar: guestAvatar,
-          bio: '登录后查看更多功能'
+          bio: '登录后查看更多功能',
+          tags: []
         },
         userRank: null,
         commentStats: { totalComments: 0, totalLikes: 0 },
@@ -130,7 +132,8 @@ Page({
         userInfo: {
           nickname: userInfo.nickname || 'Cyber_Detective',
           avatar: avatar,
-          bio: userInfo.bio || ''
+          bio: userInfo.bio || '',
+          tags: (() => { try { return userInfo.tags ? JSON.parse(userInfo.tags) : []; } catch(e) { return []; } })()
         }
       });
     }
@@ -146,11 +149,14 @@ Page({
             const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.nickname || 'User')}`;
             const avatar = profile.avatar || defaultAvatar;
 
+            let parsedTags = [];
+            try { parsedTags = profile.tags ? JSON.parse(profile.tags) : []; } catch(e) {}
             this.setData({
               userInfo: {
                 nickname: profile.nickname || this.data.userInfo.nickname,
                 avatar: avatar,
-                bio: profile.bio || this.data.userInfo.bio || ''
+                bio: profile.bio || this.data.userInfo.bio || '',
+                tags: parsedTags
               },
               judgmentStats: {
                 total: profile.totalJudged || 0,
@@ -381,21 +387,13 @@ Page({
   // 登录/编辑资料
   handleEditProfile() {
     if (!auth.isLoggedIn()) {
-      // 未登录，跳转到登录页
       wx.navigateTo({
         url: '/pages/login/login?redirect=/pages/profile/profile'
       });
       return;
     }
-
-    // 已登录，打开编辑资料弹窗
-    this.setData({
-      showEditModal: true,
-      editForm: {
-        avatar: this.data.userInfo.avatar,
-        nickname: this.data.userInfo.nickname,
-        bio: this.data.userInfo.bio || ''
-      }
+    wx.navigateTo({
+      url: '/pages/edit-profile/edit-profile'
     });
   },
 

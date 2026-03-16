@@ -4,6 +4,7 @@
   <!-- 页面标题 -->
   <view class="page-header">
     <text class="page-title">侦探榜</text>
+    <text class="page-subtitle">谁是真正的火眼金睛？</text>
   </view>
 
   <!-- 加载状态 -->
@@ -41,6 +42,7 @@
 
       <!-- 第一名 (中间) -->
       <view wx:if="{{users[0]}}" class="podium-item podium-first">
+        <view class="crown-spacer"></view>
         <view class="crown-icon">👑</view>
         <view class="podium-avatar-wrapper">
           <image src="{{users[0].avatar}}" class="podium-avatar avatar-first" mode="aspectFill" binderror="handleAvatarError" data-index="0"></image>

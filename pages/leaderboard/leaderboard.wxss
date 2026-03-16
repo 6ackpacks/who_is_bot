@@ -12,16 +12,30 @@
 
 /* ===== 页面标题 ===== */
 .page-header {
-  padding: 48rpx 48rpx 64rpx;
+  padding: 48rpx 48rpx 24rpx;
   text-align: left;
+  position: sticky;
+  top: 0;
+  background: rgba(249, 248, 246, 0.92);
+  backdrop-filter: blur(20rpx);
+  z-index: 10;
+  padding-bottom: 24rpx;
 }
 
 .page-title {
   font-family: var(--font-display, 'Poppins', 'PingFang SC', -apple-system, sans-serif);
   font-size: 72rpx;
-  font-weight: 600;
+  font-weight: 900;
   color: var(--accent-clay, #D97757);
   line-height: 1.6;
+}
+
+.page-subtitle {
+  font-size: 26rpx;
+  color: #9B9B97;
+  margin-top: 8rpx;
+  font-weight: 500;
+  display: block;
 }
 
 /* ===== 加载状态 ===== */
@@ -90,7 +104,7 @@
 
 /* ===== 排行榜内容 ===== */
 .leaderboard-content {
-  height: calc(100vh - 240rpx);
+  height: calc(100vh - 280rpx);
   padding: 0 48rpx;
   box-sizing: border-box;
 }
@@ -101,7 +115,10 @@
   align-items: flex-end;
   justify-content: center;
   gap: 32rpx;
-  height: 520rpx;
+  padding-top: 80rpx;
+  height: auto;
+  min-height: 520rpx;
+  overflow: visible;
   margin-bottom: 48rpx;
 }
 
@@ -127,6 +144,12 @@
 /* 第三名 */
 .podium-third {
   z-index: 1;
+}
+
+/* ===== 皇冠占位 ===== */
+.crown-spacer {
+  height: 80rpx;
+  display: block;
 }
 
 /* ===== 皇冠图标 ===== */
@@ -194,7 +217,7 @@
 /* 第二名底座 */
 .base-second {
   height: 192rpx;
-  background: var(--bg-secondary, #F0EEE6);
+  background: #E8E6DC;
   box-shadow: 0 8rpx 12rpx -2rpx rgba(0, 0, 0, 0.05);
 }
 
@@ -223,8 +246,6 @@
 .rank-second {
   font-size: 72rpx;
   color: var(--text-muted, #66655F);
-  position: absolute;
-  top: -24rpx;
 }
 
 /* 第三名排名 */
@@ -246,7 +267,7 @@
 
 .podium-name {
   font-family: var(--font-body, 'Lora', 'Noto Serif SC', Georgia, serif);
-  font-size: 24rpx;
+  font-size: 26rpx;
   font-weight: 600;
   color: var(--text-main, #0A0A0A);
   text-align: center;
@@ -263,6 +284,10 @@
   color: var(--text-muted, #3A3A3A);
   text-align: center;
   line-height: 1.4;
+}
+
+.podium-stats:first-of-type {
+  color: #E76F51;
 }
 
 /* ===== 排名卡片容器 ===== */
@@ -331,7 +356,7 @@
 
 .card-accuracy {
   font-size: 24rpx;
-  color: var(--text-muted, #66655F);
+  color: #66655F;
   line-height: 1.6;
 }
 

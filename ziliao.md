@@ -80,6 +80,7 @@
 | `statsSource` | `statsSource` | varchar(10) | 否 | `'real'` | 数据来源：`manual`（预设）或 `real`（真实投票） |
 | `manualAiPercent` | `manualAiPercent` | float | 是 | NULL | 管理员手动设置的 AI 判定百分比（0-100） |
 | `manualHumanPercent` | `manualHumanPercent` | float | 是 | NULL | 管理员手动设置的真人判定百分比（0-100） |
+| `manualTotalVotes` | `manualTotalVotes` | int | 是 | NULL | 管理员手动设置的展示参与人数，为 NULL 时显示真实 totalVotes |
 | `authorId` | `authorId` | varchar(36) | 是 | NULL | 作者 ID，外键 → `users.id` |
 | `createdAt` | `createdAt` | timestamp | 否 | 自动 | 创建时间 |
 | `updatedAt` | `updatedAt` | timestamp | 否 | 自动 | 更新时间 |

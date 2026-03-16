@@ -6,32 +6,38 @@
     <view class="profile-wrapper">
       <!-- 页面顶部操作区 -->
       <view class="top-actions">
-        <button wx:if="{{isLoggedIn}}" class="btn-edit" bindtap="handleEditProfile">编辑资料</button>
-        <button wx:if="{{isLoggedIn}}" class="btn-logout" bindtap="handleLogout">退出登录</button>
+        <button wx:if="{{isLoggedIn}}" class="btn-edit" bindtap="handleEditProfile">⚙ 编辑资料</button>
         <button wx:else class="btn-edit" bindtap="handleEditProfile">登录</button>
+        <button wx:if="{{isLoggedIn}}" class="btn-logout" bindtap="handleLogout">↪ 退出登录</button>
       </view>
 
       <!-- 用户主干信息 -->
       <view class="user-core-info">
-        <image src="{{userInfo.avatar}}" class="user-avatar" mode="aspectFill" binderror="handleAvatarError"></image>
+        <view class="avatar-wrapper">
+          <image src="{{userInfo.avatar}}" class="user-avatar anim-pop-in" mode="aspectFill" binderror="handleAvatarError"></image>
+          <view class="avatar-status-dot"></view>
+        </view>
         <view class="user-text-box">
-          <view class="profile-nickname">{{userInfo.nickname}}</view>
-          <view class="profile-bio">{{userInfo.bio || '这个人有点忙着找人机呢，什么也没留下'}}</view>
+          <view class="profile-nickname anim-fade-in-right" style="animation-delay:0.3s;">{{userInfo.nickname}}</view>
+          <view wx:if="{{userInfo.bio}}" class="profile-bio anim-fade-in-right" style="animation-delay:0.4s;">{{userInfo.bio}}</view>
+          <view wx:if="{{userInfo.tags && userInfo.tags.length > 0}}" class="profile-tags anim-fade-in-right" style="animation-delay:0.5s;">
+            <text wx:for="{{userInfo.tags}}" wx:key="index" class="profile-tag-pill">{{item}}</text>
+          </view>
         </view>
       </view>
 
       <!-- 核心数据统计 -->
-      <view class="stats-cards">
+      <view class="stats-cards anim-fade-in-up" style="animation-delay:0.5s;">
         <view class="stat-card" bindtap="handleStatClick" data-type="judgments">
-          <text class="stat-card-number">{{judgmentStats.total || 0}}</text>
+          <text class="stat-card-number stat-number-dark">{{judgmentStats.total || 0}}</text>
           <text class="stat-card-label">次判断</text>
         </view>
         <view class="stat-card" bindtap="handleStatClick" data-type="accuracy">
-          <text class="stat-card-number">{{judgmentStats.accuracy || 0}}%</text>
+          <text class="stat-card-number stat-number-accent">{{judgmentStats.accuracy || 0}}%</text>
           <text class="stat-card-label">正确率</text>
         </view>
         <view class="stat-card" bindtap="handleStatClick" data-type="liked-comments">
-          <text class="stat-card-number">{{commentStats.totalLikes || 0}}</text>
+          <text class="stat-card-number stat-number-dark">{{commentStats.totalLikes || 0}}</text>
           <text class="stat-card-label">被点赞评论</text>
         </view>
       </view>
@@ -39,7 +45,7 @@
 
     <!-- 标签页 -->
     <view class="tabs-container">
-      <view class="tabs-header">
+      <view class="tabs-header sticky-tabs">
         <view
           class="tab-item {{activeTab === 'judgments' ? 'active' : ''}}"
           bindtap="switchTab"
@@ -67,19 +73,22 @@
           <view
             wx:for="{{judgments}}"
             wx:key="id"
-            class="judgment-item"
+            class="judgment-item anim-fade-in-up"
+            style="animation-delay: {{0.6 + index * 0.05}}s;"
             bindtap="goToDetail"
             data-id="{{item.contentId}}">
             <image src="{{item.thumbnail}}" class="judgment-thumbnail" mode="aspectFill"></image>
             <view class="judgment-content">
               <view class="judgment-title">{{item.title}}</view>
               <view class="judgment-meta">
-                <text class="judgment-result {{item.isCorrect ? 'correct' : 'incorrect'}}">
-                  {{item.isCorrect ? '✓ 正确' : '✗ 错误'}}
-                </text>
+                <view class="judgment-badge {{item.isCorrect ? 'badge-correct' : 'badge-incorrect'}}">
+                  <text class="badge-icon">{{item.isCorrect ? '✓' : '✗'}}</text>
+                  <text class="badge-text">{{item.isCorrect ? '正确' : '错误'}}</text>
+                </view>
                 <text class="judgment-time">{{item.time}}</text>
               </view>
             </view>
+            <text class="judgment-chevron">›</text>
           </view>
         </view>
         <view wx:else class="empty-state">
