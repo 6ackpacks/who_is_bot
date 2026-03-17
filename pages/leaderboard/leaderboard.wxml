@@ -26,7 +26,7 @@
     <view class="podium-container">
 
       <!-- 第二名 (左侧) -->
-      <view wx:if="{{users[1]}}" class="podium-item podium-second">
+      <view wx:if="{{users[1]}}" class="podium-item podium-second" bindtap="goToUserProfile" data-userid="{{users[1].id}}">
         <view class="podium-avatar-wrapper">
           <image src="{{users[1].avatar}}" class="podium-avatar avatar-second" mode="aspectFill" binderror="handleAvatarError" data-index="1"></image>
         </view>
@@ -41,7 +41,7 @@
       </view>
 
       <!-- 第一名 (中间) -->
-      <view wx:if="{{users[0]}}" class="podium-item podium-first">
+      <view wx:if="{{users[0]}}" class="podium-item podium-first" bindtap="goToUserProfile" data-userid="{{users[0].id}}">
         <view class="crown-spacer"></view>
         <view class="crown-icon">👑</view>
         <view class="podium-avatar-wrapper">
@@ -58,7 +58,7 @@
       </view>
 
       <!-- 第三名 (右侧) -->
-      <view wx:if="{{users[2]}}" class="podium-item podium-third">
+      <view wx:if="{{users[2]}}" class="podium-item podium-third" bindtap="goToUserProfile" data-userid="{{users[2].id}}">
         <view class="podium-avatar-wrapper">
           <image src="{{users[2].avatar}}" class="podium-avatar avatar-third" mode="aspectFill" binderror="handleAvatarError" data-index="2"></image>
         </view>
@@ -76,7 +76,7 @@
 
     <!-- 排名卡片 - 第四名及以后 -->
     <view class="ranking-cards">
-      <view wx:for="{{users}}" wx:key="id" wx:if="{{index >= 3}}" class="ranking-card">
+      <view wx:for="{{users}}" wx:key="id" wx:if="{{index >= 3}}" class="ranking-card" bindtap="goToUserProfile" data-userid="{{item.id}}">
 
         <!-- 排名数字 -->
         <text class="card-rank">{{index + 1}}</text>

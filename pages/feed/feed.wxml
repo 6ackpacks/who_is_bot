@@ -91,13 +91,13 @@
   <view wx:elif="{{viewState === 'revealed'}}" class="result-view">
 
       <!-- 返回按钮 - 左上角 -->
-      <view class="back-button" bindtap="goHome">
+      <view class="back-button" bindtap="handleBack">
         <text class="back-icon">←</text>
         <text class="back-text">返回</text>
       </view>
 
-      <!-- 继续按钮 - 右上角 -->
-      <view class="next-button" bindtap="handleNext">
+      <!-- 继续按钮 - 右上角（从个人主页跳转时隐藏） -->
+      <view wx:if="{{!fromProfile}}" class="next-button" bindtap="handleNext">
         <text class="next-text">继续</text>
         <text class="next-icon">→</text>
       </view>
@@ -264,6 +264,17 @@
                   </view>
                   <view class="action-btn" bindtap="onReplyComment" data-comment="{{item}}">
                     <text>回复</text>
+                  </view>
+                </view>
+
+                <!-- 回复列表（缩进展示） -->
+                <view wx:if="{{item.replies && item.replies.length > 0}}" class="replies-list">
+                  <view wx:for="{{item.replies}}" wx:for-item="reply" wx:key="id" class="reply-item">
+                    <text class="reply-author">{{reply.user ? reply.user.nickname : '游客'}}: </text>
+                    <text class="reply-content">{{reply.content}}</text>
+                    <view class="reply-actions">
+                      <text class="reply-likes">{{reply.likes > 0 ? reply.likes + ' 赞' : ''}}</text>
+                    </view>
                   </view>
                 </view>
               </view>

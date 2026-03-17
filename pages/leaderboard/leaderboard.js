@@ -198,5 +198,20 @@ Page({
       console.log('未找到对应的用户数据');
     }
     console.log('======================================');
+  },
+
+  // 跳转到用户个人主页
+  goToUserProfile(e) {
+    const userId = e.currentTarget.dataset.userid;
+    if (!userId) return;
+
+    // profile 是 tabBar 页面，不能用 navigateTo 传参，改用 globalData 传递 userId
+    const app = getApp();
+    if (!app.globalData) app.globalData = {};
+    app.globalData.viewingUserId = userId;
+
+    wx.switchTab({
+      url: '/pages/profile/profile'
+    });
   }
 });

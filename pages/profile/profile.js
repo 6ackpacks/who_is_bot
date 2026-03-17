@@ -12,6 +12,8 @@ Page({
       tags: []
     },
     isLoggedIn: false,
+    isOwnProfile: true, // 是否是查看自己的资料
+    targetUserId: null, // 目标用户ID（查看他人资料时使用）
     activeTab: 'judgments', // 当前激活的标签页
     tabIndicatorLeft: 0, // 标签页指示器位置（百分比）
     tabIndicatorWidth: 33.33, // 标签页指示器宽度（百分比）
@@ -63,7 +65,25 @@ Page({
     }
   },
 
-  onLoad() {
+  onLoad(options) {
+    // 检查是否传入了 userId 参数
+    if (options && options.userId) {
+      const targetUserId = parseInt(options.userId);
+      const currentUserId = auth.getUserId();
+      const isOwnProfile = currentUserId && (currentUserId === targetUserId);
+
+      this.setData({
+        targetUserId: targetUserId,
+        isOwnProfile: isOwnProfile
+      });
+    } else {
+      // 未传入 userId，默认查看自己的资料
+      this.setData({
+        isOwnProfile: true,
+        targetUserId: null
+      });
+    }
+
     this.checkLoginAndLoadData();
   },
 
@@ -74,7 +94,20 @@ Page({
       duration: 0
     });
 
-    // 每次显示页面时检查登录状态
+    // 检查是否从榜单等地方传入了要查看的用户 ID
+    const app = getApp();
+    const viewingUserId = app.globalData && app.globalData.viewingUserId;
+    if (viewingUserId) {
+      app.globalData.viewingUserId = null; // 消费后立即清除
+      const currentUserId = auth.getUserId();
+      const isOwnProfile = currentUserId && (String(currentUserId) === String(viewingUserId));
+      this.setData({ isOwnProfile, targetUserId: viewingUserId });
+    } else {
+      // 正常通过 tabBar 进入，重置为查看自己
+      this.setData({ isOwnProfile: true, targetUserId: null });
+    }
+
+    // 每次显示页面时检查登录状态并加载数据
     this.checkLoginAndLoadData();
 
     // 更新自定义 tabBar 选中状态
@@ -88,6 +121,13 @@ Page({
     const isLoggedIn = auth.isLoggedIn();
     this.setData({ isLoggedIn });
 
+    // 如果是查看他人资料
+    if (!this.data.isOwnProfile && this.data.targetUserId) {
+      this.loadTargetUserData(this.data.targetUserId);
+      return;
+    }
+
+    // 查看自己的资料
     if (isLoggedIn) {
       // 已登录，加载用户数据
       this.loadUserData();
@@ -176,9 +216,56 @@ Page({
     }
   },
 
+  // 加载目标用户数据（查看他人资料时使用）
+  loadTargetUserData(userId) {
+    api.getUserProfile(userId)
+      .then(res => {
+        if (res && res.success && res.data) {
+          const profile = res.data;
+
+          // 生成默认头像
+          const defaultAvatar = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile.nickname || 'User')}`;
+          const avatar = profile.avatar || defaultAvatar;
+
+          let parsedTags = [];
+          try { parsedTags = profile.tags ? JSON.parse(profile.tags) : []; } catch(e) {}
+
+          this.setData({
+            userInfo: {
+              nickname: profile.nickname || '用户',
+              avatar: avatar,
+              bio: profile.bio || '',
+              tags: parsedTags
+            },
+            judgmentStats: {
+              total: profile.totalJudged || 0,
+              correct: Math.round(((profile.accuracy || 0) * (profile.totalJudged || 0)) / 100),
+              accuracy: Math.round((profile.accuracy || 0) * 10) / 10
+            },
+            commentStats: {
+              totalComments: profile.totalComments || 0,
+              totalLikes: profile.totalLikes || 0
+            }
+          });
+
+          // 加载目标用户的判定记录和评论
+          this.loadJudgments(userId);
+          this.loadComments(userId);
+          this.loadUserRank(userId);
+        }
+      })
+      .catch(err => {
+        console.error('加载用户资料失败:', err);
+        wx.showToast({
+          title: '加载失败',
+          icon: 'none'
+        });
+      });
+  },
+
   // 加载用户排名
-  loadUserRank() {
-    const userId = auth.getUserId();
+  loadUserRank(targetUserId) {
+    const userId = targetUserId || auth.getUserId();
     if (!userId) return;
 
     api.getUserRank(userId)
@@ -232,8 +319,8 @@ Page({
   },
 
   // 加载判定记录
-  loadJudgments() {
-    const userId = auth.getUserId();
+  loadJudgments(targetUserId) {
+    const userId = targetUserId || auth.getUserId();
     if (!userId) return;
 
     api.getUserJudgments(userId)
@@ -286,8 +373,8 @@ Page({
   },
 
   // 加载评论列表
-  loadComments() {
-    const userId = auth.getUserId();
+  loadComments(targetUserId) {
+    const userId = targetUserId || auth.getUserId();
     if (!userId) return;
 
     api.getComments({ userId })
@@ -375,11 +462,17 @@ Page({
     });
   },
 
-  // 跳转到详情页
+  // 跳转到判定解析界面（feed 页 revealed 状态）
   goToDetail(e) {
     const id = e.currentTarget.dataset.id;
-    wx.navigateTo({
-      url: `/pages/detail/detail?id=${id}`
+    if (!id) return;
+
+    const app = getApp();
+    if (!app.globalData) app.globalData = {};
+    app.globalData.revealContentId = id;
+
+    wx.switchTab({
+      url: '/pages/feed/feed'
     });
   },
 

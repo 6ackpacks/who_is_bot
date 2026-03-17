@@ -4,8 +4,8 @@
 
     <!-- 顶部导航栏 -->
     <view class="profile-nav">
-      <text class="profile-nav-title">我的</text>
-      <view class="profile-nav-actions" wx:if="{{isLoggedIn}}">
+      <text class="profile-nav-title">{{isOwnProfile ? '我的' : userInfo.nickname}}</text>
+      <view class="profile-nav-actions" wx:if="{{isOwnProfile && isLoggedIn}}">
         <view class="nav-btn nav-btn-edit" bindtap="handleEditProfile">
           <text class="nav-btn-text">编辑资料</text>
         </view>
@@ -13,7 +13,7 @@
           <text class="nav-btn-logout-icon">↪</text>
         </view>
       </view>
-      <view class="profile-nav-actions" wx:else>
+      <view class="profile-nav-actions" wx:elif="{{isOwnProfile && !isLoggedIn}}">
         <view class="nav-btn nav-btn-login" bindtap="handleEditProfile">
           <text class="nav-btn-text">登录</text>
         </view>

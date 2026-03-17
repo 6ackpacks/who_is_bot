@@ -22,4 +22,8 @@ export class CreateCommentDto {
     return value;
   })
   content: string;
+
+  @IsOptional()
+  @IsString()
+  parentId?: string;
 }

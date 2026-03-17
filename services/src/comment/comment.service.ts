@@ -41,11 +41,29 @@ export class CommentService {
       throw new NotFoundException('用户不存在');
     }
 
+    // 如果是回复，验证父评论存在且属于同一内容
+    if (dto.parentId) {
+      const parent = await this.commentRepository.findOne({
+        where: { id: dto.parentId },
+      });
+      if (!parent) {
+        throw new NotFoundException('父评论不存在');
+      }
+      if (parent.contentId !== dto.contentId) {
+        throw new BadRequestException('父评论不属于该内容');
+      }
+      // 只允许一级回复：父评论本身必须是顶层评论
+      if (parent.parentId !== null) {
+        throw new BadRequestException('不支持多级嵌套回复');
+      }
+    }
+
     // 创建评论
     const comment = this.commentRepository.create({
       contentId: dto.contentId,
       userId: dto.userId,
       content: dto.content,
+      parentId: dto.parentId ?? null,
     });
 
     const savedComment = await this.commentRepository.save(comment);
@@ -64,33 +82,48 @@ export class CommentService {
       throw new NotFoundException('内容不存在');
     }
 
-    // 获取所有评论
-    const comments = await this.commentRepository.find({
+    // 获取所有评论（顶层 + 回复），按时间升序，方便后续嵌套
+    const allComments = await this.commentRepository.find({
       where: { contentId },
-      order: { createdAt: 'DESC' },
+      order: { createdAt: 'ASC' },
     });
 
-    // 获取所有相关的用户ID
-    const userIds = comments
+    // 批量查询所有涉及的用户
+    const userIds = allComments
       .filter(c => c.userId)
       .map(c => c.userId)
-      .filter((id, index, self) => self.indexOf(id) === index); // 去重
+      .filter((id, index, self) => self.indexOf(id) === index);
 
-    // 批量查询用户信息
     const users = userIds.length > 0
-      ? await this.userRepository.find({
-          where: { id: In(userIds) },
-        })
+      ? await this.userRepository.find({ where: { id: In(userIds) } })
       : [];
 
-    // 创建用户ID到用户对象的映射
     const userMap = new Map(users.map(u => [u.id, u]));
 
-    // 格式化所有评论（扁平结构，无层级）
-    const formattedComments = comments.map(comment => this.formatComment(comment, userMap));
+    // 分离顶层评论和回复
+    const topLevel = allComments.filter(c => c.parentId === null || c.parentId === undefined);
+    const replies  = allComments.filter(c => c.parentId !== null && c.parentId !== undefined);
+
+    // 构建 parentId -> replies 映射（parentId 存的是 number，comment.id 是 uuid string，
+    // 但表里 parentId 列存的是 INT——实际业务中前端传的是父评论的 id。
+    // 由于 comments.id 为 uuid varchar，而 parentId 列为 INT，这里用 string 做 key 统一比较）
+    const replyMap = new Map<string, typeof replies>();
+    for (const reply of replies) {
+      const key = String(reply.parentId);
+      if (!replyMap.has(key)) replyMap.set(key, []);
+      replyMap.get(key).push(reply);
+    }
+
+    // 格式化顶层评论，并附加 replies 数组（按时间升序）
+    const formattedComments = topLevel.reverse().map(comment => {
+      const base = this.formatComment(comment, userMap);
+      const childReplies = (replyMap.get(String(comment.id)) || [])
+        .map(r => this.formatComment(r, userMap));
+      return { ...base, replies: childReplies };
+    });
 
     return {
-      total: comments.length,
+      total: topLevel.length,
       comments: formattedComments,
     };
   }
@@ -295,6 +328,7 @@ export class CommentService {
     return {
       id: comment.id,
       contentId: comment.contentId,
+      parentId: comment.parentId ?? null,
       content: comment.content,
       likes: comment.likes,
       createdAt: comment.createdAt,
