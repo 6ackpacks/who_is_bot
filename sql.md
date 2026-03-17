@@ -19,6 +19,8 @@ userId
 
 contentId
 
+parentId
+
 表名：content (内容表)
 包含字段：
 

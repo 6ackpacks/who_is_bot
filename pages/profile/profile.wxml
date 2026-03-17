@@ -15,29 +15,40 @@
       </view>
       <view class="profile-nav-actions" wx:elif="{{isOwnProfile && !isLoggedIn}}">
         <view class="nav-btn nav-btn-login" bindtap="handleEditProfile">
-          <text class="nav-btn-text">登录</text>
+          <text class="nav-btn-text nav-btn-text-login">登录</text>
         </view>
       </view>
     </view>
 
     <!-- 个人信息头区域 -->
-    <view class="profile-wrapper">
-      <!-- 用户主干信息 -->
+    <view class="profile-header-card">
+
+      <!-- 头像 + 昵称 -->
       <view class="user-core-info">
         <view class="avatar-wrapper">
-          <image src="{{userInfo.avatar}}" class="user-avatar" mode="aspectFill" binderror="handleAvatarError"></image>
+          <image
+            src="{{userInfo.avatar}}"
+            class="user-avatar"
+            mode="aspectFill"
+            binderror="handleAvatarError">
+          </image>
           <view class="avatar-status-dot"></view>
         </view>
-        <view class="profile-nickname">{{userInfo.nickname}}</view>
-        <!-- 个人简介或占位符 -->
-        <text wx:if="{{userInfo.bio}}" class="profile-bio" decode="{{true}}">{{userInfo.bio}}</text>
-        <view wx:else class="status-spacer">
-          <text class="status-spacer-text">这个人有点懒，什么都没有留下。</text>
-        </view>
-        <!-- 标签 -->
-        <view wx:if="{{userInfo.tags && userInfo.tags.length > 0}}" class="profile-tags">
-          <text wx:for="{{userInfo.tags}}" wx:key="index" class="profile-tag-pill">{{item}}</text>
-        </view>
+        <text class="profile-nickname">{{userInfo.nickname}}</text>
+      </view>
+
+      <!-- 个人简介 -->
+      <text wx:if="{{userInfo.bio}}" class="profile-bio" decode="{{true}}">{{userInfo.bio}}</text>
+      <view wx:else class="status-spacer">
+        <text class="status-spacer-text">这个人有点懒，什么都没有留下。</text>
+      </view>
+
+      <!-- 标签 -->
+      <view wx:if="{{userInfo.tags && userInfo.tags.length > 0}}" class="profile-tags">
+        <text
+          wx:for="{{userInfo.tags}}"
+          wx:key="index"
+          class="profile-tag-pill">{{item}}</text>
       </view>
 
       <!-- 核心数据统计 -->
@@ -55,29 +66,36 @@
           <text class="stat-card-label">被点赞评论</text>
         </view>
       </view>
+
     </view>
 
     <!-- 标签页 -->
     <view class="tabs-container">
-      <view class="tabs-header sticky-tabs">
+
+      <!-- Tabs 导航 -->
+      <view class="tabs-header">
         <view
-          class="tab-item {{activeTab === 'judgments' ? 'active' : ''}}"
+          class="tab-item {{activeTab === 'judgments' ? 'tab-active' : ''}}"
           bindtap="switchTab"
           data-tab="judgments">
           <text class="tab-text">判定记录</text>
+          <view class="tab-underline" wx:if="{{activeTab === 'judgments'}}"></view>
         </view>
         <view
-          class="tab-item {{activeTab === 'comments' ? 'active' : ''}}"
+          class="tab-item {{activeTab === 'comments' ? 'tab-active' : ''}}"
           bindtap="switchTab"
           data-tab="comments">
           <text class="tab-text">评论</text>
+          <view class="tab-underline" wx:if="{{activeTab === 'comments'}}"></view>
         </view>
         <view
-          class="tab-item {{activeTab === 'submit' ? 'active' : ''}}"
+          class="tab-item {{activeTab === 'submit' ? 'tab-active' : ''}}"
           bindtap="switchTab"
           data-tab="submit">
           <text class="tab-text">申请提交</text>
+          <view class="tab-underline" wx:if="{{activeTab === 'submit'}}"></view>
         </view>
+        <!-- 保留原有 tabIndicator 兼容 JS -->
         <view class="tab-indicator" style="left: {{tabIndicatorLeft}}%; width: {{tabIndicatorWidth}}%;"></view>
       </view>
 
@@ -91,7 +109,7 @@
             bindtap="goToDetail"
             data-id="{{item.contentId}}">
 
-            <!-- 缩略图：按内容类型差异化展示 -->
+            <!-- 缩略图 -->
             <view wx:if="{{item.contentType === 'text'}}" class="judgment-thumbnail thumb-text">
               <text class="thumb-text-content">{{item.textSnippet}}</text>
             </view>
@@ -108,6 +126,7 @@
               </view>
             </view>
 
+            <!-- 内容区 -->
             <view class="judgment-content">
               <view class="judgment-title">{{item.title}}</view>
               <view class="judgment-meta">
@@ -118,6 +137,8 @@
                 <text class="judgment-time">{{item.time}}</text>
               </view>
             </view>
+
+            <!-- 右侧箭头 -->
             <text class="judgment-chevron">›</text>
           </view>
         </view>
@@ -190,6 +211,7 @@
           <button class="btn-submit" bindtap="handleSubmitContent">提交申请</button>
         </view>
       </view>
+
     </view>
 
     <!-- 底部占位 -->
@@ -246,4 +268,5 @@
       </view>
     </view>
   </view>
+
 </view>
