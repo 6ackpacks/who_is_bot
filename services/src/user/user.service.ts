@@ -339,6 +339,8 @@ export class UserService {
       nickname: user.nickname,
       uid: user.uid,
       avatar: user.avatar,
+      bio: user.bio || '',
+      tags: user.tags || '',
       level: user.level,
       levelName: this.getLevelName(user.level),
       totalJudged: user.totalJudged,

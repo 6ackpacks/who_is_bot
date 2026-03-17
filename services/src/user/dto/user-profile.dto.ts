@@ -8,6 +8,8 @@ export class UserProfileDto {
   nickname: string;
   uid: string;
   avatar: string;
+  bio: string;
+  tags: string; // JSON array string, e.g. '["标签1","标签2"]'
   level: number;
   levelName: string;
 

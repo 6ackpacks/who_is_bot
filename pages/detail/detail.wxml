@@ -68,19 +68,24 @@
       <!-- 统计数据 -->
       <view class="stats-section">
         <view class="section-label">社区判定</view>
-        <view class="stats-participant">
-          <text class="participant-count">{{content.displayTotalVotes || content.totalVotes || 0}} 人参与</text>
+        <view wx:if="{{(content.totalVotes || 0) < 10}}" class="stats-pending">
+          <text class="stats-pending-text">参与判定的人数暂未超过十个人，全网共识度暂未公开</text>
         </view>
-        <view class="stats-bar">
-          <!-- AI侧：深色，左侧 -->
-          <view class="stat-item stat-ai-dark" style="width: {{content.displayAiPercent}}%; background: #1a1a1a;">
-            <text class="stat-text">AI {{content.displayAiPercent}}%</text>
+        <block wx:else>
+          <view class="stats-participant">
+            <text class="participant-count">{{content.displayTotalVotes || content.totalVotes || 0}} 人参与</text>
           </view>
-          <!-- 真人侧：浅色，右侧 -->
-          <view class="stat-item stat-human-light" style="width: {{content.displayHumanPercent}}%; background: #e0e0e0;">
-            <text class="stat-text stat-text-dark">真人 {{content.displayHumanPercent}}%</text>
+          <view class="stats-bar">
+            <!-- AI侧：深色，左侧 -->
+            <view class="stat-item stat-ai-dark" style="width: {{content.displayAiPercent}}%; background: #1a1a1a;">
+              <text class="stat-text">AI {{content.displayAiPercent}}%</text>
+            </view>
+            <!-- 真人侧：浅色，右侧 -->
+            <view class="stat-item stat-human-light" style="width: {{content.displayHumanPercent}}%; background: #e0e0e0;">
+              <text class="stat-text stat-text-dark">真人 {{content.displayHumanPercent}}%</text>
+            </view>
           </view>
-        </view>
+        </block>
       </view>
 
       <!-- 解析说明 -->

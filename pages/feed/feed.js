@@ -36,7 +36,8 @@ Page({
     judgedItems: [], // 已判断的题目ID数组
     userChoices: {}, // 用户选择记录对象 {contentId: 'ai' | 'human'}
     // 数字动画
-    displayPercentage: 0 // 用于显示动画的百分比数字
+    displayPercentage: 0, // 用于显示动画的百分比数字
+    animationTimer: null // 动画计时器ID，用于清理
   },
 
   onLoad() {
@@ -49,6 +50,10 @@ Page({
   onUnload() {
     // 清理视频上下文缓存，防止内存泄漏
     this.cleanupVideoContexts();
+    // 清理动画计时器，防止内存泄漏
+    if (this.data.animationTimer) {
+      clearTimeout(this.data.animationTimer);
+    }
   },
 
   onShow() {
@@ -498,6 +503,11 @@ Page({
 
   // 数字滚动动画
   animatePercentage(targetValue) {
+    // 清除之前的动画计时器，防止多个动画同时运行
+    if (this.data.animationTimer) {
+      clearTimeout(this.data.animationTimer);
+    }
+
     const duration = 1200; // 动画持续时间（毫秒）
     const startTime = Date.now();
     const startValue = 0;
@@ -516,11 +526,15 @@ Page({
       });
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        const timerId = setTimeout(animate, 16); // 16ms ≈ 60fps, 微信小程序兼容方案
+        this.setData({ animationTimer: timerId });
+      } else {
+        this.setData({ animationTimer: null });
       }
     };
 
-    requestAnimationFrame(animate);
+    const timerId = setTimeout(animate, 16);
+    this.setData({ animationTimer: timerId });
   },
 
   // 切换详情抽屉

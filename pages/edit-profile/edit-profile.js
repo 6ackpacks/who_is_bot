@@ -66,9 +66,15 @@ Page({
     api.updateProfile(payload)
       .then(res => {
         if (res && res.success) {
-          // 更新本地缓存
+          // 更新本地缓存 - 关键：保持 tags 为 JSON 字符串格式以匹配后端返回格式
           const existing = auth.getUserInfo() || {};
-          const updated = { ...existing, ...payload };
+          const updated = {
+            ...existing,
+            nickname: nickname.trim(),
+            bio: bio.trim(),
+            avatar: avatar,
+            tags: JSON.stringify(tags)  // 保持字符串格式
+          };
           wx.setStorageSync('userInfo', updated);
 
           wx.showToast({ title: '保存成功', icon: 'success' });

@@ -1,33 +1,47 @@
-<!--pages/profile/profile.wxml - Claude风格个人主页-->
+<!--pages/profile/profile.wxml-->
 <view class="profile-container">
   <scroll-view scroll-y class="profile-scroll">
 
+    <!-- 顶部导航栏 -->
+    <view class="profile-nav">
+      <text class="profile-nav-title">我的</text>
+      <view class="profile-nav-actions" wx:if="{{isLoggedIn}}">
+        <view class="nav-btn nav-btn-edit" bindtap="handleEditProfile">
+          <text class="nav-btn-text">编辑资料</text>
+        </view>
+        <view class="nav-btn nav-btn-logout" bindtap="handleLogout">
+          <text class="nav-btn-logout-icon">↪</text>
+        </view>
+      </view>
+      <view class="profile-nav-actions" wx:else>
+        <view class="nav-btn nav-btn-login" bindtap="handleEditProfile">
+          <text class="nav-btn-text">登录</text>
+        </view>
+      </view>
+    </view>
+
     <!-- 个人信息头区域 -->
     <view class="profile-wrapper">
-      <!-- 页面顶部操作区 -->
-      <view class="top-actions">
-        <button wx:if="{{isLoggedIn}}" class="btn-edit" bindtap="handleEditProfile">⚙ 编辑资料</button>
-        <button wx:else class="btn-edit" bindtap="handleEditProfile">登录</button>
-        <button wx:if="{{isLoggedIn}}" class="btn-logout" bindtap="handleLogout">↪ 退出登录</button>
-      </view>
-
       <!-- 用户主干信息 -->
       <view class="user-core-info">
         <view class="avatar-wrapper">
-          <image src="{{userInfo.avatar}}" class="user-avatar anim-pop-in" mode="aspectFill" binderror="handleAvatarError"></image>
+          <image src="{{userInfo.avatar}}" class="user-avatar" mode="aspectFill" binderror="handleAvatarError"></image>
           <view class="avatar-status-dot"></view>
         </view>
-        <view class="user-text-box">
-          <view class="profile-nickname anim-fade-in-right" style="animation-delay:0.3s;">{{userInfo.nickname}}</view>
-          <view wx:if="{{userInfo.bio}}" class="profile-bio anim-fade-in-right" style="animation-delay:0.4s;">{{userInfo.bio}}</view>
-          <view wx:if="{{userInfo.tags && userInfo.tags.length > 0}}" class="profile-tags anim-fade-in-right" style="animation-delay:0.5s;">
-            <text wx:for="{{userInfo.tags}}" wx:key="index" class="profile-tag-pill">{{item}}</text>
-          </view>
+        <view class="profile-nickname">{{userInfo.nickname}}</view>
+        <!-- 个人简介或占位符 -->
+        <view wx:if="{{userInfo.bio}}" class="profile-bio">{{userInfo.bio}}</view>
+        <view wx:else class="status-spacer">
+          <text class="status-spacer-text">这个人有点懒，什么都没有留下。</text>
+        </view>
+        <!-- 标签 -->
+        <view wx:if="{{userInfo.tags && userInfo.tags.length > 0}}" class="profile-tags">
+          <text wx:for="{{userInfo.tags}}" wx:key="index" class="profile-tag-pill">{{item}}</text>
         </view>
       </view>
 
       <!-- 核心数据统计 -->
-      <view class="stats-cards anim-fade-in-up" style="animation-delay:0.5s;">
+      <view class="stats-cards">
         <view class="stat-card" bindtap="handleStatClick" data-type="judgments">
           <text class="stat-card-number stat-number-dark">{{judgmentStats.total || 0}}</text>
           <text class="stat-card-label">次判断</text>
@@ -73,11 +87,27 @@
           <view
             wx:for="{{judgments}}"
             wx:key="id"
-            class="judgment-item anim-fade-in-up"
-            style="animation-delay: {{0.6 + index * 0.05}}s;"
+            class="judgment-item"
             bindtap="goToDetail"
             data-id="{{item.contentId}}">
-            <image src="{{item.thumbnail}}" class="judgment-thumbnail" mode="aspectFill"></image>
+
+            <!-- 缩略图：按内容类型差异化展示 -->
+            <view wx:if="{{item.contentType === 'text'}}" class="judgment-thumbnail thumb-text">
+              <text class="thumb-text-content">{{item.textSnippet}}</text>
+            </view>
+            <image
+              wx:elif="{{item.contentType === 'image'}}"
+              src="{{item.thumbnail}}"
+              class="judgment-thumbnail"
+              mode="aspectFill">
+            </image>
+            <view wx:else class="judgment-thumbnail thumb-video">
+              <image src="/images/video-thumb.png" class="thumb-video-img" mode="aspectFill"></image>
+              <view class="thumb-video-overlay">
+                <text class="thumb-video-play">▶</text>
+              </view>
+            </view>
+
             <view class="judgment-content">
               <view class="judgment-title">{{item.title}}</view>
               <view class="judgment-meta">

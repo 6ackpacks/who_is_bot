@@ -37,7 +37,6 @@ export default function ContentEdit() {
         text: content.text,
         url: content.url,
         isAi: content.isAi,
-        modelTag: content.modelTag,
         provider: content.provider,
         deceptionRate: content.deceptionRate,
         explanation: content.explanation,
@@ -72,7 +71,6 @@ export default function ContentEdit() {
         type: contentType,
         title: values.title,
         isAi: values.isAi,
-        modelTag: values.modelTag,
         provider: values.provider,
         deceptionRate: values.deceptionRate,
         explanation: values.explanation,
@@ -182,19 +180,11 @@ export default function ContentEdit() {
           </Form.Item>
 
           <Form.Item
-            label="模型标签"
-            name="modelTag"
-            rules={[{ required: true, message: '请输入模型标签' }]}
-          >
-            <Input placeholder="如: GPT-4, Claude, Human" />
-          </Form.Item>
-
-          <Form.Item
-            label="提供者"
+            label="创作来源"
             name="provider"
-            rules={[{ required: true, message: '请输入提供者' }]}
+            rules={[{ required: true, message: '请输入创作来源' }]}
           >
-            <Input placeholder="如: OpenAI, Anthropic, User" />
+            <Input placeholder="如: Midjourney、Stable Diffusion、真实摄影" />
           </Form.Item>
 
           <Form.Item

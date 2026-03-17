@@ -245,6 +245,14 @@ Page({
           const judgments = rawList.map(item => {
             const validTypes = ['text', 'image', 'video'];
             const contentType = validTypes.includes(item.contentType) ? item.contentType : 'text';
+            const title = item.contentTitle || '未知内容';
+
+            // 缩略图逻辑：
+            // - 文字：textSnippet 显示文字预览，thumbnail 不使用
+            // - 图片：thumbnail 使用 contentUrl（实际图片地址）
+            // - 视频：使用本地占位图 /images/video-thumb.png
+            const thumbnail = contentType === 'image' ? (item.contentUrl || '') : '';
+            const textSnippet = contentType === 'text' ? title : '';
 
             return {
               id: item.id,
@@ -252,8 +260,9 @@ Page({
               contentType: contentType,
               isCorrect: item.isCorrect,
               time: this.formatTime(item.createdAt),
-              title: item.contentTitle || '未知内容',
-              thumbnail: item.contentUrl || this.getDefaultThumbnail(contentType)
+              title: title,
+              thumbnail: thumbnail,
+              textSnippet: textSnippet
             };
           });
           this.setData({ judgments });
@@ -299,16 +308,6 @@ Page({
       .catch(() => {
         this.setData({ comments: [] });
       });
-  },
-
-  // 获取默认缩略图
-  getDefaultThumbnail(type) {
-    const thumbnailMap = {
-      'text': 'https://via.placeholder.com/100/D97757/FFFFFF?text=文本',
-      'image': 'https://via.placeholder.com/100/10B981/FFFFFF?text=图片',
-      'video': 'https://via.placeholder.com/100/3B82F6/FFFFFF?text=视频'
-    };
-    return thumbnailMap[type] || 'https://via.placeholder.com/100/9CA3AF/FFFFFF?text=?';
   },
 
   // 格式化时间
