@@ -30,7 +30,7 @@
         </view>
         <view class="profile-nickname">{{userInfo.nickname}}</view>
         <!-- 个人简介或占位符 -->
-        <view wx:if="{{userInfo.bio}}" class="profile-bio">{{userInfo.bio}}</view>
+        <text wx:if="{{userInfo.bio}}" class="profile-bio" decode="{{true}}">{{userInfo.bio}}</text>
         <view wx:else class="status-spacer">
           <text class="status-spacer-text">这个人有点懒，什么都没有留下。</text>
         </view>
