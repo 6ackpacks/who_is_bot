@@ -246,7 +246,7 @@
     <view class="apply-modal-mask" bindtap="closeApplyModal"></view>
     <view class="apply-modal-content">
       <view class="apply-modal-header">
-        <text class="apply-modal-title">填写内容，申请成为内容提交者</text>
+        <text class="apply-modal-title">很感谢您希望为我们项目的发展做出贡献，请您介绍一下您为什么想成为内容提交者并请简单介绍一下自己，感谢！</text>
         <view class="apply-modal-close" bindtap="closeApplyModal">✕</view>
       </view>
       <view class="apply-modal-body">
