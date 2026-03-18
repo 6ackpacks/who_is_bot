@@ -1,6 +1,6 @@
 <!--pages/profile/profile.wxml-->
 <view class="profile-container">
-  <scroll-view scroll-y class="profile-scroll">
+  <scroll-view scroll-y class="profile-scroll" bindscrolltolower="loadMoreJudgments">
 
     <!-- 顶部导航栏 - 只在查看他人主页时显示 -->
     <view class="profile-nav" wx:if="{{!isOwnProfile}}">
@@ -19,10 +19,13 @@
             mode="aspectFill"
             binderror="handleAvatarError">
           </image>
-          <view class="avatar-status-dot"></view>
         </view>
         <!-- 编辑资料和退出按钮 -->
         <view class="profile-header-actions" wx:if="{{isOwnProfile && isLoggedIn}}">
+          <view class="nav-btn nav-btn-bell" bindtap="goToNotifications">
+            <text class="nav-btn-bell-icon">🔔</text>
+            <view wx:if="{{hasUnreadNotifications}}" class="bell-badge"></view>
+          </view>
           <view class="nav-btn nav-btn-edit" bindtap="handleEditProfile">
             <text class="nav-btn-text">编辑资料</text>
           </view>
@@ -64,7 +67,7 @@
           <text class="stat-card-number stat-number-accent">{{judgmentStats.accuracy || 0}}%</text>
           <text class="stat-card-label">正确率</text>
         </view>
-        <view class="stat-card" bindtap="handleStatClick" data-type="liked-comments">
+        <view wx:if="{{isOwnProfile}}" class="stat-card" bindtap="handleStatClick" data-type="liked-comments">
           <text class="stat-card-number stat-number-dark">{{commentStats.totalLikes || 0}}</text>
           <text class="stat-card-label">被点赞评论</text>
         </view>
@@ -75,8 +78,8 @@
     <!-- 标签页 -->
     <view class="tabs-container">
 
-      <!-- Tabs 导航 -->
-      <view class="tabs-header">
+      <!-- Tabs 导航 - 只在查看自己主页时显示 -->
+      <view wx:if="{{isOwnProfile}}" class="tabs-header">
         <view
           class="tab-item {{activeTab === 'judgments' ? 'tab-active' : ''}}"
           bindtap="switchTab"
@@ -93,17 +96,17 @@
         </view>
         <view
           class="tab-item {{activeTab === 'submit' ? 'tab-active' : ''}}"
-          bindtap="switchTab"
+          bindtap="handleSubmitTab"
           data-tab="submit">
-          <text class="tab-text">申请提交</text>
+          <text class="tab-text">申请提交资格</text>
           <view class="tab-underline" wx:if="{{activeTab === 'submit'}}"></view>
         </view>
         <!-- 保留原有 tabIndicator 兼容 JS -->
         <view class="tab-indicator" style="left: {{tabIndicatorLeft}}%; width: {{tabIndicatorWidth}}%;"></view>
       </view>
 
-      <!-- 判定记录标签页 -->
-      <view class="tab-content" wx:if="{{activeTab === 'judgments'}}">
+      <!-- 判定记录标签页 - 查看他人时直接显示，查看自己时受 activeTab 控制 -->
+      <view class="tab-content" wx:if="{{activeTab === 'judgments' || !isOwnProfile}}">
         <view wx:if="{{judgments.length > 0}}" class="judgment-list">
           <view
             wx:for="{{judgments}}"
@@ -144,14 +147,19 @@
             <!-- 右侧箭头 -->
             <text class="judgment-chevron">›</text>
           </view>
+          <!-- 加载更多指示器 -->
+          <view wx:if="{{hasMoreJudgments}}" class="load-more-indicator">
+            <text wx:if="{{loadingMore}}" class="load-more-text">加载中...</text>
+            <text wx:else class="load-more-text">上滑加载更多</text>
+          </view>
         </view>
         <view wx:else class="empty-state">
           <text class="empty-text">暂无判定记录</text>
         </view>
       </view>
 
-      <!-- 评论标签页 -->
-      <view class="tab-content" wx:if="{{activeTab === 'comments'}}">
+      <!-- 评论标签页 - 只在查看自己主页时显示 -->
+      <view class="tab-content" wx:if="{{activeTab === 'comments' && isOwnProfile}}">
         <view wx:if="{{comments.length > 0}}" class="comment-list">
           <view
             wx:for="{{comments}}"
@@ -174,9 +182,20 @@
         </view>
       </view>
 
-      <!-- 申请提交标签页 -->
-      <view class="tab-content" wx:if="{{activeTab === 'submit'}}">
-        <view class="submit-form">
+      <!-- 申请提交资格标签页 - 只在查看自己主页时显示 -->
+      <view class="tab-content" wx:if="{{activeTab === 'submit' && isOwnProfile}}">
+        <!-- 未获得提交资格时：显示申请入口 -->
+        <view wx:if="{{!hasSubmitPermission}}" class="submit-apply-section">
+          <view class="apply-card">
+            <text class="apply-icon">📝</text>
+            <text class="apply-title">成为内容提交者</text>
+            <text class="apply-desc">申请成为内容提交者后，你可以上传文本、视频和图片供大家判定</text>
+            <button class="btn-apply" bindtap="handleApplySubmitPermission">申请提交资格</button>
+          </view>
+        </view>
+
+        <!-- 已获得提交资格：显示上传表单 -->
+        <view wx:else class="submit-form">
           <view class="form-group">
             <text class="form-label">内容类型</text>
             <picker
@@ -211,7 +230,7 @@
             <text class="char-count">{{submitForm.description.length}}/500</text>
           </view>
 
-          <button class="btn-submit" bindtap="handleSubmitContent">提交申请</button>
+          <button class="btn-submit" bindtap="handleSubmitContent">提交内容</button>
         </view>
       </view>
 
@@ -221,6 +240,32 @@
     <view class="bottom-spacer"></view>
 
   </scroll-view>
+
+  <!-- 申请提交资格弹窗 -->
+  <view class="apply-modal" wx:if="{{showApplyModal}}">
+    <view class="apply-modal-mask" bindtap="closeApplyModal"></view>
+    <view class="apply-modal-content">
+      <view class="apply-modal-header">
+        <text class="apply-modal-title">填写内容，申请成为内容提交者</text>
+        <view class="apply-modal-close" bindtap="closeApplyModal">✕</view>
+      </view>
+      <view class="apply-modal-body">
+        <textarea
+          class="apply-textarea"
+          placeholder="请介绍你想提交的内容类型和来源，例如：我想上传自己创作的AI绘画作品供大家判定..."
+          value="{{applyContent}}"
+          bindinput="onApplyContentInput"
+          maxlength="500"
+          auto-height
+        />
+        <text class="apply-char-count">{{applyContent.length || 0}}/500</text>
+      </view>
+      <view class="apply-modal-footer">
+        <button class="btn-cancel" bindtap="closeApplyModal">取消</button>
+        <button class="btn-save" bindtap="submitApplyPermission">提交申请</button>
+      </view>
+    </view>
+  </view>
 
   <!-- 编辑资料弹窗 -->
   <view class="edit-modal" wx:if="{{showEditModal}}">

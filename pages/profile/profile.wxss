@@ -61,6 +61,37 @@ page {
   justify-content: center;
 }
 
+/* 通知铃铛按钮 */
+.nav-btn-bell {
+  position: relative;
+  width: 68rpx;
+  height: 68rpx;
+  background: var(--white);
+  border-radius: 50%;
+  border: 2rpx solid #E7E5E4;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.nav-btn-bell:active {
+  background: #F5F5F4;
+}
+
+.nav-btn-bell-icon {
+  font-size: 30rpx;
+  line-height: 1;
+}
+
+.bell-badge {
+  position: absolute;
+  top: 8rpx;
+  right: 8rpx;
+  width: 16rpx;
+  height: 16rpx;
+  background: #EF4444;
+  border-radius: 50%;
+  border: 3rpx solid var(--white);
+}
+
 /* 编辑资料按钮：白色胶囊 */
 .nav-btn-edit {
   padding: 16rpx 32rpx;
@@ -150,18 +181,6 @@ page {
   background: #F5F5F4;
   box-shadow: 0 6rpx 20rpx rgba(0, 0, 0, 0.12);
   display: block;
-}
-
-/* 在线状态绿点 */
-.avatar-status-dot {
-  position: absolute;
-  bottom: 4rpx;
-  right: 4rpx;
-  width: 24rpx;
-  height: 24rpx;
-  background: #10B981;
-  border: 4rpx solid var(--white);
-  border-radius: 50%;
 }
 
 .profile-nickname {
@@ -641,9 +660,197 @@ page {
   font-weight: 500;
 }
 
+/* ===== 加载更多 ===== */
+.load-more-indicator {
+  padding: 32rpx;
+  text-align: center;
+}
+
+.load-more-text {
+  font-size: 26rpx;
+  color: #A8A29E;
+}
+
+/* ===== 申请提交资格 ===== */
+.submit-apply-section {
+  padding: 40rpx 24rpx;
+}
+
+.apply-card {
+  background: var(--white, #FFFFFF);
+  border-radius: 24rpx;
+  padding: 60rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 2rpx solid #E7E5E4;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+
+.apply-icon {
+  font-size: 64rpx;
+  margin-bottom: 24rpx;
+}
+
+.apply-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1D1C16;
+  margin-bottom: 16rpx;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.apply-desc {
+  font-size: 26rpx;
+  color: #78716C;
+  line-height: 1.6;
+  margin-bottom: 40rpx;
+}
+
+.btn-apply {
+  width: 80%;
+  height: 88rpx;
+  background: #D97757;
+  color: #FFFFFF;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  border: none;
+  line-height: 88rpx;
+}
+
+.btn-apply::after {
+  border: none;
+}
+
+.btn-apply:active {
+  background: #C4694D;
+}
+
 /* ===== 底部占位 ===== */
 .bottom-spacer {
   height: 160rpx;
+}
+
+/* ===== 申请提交资格弹窗 ===== */
+.apply-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.apply-modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.apply-modal-content {
+  position: relative;
+  width: 85%;
+  max-height: 80vh;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.15);
+}
+
+.apply-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32rpx 32rpx 16rpx;
+}
+
+.apply-modal-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1D1C16;
+  font-family: Georgia, 'Times New Roman', serif;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.apply-modal-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: #A8A29E;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.apply-modal-body {
+  padding: 16rpx 32rpx 24rpx;
+}
+
+.apply-textarea {
+  width: 100%;
+  min-height: 200rpx;
+  max-height: 400rpx;
+  padding: 24rpx;
+  background: #F5F5F4;
+  border-radius: 16rpx;
+  font-size: 28rpx;
+  color: #1D1C16;
+  line-height: 1.6;
+  box-sizing: border-box;
+}
+
+.apply-char-count {
+  display: block;
+  text-align: right;
+  font-size: 24rpx;
+  color: #A8A29E;
+  margin-top: 8rpx;
+}
+
+.apply-modal-footer {
+  display: flex;
+  gap: 16rpx;
+  padding: 16rpx 32rpx 32rpx;
+}
+
+.apply-modal-footer .btn-cancel {
+  flex: 1;
+  height: 80rpx;
+  background: #F5F5F4;
+  color: #78716C;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  line-height: 80rpx;
+}
+
+.apply-modal-footer .btn-save {
+  flex: 1;
+  height: 80rpx;
+  background: #D97757;
+  color: #FFFFFF;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  border: none;
+  line-height: 80rpx;
+}
+
+.apply-modal-footer .btn-cancel::after,
+.apply-modal-footer .btn-save::after {
+  border: none;
 }
 
 /* ===== 编辑资料弹窗 ===== */

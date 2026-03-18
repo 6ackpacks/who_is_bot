@@ -66,11 +66,30 @@ export class AuthService {
 
     if (user) {
       // 用户已存在，更新用户信息
-      const hasAvatarChanged = user.avatar !== avatarUrl;
+      // Only update nickname if the new one is not the default placeholder
+      if (dto.nickName && dto.nickName !== '微信用户') {
+        user.nickname = dto.nickName;
+      }
 
-      user.nickname = dto.nickName;
-      user.avatar = avatarUrl;
-      user.avatarUpdateTime = hasAvatarChanged ? now : user.avatarUpdateTime;
+      // Only update avatar if the new one is a valid non-default URL.
+      // If the user already has a valid custom avatar and the incoming one is
+      // a dicebear default (generated because WeChat sent no real avatar),
+      // keep the existing avatar to avoid overwriting a user's chosen photo.
+      const isNewAvatarValid = isValidAvatarUrl(avatarUrl) && !avatarUrl.includes('dicebear.com');
+      const hasExistingAvatar = isValidAvatarUrl(user.avatar);
+
+      if (isNewAvatarValid && user.avatar !== avatarUrl) {
+        // Incoming avatar is a real (non-default) URL — accept it
+        user.avatar = avatarUrl;
+        user.avatarUpdateTime = now;
+      } else if (!hasExistingAvatar) {
+        // User has no valid avatar at all — use whatever we got (even a default)
+        user.avatar = avatarUrl;
+        user.avatarUpdateTime = now;
+      }
+      // If user already has a valid avatar and new one is a dicebear default,
+      // do nothing — preserve the existing custom avatar.
+
       user.gender = dto.gender;
       user.city = dto.city;
       user.updatedAt = new Date();
@@ -134,8 +153,10 @@ export class AuthService {
     const defaultAvatar = dto.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(dto.nickname || 'User')}`;
 
     if (user) {
-      // 用户已存在，更新登录时间和头像
-      user.avatar = defaultAvatar;
+      // 用户已存在，只在用户尚无有效头像时才更新头像
+      if (!user.avatar || user.avatar.includes('example.com') || user.avatar.includes('placeholder.com')) {
+        user.avatar = defaultAvatar;
+      }
       user.updatedAt = new Date();
       await this.userRepository.save(user);
     } else {

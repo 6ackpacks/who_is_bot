@@ -9,96 +9,187 @@
 
   <!-- 错误状态 -->
   <view wx:elif="{{error}}" class="error-container">
-    <text class="icon icon-warning icon-xxl icon-warning"></text>
     <text class="error-text">{{error}}</text>
     <button class="retry-btn" bindtap="handleRetry">重新加载</button>
   </view>
 
-  <!-- 内容详情 -->
-  <scroll-view wx:else scroll-y class="detail-scroll">
-    <view class="detail-content">
+  <!-- 内容详情 - 复刻 feed 的 result-view -->
+  <view wx:else class="result-view">
 
-      <!-- 内容卡片 -->
-      <view class="content-section">
-        <view class="section-label">原始内容</view>
+    <!-- 返回按钮 - 左上角固定定位 -->
+    <view class="back-button" bindtap="handleBack">
+      <text class="back-icon">←</text>
+      <text class="back-text">返回</text>
+    </view>
 
-        <!-- 文本内容 -->
-        <view wx:if="{{content.type === 'text'}}" class="content-card">
-          <view class="quote-icon">"</view>
-          <text class="content-text">{{content.content}}</text>
-        </view>
-
-        <!-- 图片内容 -->
-        <view wx:elif="{{content.type === 'image'}}" class="content-card image-card">
-          <view class="content-image-wrapper">
-            <image src="{{content.url}}" class="content-image" mode="aspectFit"></image>
-          </view>
-        </view>
-
-        <!-- 视频内容 -->
-        <view wx:elif="{{content.type === 'video'}}" class="content-card video-card">
-          <video
-            src="{{content.url}}"
-            class="content-video"
-            controls
-            show-center-play-btn
-            enable-play-gesture
-          ></video>
-        </view>
+    <!-- 判定结果 hero -->
+    <view class="judgment-result-hero {{isCorrect ? 'correct' : 'incorrect'}}">
+      <view class="result-headline">
+        <text class="status-icon">{{isCorrect ? '✓' : '✗'}}</text>
+        <text class="status-text">{{isCorrect ? '判定成功' : '判定失误'}}</text>
       </view>
-
-      <!-- 答案揭晓 -->
-      <view class="answer-section">
-        <view class="section-label">答案揭晓</view>
-        <view class="answer-card">
-          <view class="answer-badge answer-{{content.isAI ? 'ai' : 'human'}}">
-            <text wx:if="{{content.isAI}}" class="icon icon-robot"></text>
-            <text wx:else class="icon icon-user"></text>
-            {{content.isAI ? ' AI生成' : ' 真人创作'}}
-          </view>
-        </view>
+      <view wx:if="{{userChoice}}" class="result-subtext">
+        {{isCorrect ? '答对了' : '很遗憾'}}，这是
+        <text class="highlight-type highlight-underline">"{{content.isAi ? 'AI 生成' : '真人创作'}}"</text>
       </view>
+      <view wx:else class="result-subtext">
+        这是
+        <text class="highlight-type highlight-underline">"{{content.isAi ? 'AI 生成' : '真人创作'}}"</text>
+      </view>
+    </view>
 
-      <!-- 统计数据 -->
-      <view class="stats-section">
-        <view class="section-label">社区判定</view>
-        <view wx:if="{{(content.totalVotes || 0) < 10}}" class="stats-pending">
-          <text class="stats-pending-text">参与判定的人数暂未超过十个人，全网共识度暂未公开</text>
-        </view>
-        <block wx:else>
-          <view class="stats-participant">
-            <text class="participant-count">{{content.displayTotalVotes || content.totalVotes || 0}} 人参与</text>
-          </view>
-          <view class="stats-bar">
-            <!-- AI侧：深色，左侧 -->
-            <view class="stat-item stat-ai-dark" style="width: {{content.displayAiPercent}}%; background: #1a1a1a;">
-              <text class="stat-text">AI {{content.displayAiPercent}}%</text>
+    <!-- 主内容白色卡片容器 -->
+    <view class="result-content-card">
+
+      <!-- 内容预览卡片 -->
+      <view class="content-card">
+        <view class="judgment-visual">
+          <view class="content-image-container">
+
+            <!-- 视频内容 -->
+            <video
+              wx:if="{{content.type === 'video'}}"
+              class="content-media"
+              src="{{content.url}}"
+              object-fit="cover"
+              autoplay="{{false}}"
+              loop="{{false}}"
+              muted="{{false}}"
+              show-center-play-btn="{{true}}"
+              controls="{{true}}"
+            ></video>
+
+            <!-- 图片内容 -->
+            <image
+              wx:elif="{{content.type === 'image'}}"
+              class="content-media"
+              src="{{content.url}}"
+              mode="aspectFill"
+            ></image>
+
+            <!-- 文字内容 -->
+            <view wx:else class="content-text-display">
+              <text>{{content.text || content.title}}</text>
             </view>
-            <!-- 真人侧：浅色，右侧 -->
-            <view class="stat-item stat-human-light" style="width: {{content.displayHumanPercent}}%; background: #e0e0e0;">
-              <text class="stat-text stat-text-dark">真人 {{content.displayHumanPercent}}%</text>
+          </view>
+
+          <!-- 来源标签 -->
+          <view class="tag-pill">
+            <text class="tag-dot">●</text> 来源: {{content.provider || content.modelTag || 'Unknown'}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 统计显示 -->
+      <view class="result-stats-card">
+        <view class="stats-container">
+          <view class="stat-main">
+            <view class="stat-label">
+              <text>全网共识度</text>
+              <text class="stat-badge">{{content.displayTotalVotes || content.totalVotes || 0}} 人参与</text>
+            </view>
+            <view class="stat-value">
+              <text class="percentage-large">{{displayPercentage}}</text>
+              <view class="percentage-col">
+                <text class="percentage-unit">%</text>
+                <text class="percentage-label">认为是AI</text>
+              </view>
+            </view>
+          </view>
+          <view class="progress-track">
+            <view class="progress-fill-ai" style="width: {{content.displayAiPercent}}%; background: #1a1a1a;"></view>
+            <view class="progress-fill-human" style="width: {{content.displayHumanPercent}}%; background: #e0e0e0;"></view>
+          </view>
+          <view class="progress-labels">
+            <text class="progress-label-item">真人 ({{content.displayHumanPercent}}%)</text>
+            <text class="progress-label-item">AI ({{content.displayAiPercent}}%)</text>
+          </view>
+        </view>
+      </view>
+
+    </view>
+
+    <!-- 解析卡片 -->
+    <view wx:if="{{content.explanation}}" class="analysis-card" bindtap="toggleAnalysis">
+      <view class="analysis-header">
+        <text class="analysis-title">⚡ 官方解析</text>
+        <text class="chevron {{analysisExpanded ? 'expanded' : ''}}">›</text>
+      </view>
+      <view class="analysis-content {{analysisExpanded ? 'show' : ''}}">
+        {{content.explanation}}
+      </view>
+    </view>
+
+    <!-- 评论区域 -->
+    <view class="comments-section">
+      <view class="section-title-row">
+        <view class="section-title">讨论 ({{comments.length}})</view>
+      </view>
+
+      <!-- 评论输入框 -->
+      <view class="comment-input-container">
+        <input
+          class="comment-input-field"
+          placeholder="{{replyingTo ? '回复 ' + replyingTo.user.nickname : '发表你的观点...'}}"
+          value="{{commentInput}}"
+          bindinput="onCommentInput"
+          maxlength="500"
+          confirm-type="send"
+          bindconfirm="submitComment"
+        />
+        <view class="comment-send-btn" bindtap="submitComment">
+          <text class="send-icon">➤</text>
+        </view>
+      </view>
+
+      <!-- 评论列表 -->
+      <view class="comments-list">
+        <view wx:if="{{comments.length === 0}}" class="empty-comments">
+          <text class="empty-text">暂无评论，快来抢沙发吧~</text>
+        </view>
+
+        <block wx:for="{{comments}}" wx:key="id">
+          <view class="comment-item">
+            <image
+              class="avatar"
+              src="{{item.user ? item.user.avatar : 'https://api.dicebear.com/7.x/avataaars/svg?seed=default'}}"
+              mode="aspectFill"
+              binderror="handleAvatarError"
+              data-index="{{index}}"
+            />
+            <view class="comment-body">
+              <view class="comment-meta">
+                <view class="username-row">
+                  <text class="username">{{item.user ? item.user.nickname : '游客'}}</text>
+                  <text wx:if="{{item.isPinned}}" class="pin-badge">精选</text>
+                </view>
+                <text class="comment-time">{{item.createdAt}}</text>
+              </view>
+              <view class="comment-text">{{item.content}}</view>
+              <view class="comment-actions">
+                <view class="action-btn" bindtap="onLikeComment" data-id="{{item.id}}">
+                  <text class="like-icon">👍</text>
+                  <text class="action-count">{{item.likes > 0 ? item.likes : '赞'}}</text>
+                </view>
+                <view class="action-btn" bindtap="onReplyComment" data-comment="{{item}}">
+                  <text>回复</text>
+                </view>
+              </view>
+              <view wx:if="{{item.replies && item.replies.length > 0}}" class="replies-list">
+                <view wx:for="{{item.replies}}" wx:for-item="reply" wx:key="id" class="reply-item">
+                  <text class="reply-author">{{reply.user ? reply.user.nickname : '游客'}}: </text>
+                  <text class="reply-content">{{reply.content}}</text>
+                  <view class="reply-actions">
+                    <text class="reply-likes">{{reply.likes > 0 ? reply.likes + ' 赞' : ''}}</text>
+                  </view>
+                </view>
+              </view>
             </view>
           </view>
         </block>
       </view>
-
-      <!-- 解析说明 -->
-      <view class="explanation-section">
-        <view class="section-label">专家解析</view>
-        <view class="explanation-card">
-          <text class="explanation-text">{{content.explanation || '暂无解析'}}</text>
-        </view>
-      </view>
-
-      <!-- 底部按钮 -->
-      <view class="bottom-actions">
-        <button class="btn-primary" bindtap="goHome">返回首页</button>
-      </view>
-
-      <!-- 底部占位 -->
-      <view class="bottom-spacer"></view>
-
     </view>
-  </scroll-view>
+
+  </view>
 
 </view>

@@ -1,6 +1,6 @@
 {
-  "navigationBarTitleText": "题目详情",
-  "navigationBarBackgroundColor": "#FFFFFF",
+  "navigationBarTitleText": "判定解析",
+  "navigationBarBackgroundColor": "#F4F4F0",
   "navigationBarTextStyle": "black",
-  "backgroundColor": "#F8F9FA"
+  "backgroundColor": "#F4F4F0"
 }

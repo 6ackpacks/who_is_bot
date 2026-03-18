@@ -85,14 +85,8 @@
   <!-- 判定后状态 - 评论/结果页面 -->
   <view wx:elif="{{viewState === 'revealed'}}" class="result-view">
 
-      <!-- 返回按钮 - 左上角 -->
-      <view class="back-button" bindtap="handleBack">
-        <text class="back-icon">←</text>
-        <text class="back-text">返回</text>
-      </view>
-
-      <!-- 继续按钮 - 右上角（从个人主页跳转时隐藏） -->
-      <view wx:if="{{!fromProfile}}" class="next-button" bindtap="handleNext">
+      <!-- 下一题按钮 - 右下角 -->
+      <view class="next-button" bindtap="handleNext">
         <text class="next-text">下一题</text>
         <text class="next-icon">→</text>
       </view>
@@ -215,6 +209,7 @@
             maxlength="500"
             confirm-type="send"
             bindconfirm="submitComment"
+            focus="{{commentInputFocus}}"
           />
           <view class="comment-send-btn" bindtap="submitComment">
             <text class="send-icon">➤</text>

@@ -1,0 +1,91 @@
+<view class="profile-container">
+  <scroll-view scroll-y class="profile-scroll" bindscrolltolower="loadMoreJudgments">
+
+    <!-- Loading -->
+    <view wx:if="{{loading}}" class="loading-container">
+      <view class="loading-spinner"></view>
+    </view>
+
+    <block wx:else>
+      <!-- Profile header -->
+      <view class="profile-header-card">
+        <view class="user-header-row">
+          <view class="avatar-wrapper">
+            <image src="{{userInfo.avatar}}" class="user-avatar" mode="aspectFill" binderror="handleAvatarError"></image>
+          </view>
+        </view>
+
+        <text class="profile-nickname">{{userInfo.nickname}}</text>
+
+        <text wx:if="{{userInfo.bio}}" class="profile-bio">{{userInfo.bio}}</text>
+        <view wx:else class="status-spacer">
+          <text class="status-spacer-text">这个人有点懒，什么都没有留下。</text>
+        </view>
+
+        <view wx:if="{{userInfo.tags && userInfo.tags.length > 0}}" class="profile-tags">
+          <text wx:for="{{userInfo.tags}}" wx:key="index" class="profile-tag-pill">{{item}}</text>
+        </view>
+
+        <view class="stats-cards">
+          <view class="stat-card">
+            <text class="stat-card-number stat-number-dark">{{judgmentStats.total || 0}}</text>
+            <text class="stat-card-label">次判断</text>
+          </view>
+          <view class="stat-card">
+            <text class="stat-card-number stat-number-accent">{{judgmentStats.accuracy || 0}}%</text>
+            <text class="stat-card-label">正确率</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- Judgment records -->
+      <view class="tabs-container">
+        <view class="tabs-header">
+          <view class="tab-item tab-active">
+            <text class="tab-text">判定记录</text>
+            <view class="tab-underline"></view>
+          </view>
+        </view>
+
+        <view class="tab-content">
+          <view wx:if="{{judgments.length > 0}}" class="judgment-list">
+            <view wx:for="{{judgments}}" wx:key="id" class="judgment-item" bindtap="goToDetail" data-id="{{item.contentId}}">
+              <view wx:if="{{item.contentType === 'text'}}" class="judgment-thumbnail thumb-text">
+                <text class="thumb-text-content">{{item.textSnippet}}</text>
+              </view>
+              <image wx:elif="{{item.contentType === 'image'}}" src="{{item.thumbnail}}" class="judgment-thumbnail" mode="aspectFill"></image>
+              <view wx:else class="judgment-thumbnail thumb-video">
+                <view class="thumb-video-overlay"><text class="thumb-video-play">▶</text></view>
+              </view>
+
+              <view class="judgment-content">
+                <view class="judgment-title">{{item.title}}</view>
+                <view class="judgment-meta">
+                  <view class="judgment-badge {{item.isCorrect ? 'badge-correct' : 'badge-incorrect'}}">
+                    <text class="badge-icon">{{item.isCorrect ? '✓' : '✗'}}</text>
+                    <text class="badge-text">{{item.isCorrect ? '正确' : '错误'}}</text>
+                  </view>
+                  <text class="judgment-time">{{item.time}}</text>
+                </view>
+              </view>
+
+              <text class="judgment-chevron">›</text>
+            </view>
+          </view>
+          <view wx:else class="empty-state">
+            <text class="empty-text">暂无判定记录</text>
+          </view>
+
+          <!-- Load more -->
+          <view wx:if="{{hasMoreJudgments}}" class="load-more">
+            <text wx:if="{{loadingMore}}" class="load-more-text">加载中...</text>
+            <text wx:else class="load-more-text">上滑加载更多</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="bottom-spacer"></view>
+    </block>
+
+  </scroll-view>
+</view>

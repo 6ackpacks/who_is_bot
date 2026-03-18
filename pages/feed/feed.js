@@ -22,6 +22,7 @@ Page({
     // 评论相关
     comments: [],
     commentInput: '',
+    commentInputFocus: false,
     replyingTo: null,
     userId: null,
     guestId: null,
@@ -38,8 +39,8 @@ Page({
     // 数字动画
     displayPercentage: 0, // 用于显示动画的百分比数字
     animationTimer: null, // 动画计时器ID，用于清理
-    // 来源标记
-    fromProfile: false // 是否从个人主页判定记录跳转过来
+    // 从判定记录跳转过来
+    fromProfile: false
   },
 
   onLoad() {
@@ -62,72 +63,10 @@ Page({
     // 每次显示页面时重新加载主题
     this.initTheme();
 
-    // 检查是否需要展示指定内容的解析界面（从判定记录跳转过来）
-    const app = getApp();
-    const revealContentId = app.globalData && app.globalData.revealContentId;
-    if (revealContentId) {
-      app.globalData.revealContentId = null; // 立即消费，防止重复触发
-      this.showRevealedContent(revealContentId);
-    }
-
     // 更新自定义 tabBar 选中状态
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setSelected('pages/feed/feed');
     }
-  },
-
-  // 加载指定 contentId 并进入 revealed 状态（从判定记录跳转时使用）
-  showRevealedContent(contentId) {
-    // 从本地存储读取该题目的历史选择
-    const userChoices = wx.getStorageSync('userChoices') || {};
-    const userChoice = userChoices[contentId] || null;
-
-    api.getContentById(contentId)
-      .then(res => {
-        let content = null;
-        if (res && res.success && res.data) {
-          content = res.data;
-        } else if (res && res.id) {
-          content = res;
-        }
-        if (!content) return;
-
-        // 兼容 isAi / isAI 两种字段名
-        const isAi = content.isAi !== undefined ? content.isAi : content.isAI;
-        const isCorrect = userChoice
-          ? (userChoice === 'ai' ? isAi : !isAi)
-          : false;
-
-        // 补充 feed 页面需要的字段
-        content.isAi = isAi;
-        if (content.displayAiPercent === undefined) {
-          const aiVotes = content.aiVotes || 0;
-          const humanVotes = content.humanVotes || 0;
-          const total = aiVotes + humanVotes;
-          content.displayAiPercent = total > 0 ? Math.round((aiVotes / total) * 100) : 0;
-          content.displayHumanPercent = 100 - content.displayAiPercent;
-          content.displayTotalVotes = total;
-        }
-
-        this.setData({
-          currentItem: content,
-          viewState: 'revealed',
-          isCorrect: isCorrect,
-          userChoice: userChoice,
-          displayPercentage: 0,
-          comments: [],
-          commentInput: '',
-          replyingTo: null,
-          fromProfile: true
-        });
-
-        this.loadComments();
-        this.animatePercentage(content.displayAiPercent || 0);
-      })
-      .catch(err => {
-        console.error('加载内容详情失败:', err);
-        wx.showToast({ title: '内容加载失败', icon: 'none' });
-      });
   },
 
   // 初始化主题
@@ -216,7 +155,8 @@ Page({
     // 直接进入解析界面，重置动画数字
     this.setData({
       viewState: 'revealed',
-      displayPercentage: 0
+      displayPercentage: 0,
+      commentInputFocus: false
     });
 
     // 加载评论
@@ -225,6 +165,90 @@ Page({
     // 启动百分比动画（使用已有的 displayAiPercent，若无则为 0）
     const targetPercent = (this.data.currentItem && this.data.currentItem.displayAiPercent) || 0;
     this.animatePercentage(targetPercent);
+  },
+
+  // 从判定记录跳转过来，展示指定内容的解析界面
+  showRevealedContent(contentId) {
+    // 保存当前状态，以便用户点击返回时恢复
+    this._savedFeedState = {
+      currentIndex: this.data.currentIndex,
+      currentItem: this.data.currentItem,
+      viewState: this.data.viewState,
+      isCorrect: this.data.isCorrect,
+      userChoice: this.data.userChoice,
+      comments: this.data.comments,
+      commentInput: this.data.commentInput,
+      replyingTo: this.data.replyingTo,
+      displayPercentage: this.data.displayPercentage,
+      fromProfile: this.data.fromProfile
+    };
+
+    // 从本地存储读取该题目的历史选择
+    const userChoices = wx.getStorageSync('userChoices') || {};
+    const userChoice = userChoices[contentId] || null;
+
+    const api = require('../../utils/api.js');
+    api.getContentById(contentId)
+      .then(res => {
+        // 兼容多种响应格式
+        let content = null;
+        if (res && res.success && res.data) {
+          content = res.data;
+        } else if (res && res.id) {
+          content = res;
+        }
+
+        if (!content) {
+          wx.showToast({ title: '内容加载失败', icon: 'none' });
+          return;
+        }
+
+        // 判断是否答对
+        const isCorrect = userChoice === 'ai' ? content.isAi : (userChoice === 'human' ? !content.isAi : false);
+
+        this.setData({
+          currentItem: content,
+          viewState: 'revealed',
+          isCorrect: isCorrect,
+          userChoice: userChoice,
+          displayPercentage: content.displayAiPercent || 0,
+          comments: [],
+          commentInput: '',
+          replyingTo: null,
+          fromProfile: true,
+          commentInputFocus: false
+        });
+
+        // 加载评论
+        this.loadComments();
+
+        // 启动百分比动画
+        const targetPercent = content.displayAiPercent || 0;
+        if (targetPercent > 0) {
+          this.animatePercentage(targetPercent);
+        }
+      })
+      .catch(err => {
+        console.error('加载内容失败:', err);
+        wx.showToast({ title: '加载失败，请重试', icon: 'none' });
+      });
+  },
+
+  // 从判定记录返回，恢复之前的状态
+  handleBackFromProfile() {
+    if (this._savedFeedState) {
+      this.setData({
+        ...this._savedFeedState,
+        fromProfile: false
+      });
+      this._savedFeedState = null;
+    } else {
+      // 兜底：直接返回判定状态
+      this.setData({
+        viewState: 'judging',
+        fromProfile: false
+      });
+    }
   },
 
   // 从后端加载数据
@@ -419,7 +443,8 @@ Page({
       activeCategory: category,
       viewState: 'judging',
       showDetails: false,
-      userChoice: null
+      userChoice: null,
+      commentInputFocus: false
     }, () => {
       this.filterItemsByCategory();
     });
@@ -483,7 +508,8 @@ Page({
         viewState: 'revealed',
         isCorrect: isCorrect,
         showAnimation: true,
-        displayPercentage: 0 // 重置动画数字，等待 API 返回真实值
+        displayPercentage: 0, // 重置动画数字，等待 API 返回真实值
+        commentInputFocus: false
       });
 
       // 加载评论
@@ -640,7 +666,7 @@ Page({
         commentInput: '',   // 清空评论输入框
         replyingTo: null,   // 清除回复状态
         displayPercentage: 0, // 重置数字动画，避免显示上一题的值
-        fromProfile: false  // 正常切题，清除来源标记
+        commentInputFocus: false
       });
     }, 100);
   },
@@ -712,7 +738,8 @@ Page({
       videoPlaying: true,    // 重置视频播放状态
       comments: [],          // 重置评论列表
       commentInput: '',      // 清空评论输入框
-      replyingTo: null       // 清除回复状态
+      replyingTo: null,      // 清除回复状态
+      commentInputFocus: false
     });
   },
 
@@ -754,18 +781,8 @@ Page({
     this.data.videoContextCache = {};
   },
 
-  // 返回按钮处理：从个人主页跳转过来时跳回 profile，否则执行 goHome
-  handleBack() {
-    if (this.data.fromProfile) {
-      wx.switchTab({ url: '/pages/profile/profile' });
-    } else {
-      this.goHome();
-    }
-  },
-
-  // 返回主页
+  // 返回主页（重置判定状态）
   goHome() {
-    // 重新加载当前页面，回到判定状态
     this.setData({
       currentIndex: 0,
       currentItem: this.data.displayItems[0],
@@ -777,8 +794,8 @@ Page({
       comments: [],
       commentInput: '',
       replyingTo: null,
-      likedComments: [], // 重置已点赞列表
-      fromProfile: false  // 清除来源标记
+      likedComments: [],
+      commentInputFocus: false
     });
   },
 
@@ -955,16 +972,14 @@ Page({
   // 回复评论
   onReplyComment(e) {
     const comment = e.currentTarget.dataset.comment;
+    // 先关闭 focus 再打开，确保触发聚焦
     this.setData({
-      replyingTo: comment
+      replyingTo: comment,
+      commentInputFocus: false
     });
-
-    // 聚焦输入框
-    wx.showToast({
-      title: '回复 ' + (comment.user ? comment.user.nickname : '游客'),
-      icon: 'none',
-      duration: 1000
-    });
+    setTimeout(() => {
+      this.setData({ commentInputFocus: true });
+    }, 100);
   },
 
   // 删除评论

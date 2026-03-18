@@ -36,8 +36,6 @@
 
       <!-- 第一名 (中间) -->
       <view wx:if="{{users[0]}}" class="podium-item podium-first" bindtap="goToUserProfile" data-userid="{{users[0].id}}">
-        <view class="crown-spacer"></view>
-        <view class="crown-icon">👑</view>
         <view class="podium-avatar-wrapper">
           <image src="{{users[0].avatar}}" class="podium-avatar avatar-first" mode="aspectFill" binderror="handleAvatarError" data-index="0"></image>
         </view>

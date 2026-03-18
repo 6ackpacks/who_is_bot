@@ -5,7 +5,10 @@
     "pages/feed/feed",
     "pages/leaderboard/leaderboard",
     "pages/profile/profile",
-    "pages/history/history"
+    "pages/detail/detail",
+    "pages/history/history",
+    "pages/notifications/notifications",
+    "pages/user-profile/user-profile"
   ],
   "cloud": true,
   "window": {

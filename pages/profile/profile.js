@@ -40,6 +40,10 @@ Page({
 
     // 判定记录
     judgments: [],
+    allJudgments: [],       // 完整判定记录列表
+    judgmentPageSize: 10,   // 每页显示数量
+    hasMoreJudgments: false,
+    loadingMore: false,
 
     // 评论列表
     comments: [],
@@ -51,6 +55,14 @@ Page({
       nickname: '',
       bio: ''
     },
+
+    // 通知
+    hasUnreadNotifications: false,
+
+    // 申请提交资格
+    hasSubmitPermission: false, // 是否已获得提交资格
+    showApplyModal: false,
+    applyContent: '',
 
     // 申请提交表单
     contentTypes: [
@@ -65,25 +77,8 @@ Page({
     }
   },
 
-  onLoad(options) {
-    // 检查是否传入了 userId 参数
-    if (options && options.userId) {
-      const targetUserId = parseInt(options.userId);
-      const currentUserId = auth.getUserId();
-      const isOwnProfile = currentUserId && (currentUserId === targetUserId);
-
-      this.setData({
-        targetUserId: targetUserId,
-        isOwnProfile: isOwnProfile
-      });
-    } else {
-      // 未传入 userId，默认查看自己的资料
-      this.setData({
-        isOwnProfile: true,
-        targetUserId: null
-      });
-    }
-
+  onLoad() {
+    this.setData({ isOwnProfile: true, targetUserId: null });
     this.checkLoginAndLoadData();
   },
 
@@ -94,18 +89,8 @@ Page({
       duration: 0
     });
 
-    // 检查是否从榜单等地方传入了要查看的用户 ID
-    const app = getApp();
-    const viewingUserId = app.globalData && app.globalData.viewingUserId;
-    if (viewingUserId) {
-      app.globalData.viewingUserId = null; // 消费后立即清除
-      const currentUserId = auth.getUserId();
-      const isOwnProfile = currentUserId && (String(currentUserId) === String(viewingUserId));
-      this.setData({ isOwnProfile, targetUserId: viewingUserId });
-    } else {
-      // 正常通过 tabBar 进入，重置为查看自己
-      this.setData({ isOwnProfile: true, targetUserId: null });
-    }
+    // Profile tab 始终显示自己的资料
+    this.setData({ isOwnProfile: true, targetUserId: null });
 
     // 每次显示页面时检查登录状态并加载数据
     this.checkLoginAndLoadData();
@@ -248,9 +233,8 @@ Page({
             }
           });
 
-          // 加载目标用户的判定记录和评论
+          // 加载目标用户的判定记录（不加载评论，因为查看他人资料时不显示评论 tab）
           this.loadJudgments(userId);
-          this.loadComments(userId);
           this.loadUserRank(userId);
         }
       })
@@ -352,7 +336,13 @@ Page({
               textSnippet: textSnippet
             };
           });
-          this.setData({ judgments });
+          const pageSize = this.data.judgmentPageSize;
+          const firstSlice = judgments.slice(0, pageSize);
+          this.setData({
+            allJudgments: judgments,
+            judgments: firstSlice,
+            hasMoreJudgments: judgments.length > pageSize
+          });
 
           // 仅当 profile 接口未提供统计时用列表数据兜底
           if (this.data.judgmentStats.total === 0) {
@@ -368,8 +358,27 @@ Page({
       .catch(() => {
         this.setData({
           judgments: [],
+          allJudgments: [],
+          hasMoreJudgments: false
         });
       });
+  },
+
+  // 加载更多判定记录
+  loadMoreJudgments() {
+    if (!this.data.hasMoreJudgments || this.data.loadingMore) return;
+    this.setData({ loadingMore: true });
+
+    const currentCount = this.data.judgments.length;
+    const pageSize = this.data.judgmentPageSize;
+    const all = this.data.allJudgments;
+    const newSlice = all.slice(0, currentCount + pageSize);
+
+    this.setData({
+      judgments: newSlice,
+      hasMoreJudgments: newSlice.length < all.length,
+      loadingMore: false
+    });
   },
 
   // 加载评论列表
@@ -429,6 +438,46 @@ Page({
     });
   },
 
+  // 点击"申请提交资格" tab
+  handleSubmitTab() {
+    this.setData({
+      activeTab: 'submit',
+      tabIndicatorLeft: 66.66,
+      tabIndicatorWidth: 33.33
+    });
+  },
+
+  // 申请提交资格
+  handleApplySubmitPermission() {
+    this.setData({ showApplyModal: true, applyContent: '' });
+  },
+
+  closeApplyModal() {
+    this.setData({ showApplyModal: false, applyContent: '' });
+  },
+
+  onApplyContentInput(e) {
+    this.setData({ applyContent: e.detail.value });
+  },
+
+  submitApplyPermission() {
+    const content = this.data.applyContent.trim();
+    if (!content) {
+      wx.showToast({ title: '请填写申请内容', icon: 'none' });
+      return;
+    }
+
+    // TODO: Call backend API to submit the application
+    // api.submitContentPermission({ content }).then(...)
+
+    this.setData({ showApplyModal: false, applyContent: '' });
+    wx.showToast({
+      title: '申请已提交，请等待审核',
+      icon: 'success',
+      duration: 2000
+    });
+  },
+
   // 统计数据点击事件
   handleStatClick(e) {
     const type = e.currentTarget.dataset.type;
@@ -455,6 +504,13 @@ Page({
     }
   },
 
+  // 跳转到通知页
+  goToNotifications() {
+    wx.navigateTo({
+      url: '/pages/notifications/notifications'
+    });
+  },
+
   // 跳转到排行榜
   goToLeaderboard() {
     wx.navigateTo({
@@ -462,17 +518,13 @@ Page({
     });
   },
 
-  // 跳转到判定解析界面（feed 页 revealed 状态）
+  // 跳转到独立的判定解析页面
   goToDetail(e) {
     const id = e.currentTarget.dataset.id;
     if (!id) return;
 
-    const app = getApp();
-    if (!app.globalData) app.globalData = {};
-    app.globalData.revealContentId = id;
-
-    wx.switchTab({
-      url: '/pages/feed/feed'
+    wx.navigateTo({
+      url: `/pages/detail/detail?id=${id}`
     });
   },
 

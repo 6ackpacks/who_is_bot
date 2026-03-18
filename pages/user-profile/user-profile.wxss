@@ -1,0 +1,34 @@
+@import "../profile/profile.wxss";
+
+/* Loading */
+.loading-container {
+  width: 100%;
+  height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  width: 80rpx;
+  height: 80rpx;
+  border: 6rpx solid #E7E5E4;
+  border-top-color: #D97757;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Load more */
+.load-more {
+  padding: 32rpx;
+  text-align: center;
+}
+
+.load-more-text {
+  font-size: 26rpx;
+  color: #A8A29E;
+}

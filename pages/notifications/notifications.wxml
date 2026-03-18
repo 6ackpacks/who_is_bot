@@ -1,0 +1,74 @@
+<!--pages/notifications/notifications.wxml-->
+<view class="notifications-container">
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 通知内容 -->
+  <view wx:else class="notifications-content">
+
+    <!-- 分区筛选 -->
+    <view class="section-tabs">
+      <view class="section-tab {{activeSection === 'all' ? 'section-tab-active' : ''}}" bindtap="switchSection" data-section="all">
+        <text>全部</text>
+      </view>
+      <view class="section-tab {{activeSection === 'like' ? 'section-tab-active' : ''}}" bindtap="switchSection" data-section="like">
+        <text>点赞</text>
+      </view>
+      <view class="section-tab {{activeSection === 'reply' ? 'section-tab-active' : ''}}" bindtap="switchSection" data-section="reply">
+        <text>回复</text>
+      </view>
+      <view class="section-tab {{activeSection === 'system' ? 'section-tab-active' : ''}}" bindtap="switchSection" data-section="system">
+        <text>系统</text>
+      </view>
+    </view>
+
+    <!-- 通知列表 -->
+    <scroll-view scroll-y class="notification-list">
+
+      <!-- 空状态 -->
+      <view wx:if="{{filteredNotifications.length === 0}}" class="empty-state">
+        <text class="empty-icon">🔔</text>
+        <text class="empty-text">暂无新消息</text>
+        <text class="empty-hint">当有人点赞或回复你的评论时，会在这里通知你</text>
+      </view>
+
+      <!-- 通知项 -->
+      <view
+        wx:for="{{filteredNotifications}}"
+        wx:key="id"
+        class="notification-item {{item.read ? '' : 'notification-unread'}}"
+        bindtap="goToDetail"
+        data-content-id="{{item.contentId}}">
+
+        <!-- 类型图标 -->
+        <view class="notification-icon-wrapper">
+          <text wx:if="{{item.type === 'like'}}" class="notification-type-icon">👍</text>
+          <text wx:elif="{{item.type === 'reply'}}" class="notification-type-icon">💬</text>
+          <text wx:else class="notification-type-icon">📢</text>
+        </view>
+
+        <!-- 通知内容 -->
+        <view class="notification-body">
+          <view class="notification-title">
+            <text class="notification-sender">{{item.senderName}}</text>
+            <text wx:if="{{item.type === 'like'}}"> 赞了你的评论</text>
+            <text wx:elif="{{item.type === 'reply'}}"> 回复了你的评论</text>
+            <text wx:else>{{item.title}}</text>
+          </view>
+          <text wx:if="{{item.preview}}" class="notification-preview">{{item.preview}}</text>
+          <text class="notification-time">{{item.timeText}}</text>
+        </view>
+
+        <!-- 未读标记 -->
+        <view wx:if="{{!item.read}}" class="notification-dot"></view>
+      </view>
+
+    </scroll-view>
+
+  </view>
+
+</view>

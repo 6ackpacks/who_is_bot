@@ -124,21 +124,6 @@
   z-index: 1;
 }
 
-/* ===== 皇冠占位 ===== */
-.crown-spacer {
-  height: 80rpx;
-  display: block;
-}
-
-/* ===== 皇冠图标 ===== */
-.crown-icon {
-  position: absolute;
-  top: -64rpx;
-  font-size: 48rpx;
-  z-index: 10;
-  animation: float 3s ease-in-out infinite;
-}
-
 /* ===== 头像容器 ===== */
 .podium-avatar-wrapper {
   margin-bottom: 16rpx;
@@ -373,11 +358,3 @@
   }
 }
 
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12rpx);
-  }
-}
