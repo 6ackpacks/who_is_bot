@@ -17,9 +17,6 @@
   <!-- 主内容区域 -->
   <view wx:if="{{viewState === 'judging'}}" class="judgment-view">
 
-      <!-- 标题 -->
-      <view class="page-title">谁是人机?</view>
-
       <!-- 内容区域（引号+卡片） -->
       <view class="content-wrapper">
         <view class="quote-icon">"</view>
@@ -65,16 +62,14 @@
           bindtap="handleJudge"
           data-choice="ai"
         >
-          <text class="btn-icon">AI</text>
-          <text class="btn-text">铁是人机</text>
+          <text class="btn-label">铁是人机</text>
         </button>
         <button
           class="btn-judge btn-human {{isItemJudged(currentItem.id) ? 'judged' : ''}} {{getUserChoice(currentItem.id) === 'human' ? 'user-choice' : ''}}"
           bindtap="handleJudge"
           data-choice="human"
         >
-          <text class="btn-icon">人</text>
-          <text class="btn-text">包是真人</text>
+          <text class="btn-label">包是真人</text>
         </button>
       </view>
 
@@ -98,7 +93,7 @@
 
       <!-- 继续按钮 - 右上角（从个人主页跳转时隐藏） -->
       <view wx:if="{{!fromProfile}}" class="next-button" bindtap="handleNext">
-        <text class="next-text">继续</text>
+        <text class="next-text">下一题</text>
         <text class="next-icon">→</text>
       </view>
 

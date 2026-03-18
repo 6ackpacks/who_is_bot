@@ -2,29 +2,16 @@
 <view class="profile-container">
   <scroll-view scroll-y class="profile-scroll">
 
-    <!-- 顶部导航栏 -->
-    <view class="profile-nav">
-      <text class="profile-nav-title">{{isOwnProfile ? '我的' : userInfo.nickname}}</text>
-      <view class="profile-nav-actions" wx:if="{{isOwnProfile && isLoggedIn}}">
-        <view class="nav-btn nav-btn-edit" bindtap="handleEditProfile">
-          <text class="nav-btn-text">编辑资料</text>
-        </view>
-        <view class="nav-btn nav-btn-logout" bindtap="handleLogout">
-          <text class="nav-btn-logout-icon">↪</text>
-        </view>
-      </view>
-      <view class="profile-nav-actions" wx:elif="{{isOwnProfile && !isLoggedIn}}">
-        <view class="nav-btn nav-btn-login" bindtap="handleEditProfile">
-          <text class="nav-btn-text nav-btn-text-login">登录</text>
-        </view>
-      </view>
+    <!-- 顶部导航栏 - 只在查看他人主页时显示 -->
+    <view class="profile-nav" wx:if="{{!isOwnProfile}}">
+      <text class="profile-nav-title">{{userInfo.nickname}}</text>
     </view>
 
     <!-- 个人信息头区域 -->
     <view class="profile-header-card">
 
-      <!-- 头像 + 昵称 -->
-      <view class="user-core-info">
+      <!-- 头像行：头像在左，按钮在右 -->
+      <view class="user-header-row">
         <view class="avatar-wrapper">
           <image
             src="{{userInfo.avatar}}"
@@ -34,8 +21,24 @@
           </image>
           <view class="avatar-status-dot"></view>
         </view>
-        <text class="profile-nickname">{{userInfo.nickname}}</text>
+        <!-- 编辑资料和退出按钮 -->
+        <view class="profile-header-actions" wx:if="{{isOwnProfile && isLoggedIn}}">
+          <view class="nav-btn nav-btn-edit" bindtap="handleEditProfile">
+            <text class="nav-btn-text">编辑资料</text>
+          </view>
+          <view class="nav-btn nav-btn-logout" bindtap="handleLogout">
+            <text class="nav-btn-logout-icon">↪</text>
+          </view>
+        </view>
+        <view class="profile-header-actions" wx:elif="{{isOwnProfile && !isLoggedIn}}">
+          <view class="nav-btn nav-btn-login" bindtap="handleEditProfile">
+            <text class="nav-btn-text nav-btn-text-login">登录</text>
+          </view>
+        </view>
       </view>
+
+      <!-- 昵称 -->
+      <text class="profile-nickname">{{userInfo.nickname}}</text>
 
       <!-- 个人简介 -->
       <text wx:if="{{userInfo.bio}}" class="profile-bio" decode="{{true}}">{{userInfo.bio}}</text>

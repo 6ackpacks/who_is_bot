@@ -18,12 +18,6 @@
   <scroll-view wx:else scroll-y class="detail-scroll">
     <view class="detail-content">
 
-      <!-- 页面标题 -->
-      <view class="page-header">
-        <text class="page-title">题目详情</text>
-        <text class="page-subtitle">查看完整内容和解析</text>
-      </view>
-
       <!-- 内容卡片 -->
       <view class="content-section">
         <view class="section-label">原始内容</view>

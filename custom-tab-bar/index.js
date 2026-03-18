@@ -12,7 +12,7 @@ Component({
       },
       {
         pagePath: "/pages/leaderboard/leaderboard",
-        text: "榜单",
+        text: "侦探榜",
         iconPath: "/images/tab-leaderboard.png",
         selectedIconPath: "/images/tab-leaderboard-active.png"
       },
